@@ -8,7 +8,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 const app = express();
 
-/* code here */
+
 
 app.use(express.static("build"));
 
