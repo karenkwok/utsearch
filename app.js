@@ -2,6 +2,9 @@
 
 const express = require("express");
 const http = require("http");
+const mongoose = require("mongoose");
+
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const app = express();
 
