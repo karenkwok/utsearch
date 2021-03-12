@@ -4,6 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./signin.css";
 import "../index.css";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 class SigninForm extends React.Component {
   render() {
@@ -24,6 +25,7 @@ class SigninForm extends React.Component {
 
           <input type="submit" id="signin-btn" value="Sign In" />
         </form>
+        <Link to="/signup">Sign Up</Link>
       </div>
     );
   }
