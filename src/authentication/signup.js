@@ -9,7 +9,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 class SignupForm extends React.Component {
   render() {
     return (
-      <div>
+      <div id="signupform-wrapper">
         <h1>UTSearCh</h1>
         <h2>Sign Up</h2>
         <form id="signupform">
@@ -28,7 +28,7 @@ class SignupForm extends React.Component {
 
           <input type="submit" id="createaccount-btn" value="Create Account" />
         </form>
-        <Link to="/signin">Sign In</Link>
+        <Link to="/signin" id="signupform-link">Already have an account? Sign In.</Link>
       </div>
     );
   }

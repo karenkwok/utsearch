@@ -9,7 +9,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 class SigninForm extends React.Component {
   render() {
     return (
-      <div>
+      <div id="signinform-wrapper">
         <h1>UTSearCh</h1>
         <h2>Sign In</h2>
         <form id="signinform">
@@ -25,7 +25,7 @@ class SigninForm extends React.Component {
 
           <input type="submit" id="signin-btn" value="Sign In" />
         </form>
-        <Link to="/signup">Sign Up</Link>
+        <Link to="/signup">Don't have an account? Sign Up.</Link>
       </div>
     );
   }
