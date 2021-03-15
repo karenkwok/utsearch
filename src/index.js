@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import SignupForm from "./authentication/signup";
 import SigninForm from "./authentication/signin";
+import Profile from "./functions/profile";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 
@@ -21,6 +22,9 @@ export default function App() {
           </Route>
           <Route path="/signin">
             <SigninForm></SigninForm>
+          </Route>
+          <Route path="/profile">
+            <Profile></Profile>
           </Route>
         </Switch>
       </div>
