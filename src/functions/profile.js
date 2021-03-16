@@ -12,6 +12,8 @@ import Tabs from "../components/tabs";
 
 class Profile extends React.Component {
   render() {
+    //Tabs functionality from https://www.digitalocean.com/community/tutorials/react-tabs-component
+
     return (
       <div id="profile-wrapper">
         <div id="profile-picture-wrapper">
@@ -21,7 +23,6 @@ class Profile extends React.Component {
 
         <h1 id="profile-name">The Username</h1>
         <h3>FirstName LastName</h3>
-
 
         <div id="button-wrapper">
           <Tabs>

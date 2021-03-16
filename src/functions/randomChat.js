@@ -12,6 +12,10 @@ import { client } from "../index";
 class RandomChat extends React.Component {
   render() {
 
+    // Video Call functionality from
+    // https://www.youtube.com/watch?v=DvlyzDZDEq4
+    // https://github.com/WebDevSimplified/Zoom-Clone-With-WebRTC
+    // 
     function startMeeting(e){
       document.getElementById("random-chat-wrapper").innerHTML = '<div id="video-grid"></div><div id="user-grid">You</div><button>Disconnect</button>';
       const videoGrid = document.getElementById('video-grid');
