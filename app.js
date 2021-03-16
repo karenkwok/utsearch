@@ -9,6 +9,7 @@ const { makeExecutableSchema } = require("graphql-tools");
 const User = require("./models/users");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const cors = require("cors");
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -59,6 +60,9 @@ const schema = makeExecutableSchema({
 
 // Initialize the app
 const app = express();
+
+// enables communication if frontend is on diff port than backend
+app.use(cors({origin: "http://localhost:3000"}));
 
 // The GraphQL endpoint
 app.use("/graphql", bodyParser.json(), graphqlExpress({ schema }));
