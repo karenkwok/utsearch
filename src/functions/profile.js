@@ -4,28 +4,44 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./profile.css";
 import "../index.css";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { gql } from "@apollo/client";
+import { client } from "../index";
+
+import Tabs from "../components/tabs";
 
 class Profile extends React.Component {
   render() {
     return (
-      <div id="signinform-wrapper">
-        <h1>UTSearCh</h1>
-        <h2>Sign In</h2>
-        <form id="signinform">
-          <p className="signinform-labels">Username</p>
-          <input type="text" className="signinform-fields" name="username" />
+      <div id="profile-wrapper">
+        <div id="profile-picture-wrapper">
+          <img id="profile-picture" src={"../media/default.png"} alt="Profile Picture"/>
+          <button id="img-btn">Change</button>
+        </div>
 
-          <p className="signinform-labels">Password</p>
-          <input
-            type="password"
-            className="signinform-fields"
-            name="password"
-          />
+        <h1 id="profile-name">The Username</h1>
+        <h3>FirstName LastName</h3>
 
-          <input type="submit" id="signin-btn" value="Sign In" />
-        </form>
-        <Link to="/signup">Dont have an account? Sign Up.</Link>
+
+        <div id="button-wrapper">
+          <Tabs>
+            <div className="profile-buttons" label="My Info">
+              <div>
+                <textarea className="profile-input" placeholder="Your Bio" name="Text1" rows="5"></textarea>
+              </div>
+              <div>
+                <textarea className="profile-input" placeholder="Your Tags" name="Text1" rows="5"></textarea>
+              </div>
+              <button> Save</button>
+            </div>
+            <div className="profile-buttons" label="Friends">
+              Your friends list is empty :(
+            </div>
+            <div className="profile-buttons" label="Blocked">
+              Your blocked list is empty :)
+            </div>
+          </Tabs>
+        </div>
       </div>
     );
   }
