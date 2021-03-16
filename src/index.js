@@ -6,6 +6,8 @@ import "./index.css";
 import SignupForm from "./authentication/signup";
 import SigninForm from "./authentication/signin";
 import Profile from "./functions/profile";
+import RandomChat from "./functions/randomChat";
+
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
@@ -34,6 +36,9 @@ export default function App() {
             </Route>
             <Route path="/profile">
               <Profile></Profile>
+            </Route>
+            <Route path="/random-chat">
+              <RandomChat></RandomChat>
             </Route>
           </Switch>
         </div>
