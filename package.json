@@ -8,6 +8,7 @@
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.8.1",
     "apollo-server-express": "^2.21.1",
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "connect-mongo": "^4.4.0",
     "cors": "^2.8.5",
