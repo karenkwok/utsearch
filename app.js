@@ -88,6 +88,12 @@ app.post(
   }
 );
 
+app.get("/signout", (req, res, next) => {
+  req.session.destroy();
+  res.clearCookie("connect.sid");
+  res.json("You have signed out.");
+});
+
 app.use(express.static("build"));
 
 const PORT = process.env.PORT || 5000;
