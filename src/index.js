@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import SignupForm from "./authentication/signup";
 import SigninForm from "./authentication/signin";
+import Search from "./search/search";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
@@ -30,6 +31,9 @@ export default function App() {
             </Route>
             <Route path="/signin">
               <SigninForm></SigninForm>
+            </Route>
+            <Route path="/search">
+              <Search></Search>
             </Route>
           </Switch>
         </div>
