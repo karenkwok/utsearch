@@ -4,6 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "../index.css";
 import "./search.css";
+import { Link } from "react-router-dom";
 import Icon from "@material-ui/core/Icon";
 
 class Search extends React.Component {
@@ -33,7 +34,9 @@ class Search extends React.Component {
                 />
               </div>
               <div className="result-text">
-                <div className="result-username">Username</div>
+                <div className="result-username">
+                  <Link to="/profile-generic" className="username">Username</Link>
+                </div>
                 <div className="result-bio">i eat pizza</div>
                 <div className="result-tags">
                   <div className="result-tag">pizza</div>
@@ -51,7 +54,9 @@ class Search extends React.Component {
                 />
               </div>
               <div className="result-text">
-                <div className="result-username">Username</div>
+                <div className="result-username">
+                  <Link to="/profile-generic" className="username">Username</Link>
+                </div>
                 <div className="result-bio">idk lmao</div>
                 <div className="result-tags">
                   <div className="result-tag">4th year</div>
@@ -73,7 +78,9 @@ class Search extends React.Component {
                 />
               </div>
               <div className="result-text">
-                <div className="result-username">Username</div>
+                <div className="result-username">
+                <Link to="/profile-generic" className="username">Username</Link>
+                </div>
                 <div className="result-bio">lalalalalala</div>
                 <div className="result-tags">
                   <div className="result-tag">hackathons</div>

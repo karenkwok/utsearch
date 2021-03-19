@@ -92,6 +92,19 @@
   font-weight: bold;
 }
 
+.username {
+  color: black;
+  text-decoration: none;
+}
+
+.username:focus {
+  outline: none;
+}
+
+.username:hover {
+  text-decoration: underline;
+}
+
 .result-tags {
   display: flex;
   flex-direction: row;
