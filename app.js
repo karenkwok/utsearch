@@ -23,7 +23,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 // The GraphQL schema in string form
 const typeDefs = `
   type User { username: String, email: String }
-  type Query { users: [User] }
+  type Query { users: [User], profile: User }
   input CreateUserInput {
     username: String
     password: String
@@ -42,6 +42,13 @@ const resolvers = {
         throw new AuthenticationError("You must be logged in.");
       const allUsers = await User.find();
       return allUsers;
+    },
+    profile: async (parent, args, context) => {
+      // context.user is the "profile" (username and email)
+      // if no user with that cookie
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else return context.user;
     },
   },
   Mutation: {
