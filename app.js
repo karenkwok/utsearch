@@ -23,11 +23,14 @@ mongoose.connect(process.env.MONGODB_URI, {
 // The GraphQL schema in string form
 const typeDefs = `
   type User { username: String, email: String }
-  type Query { users: [User], profile: User }
+  type Query { users: [User], profile: User, profileGeneric(input: ProfileGenericInput): User }
   input CreateUserInput {
     username: String
     password: String
     email: String
+  }
+  input ProfileGenericInput {
+    username: String
   }
   type Mutation {
     CreateUser(input: CreateUserInput): User
@@ -49,6 +52,14 @@ const resolvers = {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       else return context.user;
+    },
+    profileGeneric: async (parent, args, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else {
+        const profile = await User.findOne({username: args.input.username});
+        return profile;
+      }
     },
   },
   Mutation: {
@@ -86,7 +97,7 @@ const server = new ApolloServer({
 
 server.applyMiddleware({
   app,
-  cors: { origin: "http://localhost:3000"},
+  cors: { origin: "http://localhost:3000" },
 });
 
 app.post(
