@@ -24,10 +24,14 @@ function SigninForm() {
     event.preventDefault();
     axios
       // https://idk-lmao.herokuapp.com/signin
-      .post("http://localhost:5000/signin", {
-        username,
-        password,
-      })
+      .post(
+        "http://localhost:5000/signin",
+        {
+          username,
+          password,
+        },
+        { withCredentials: true }
+      )
       .then((result) => {
         console.log(result);
       })

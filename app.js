@@ -65,7 +65,7 @@ const resolvers = {
 const app = express();
 
 // enables communication if frontend is on diff port than backend
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(
   session({
     secret: "plkojihughfgd",
@@ -84,7 +84,10 @@ const server = new ApolloServer({
   },
 });
 
-server.applyMiddleware({ app });
+server.applyMiddleware({
+  app,
+  cors: { origin: "http://localhost:3000"},
+});
 
 app.post(
   "/signin",
