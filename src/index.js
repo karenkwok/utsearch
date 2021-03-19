@@ -12,7 +12,7 @@ import { ApolloProvider } from "@apollo/client";
 
 export const client = new ApolloClient({
   //https://idk-lmao.herokuapp.com/graphql production  http://localhost:5000/graphql local
-  uri: "https://idk-lmao.herokuapp.com/graphql",
+  uri: "http://localhost:5000/graphql",
   cache: new InMemoryCache(),
 });
 
