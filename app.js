@@ -10,6 +10,7 @@ const User = require("./models/users");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const cors = require("cors");
+const socket = require("socket.io");
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -74,7 +75,46 @@ app.use(express.static("build"));
 
 const PORT = process.env.PORT || 5000;
 
-http.createServer(app).listen(PORT, function (err) {
+/*
+Video Chat Functionality:
+https://github.com/coding-with-chaim/react-video-chat
+https://www.youtube.com/watch?v=BpN6ZwFjbCY
+*/
+
+const server = http.createServer(app);
+
+const io = socket(server);
+
+const users = {};
+
+io.on('connection', socket => {
+  //For new connections, save user id
+    if (!users[socket.id]) {
+        users[socket.id] = socket.id;
+    }
+
+    //Update all connected users with connected users
+    socket.emit("yourID", socket.id);
+    io.sockets.emit("allUsers", users);
+
+    //Delete users if they disconnect
+    socket.on('disconnect', () => {
+      socket.broadcast.emit("user left");
+      delete users[socket.id];
+    })
+
+    //Call a user
+    socket.on("callUser", (data) => {
+        io.to(data.userToCall).emit('hey', {signal: data.signalData, from: data.from});
+    })
+
+    //Let calling user know call is accepted
+    socket.on("acceptCall", (data) => {
+        io.to(data.to).emit('callAccepted', data.signal);
+    })
+});
+
+server.listen(PORT, function (err) {
   if (err) console.log(err);
   else console.log("HTTP server on http://localhost:%s", PORT);
 });

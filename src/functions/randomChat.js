@@ -1,56 +1,50 @@
 /* jshint esversion: 6 */
 
-import React from "react";
-import ReactDOM from "react-dom";
+import React, { useEffect, useState, useRef } from 'react';
+import io from "socket.io-client";
+import Peer from "simple-peer";
 import "./randomChat.css";
 import "../index.css";
 import { Link } from "react-router-dom";
 import { gql } from "@apollo/client";
 import { client } from "../index";
+import styled from "styled-components";
+
+import VideoChat from "../components/video-chat";
+
 
 
 class RandomChat extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {video: false};
+  }
+
+  startMeeting = ev => {
+    this.setState({ video: !this.state.video });
+  }
+
+
   render() {
-
-    // Video Call functionality from
-    // https://www.youtube.com/watch?v=DvlyzDZDEq4
-    // https://github.com/WebDevSimplified/Zoom-Clone-With-WebRTC
-    // 
-    function startMeeting(e){
-      document.getElementById("random-chat-wrapper").innerHTML = '<div id="video-grid"></div><div id="user-grid">You</div><button>Disconnect</button>';
-      const videoGrid = document.getElementById('video-grid');
-      const myVideo = document.createElement('video');
-      myVideo.muted = true;
-
-      navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true
-      }).then(stream => {
-        addVideoStream(myVideo, stream, videoGrid);
-      });
-    }
-
-    function addVideoStream(video, stream, videoGrid) {
-      video.srcObject = stream;
-      video.addEventListener('loadedmetadata', () => {
-        video.play()
-      });
-      videoGrid.append(video);
-      videoGrid.append("test");
-
-    }
-
     return (
-      <div id="random-chat-wrapper">
-        <h1>Meet A Student!</h1>
-        <h3>Welcome to Random Chat!</h3>
-        <p>Random Chat is a great way to meet new friends from UTSC!
-        </p>
-        <p>
-          We pick another student that is also using on this page and you can video chat together!
-        </p>
 
-        <button id="meet-student-button" onClick={startMeeting}>Meet A Student!</button>
+      <div id="random-chat-wrapper">
+
+        {!this.state.video ?
+          <>
+            <h1>Meet A Student!</h1>
+            <h3>Welcome to Random Chat!</h3>
+            <p>Random Chat is a great way to meet new friends from UTSC!
+            </p>
+            <p>
+              We pick another student that is also using on this page and you can video chat together!
+            </p>
+
+            <button id="meet-student-button" onClick={this.startMeeting}>Meet A Student!</button>
+          </>
+          :
+          <VideoChat/>
+        }
       </div>
     );
   }
