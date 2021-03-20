@@ -120,9 +120,9 @@ https://github.com/coding-with-chaim/react-video-chat
 https://www.youtube.com/watch?v=BpN6ZwFjbCY
 */
 
-const server = http.createServer(app);
+const HTTPServer = http.createServer(app);
 
-const io = socket(server);
+const io = socket(HTTPServer);
 
 const users = {};
 const connected = {};
@@ -173,7 +173,7 @@ io.on('connection', socket => {
     });
 });
 
-server.listen(PORT, function (err) {
+HTTPServer.listen(PORT, function (err) {
   if (err) console.log(err);
   else console.log("HTTP server on http://localhost:%s", PORT);
 });
