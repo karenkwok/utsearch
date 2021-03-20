@@ -32,8 +32,7 @@ function Profile() {
         </button>
       </div>
 
-      <h1 id="profile-name">The Username</h1>
-      <h3>FirstName LastName</h3>
+      <h1 id="profile-name">{username}</h1>
 
       {tags.map((tag) => {
         return <div>{tag}</div>;
