@@ -1,9 +1,10 @@
 /* jshint esversion: 6 */
 
-import { React, useState } from "react";
+import { React, useContext, useState } from "react";
 import "./signin.css";
 import "../index.css";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { Context } from "../Store";
 
 const axios = require("axios");
 
@@ -11,6 +12,9 @@ function SigninForm() {
   // initial form state values
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const [state, dispatch] = useContext(Context);
+  const history = useHistory();
 
   const handleUsernameChange = function (event) {
     setUsername(event.target.value);
@@ -33,6 +37,8 @@ function SigninForm() {
         { withCredentials: true }
       )
       .then((result) => {
+        dispatch({type: "SET_USER", payload: result.data});
+        history.push("/search");
         console.log(result);
       })
       .catch((error) => {
