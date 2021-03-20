@@ -1,12 +1,22 @@
 /* jshint esversion: 6 */
 
-import React from "react";
+import { useContext } from "react";
 import "./profile.css";
 import "../index.css";
 import Icon from "@material-ui/core/Icon";
 import Tabs from "../components/tabs";
+import { Redirect, useParams } from "react-router";
+import { Context } from "../Store";
 
 function Profile() {
+  const { username } = useParams();
+  const [state, dispatch] = useContext(Context);
+
+  if (username !== state.user.username) {
+    return <p>"You can't do that."</p>;
+  }
+
+
   //Tabs functionality from https://www.digitalocean.com/community/tutorials/react-tabs-component
   return (
     <div id="profile-wrapper">
