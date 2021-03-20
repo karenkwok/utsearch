@@ -1,11 +1,14 @@
 /* jshint esversion: 6 */
 
-import React from "react";
+import { React, useContext, useState } from "react";
 import "./signup.css";
 import "../index.css";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { gql } from "@apollo/client";
 import { client } from "../index";
+import { Context } from "../Store";
+
+const axios = require("axios");
 
 // mutation query
 const CREATE_USER = gql`
@@ -17,94 +20,98 @@ const CREATE_USER = gql`
   }
 `;
 
-class SignupForm extends React.Component {
-  constructor(props) {
-    super(props);
-    // initial form state values
-    this.state = { username: "", password: "", email: "" };
+function SignupForm() {
+  // initial form state values
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
 
-    this.handleUsernameChange = this.handleUsernameChange.bind(this);
-    this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    this.handleEmailChange = this.handleEmailChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  const [state, dispatch] = useContext(Context);
+  const history = useHistory();
 
-  handleUsernameChange(event) {
-    this.setState({ username: event.target.value });
-  }
+  const handleUsernameChange = function (event) {
+    setUsername(event.target.value);
+  };
 
-  handlePasswordChange(event) {
-    this.setState({ password: event.target.value });
-  }
+  const handlePasswordChange = function (event) {
+    setPassword(event.target.value);
+  };
 
-  handleEmailChange(event) {
-    this.setState({ email: event.target.value });
-  }
+  const handleEmailChange = function (event) {
+    setEmail(event.target.value);
+  };
 
-  handleSubmit(event) {
+  const handleSubmit = function (event) {
     event.preventDefault();
     // use apollo client to mutate with the variables from the form
     client
       .mutate({
         variables: {
           input: {
-            username: this.state.username,
-            password: this.state.password,
-            email: this.state.email,
+            username,
+            password,
+            email,
           },
         },
         // take the above variables into the mutation query above
         mutation: CREATE_USER,
       })
       .then((result) => {
+        return axios.post(
+          "https://idk-lmao.herokuapp.com/signin",
+          { username, password },
+          { withCredentials: true }
+        );
+      })
+      .then((result) => {
+        dispatch({ type: "SET_USER", payload: result.data });
+        history.push("/search");
         console.log(result);
       })
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
-  render() {
-    return (
-      <div id="signupform-wrapper">
-        <h1>UTSearCh</h1>
-        <h2>Sign Up</h2>
-        <form id="signupform" onSubmit={this.handleSubmit}>
-          <p className="signupform-labels">Username</p>
-          <input
-            type="text"
-            className="signupform-fields"
-            name="username"
-            value={this.state.username}
-            onChange={this.handleUsernameChange}
-          />
+  return (
+    <div id="signupform-wrapper">
+      <h1>UTSearCh</h1>
+      <h2>Sign Up</h2>
+      <form id="signupform" onSubmit={handleSubmit}>
+        <p className="signupform-labels">Username</p>
+        <input
+          type="text"
+          className="signupform-fields"
+          name="username"
+          value={username}
+          onChange={handleUsernameChange}
+        />
 
-          <p className="signupform-labels">Password</p>
-          <input
-            type="password"
-            className="signupform-fields"
-            name="password"
-            value={this.state.password}
-            onChange={this.handlePasswordChange}
-          />
+        <p className="signupform-labels">Password</p>
+        <input
+          type="password"
+          className="signupform-fields"
+          name="password"
+          value={password}
+          onChange={handlePasswordChange}
+        />
 
-          <p className="signupform-labels">Email</p>
-          <input
-            type="text"
-            className="signupform-fields"
-            name="email"
-            value={this.state.email}
-            onChange={this.handleEmailChange}
-          />
+        <p className="signupform-labels">Email</p>
+        <input
+          type="text"
+          className="signupform-fields"
+          name="email"
+          value={email}
+          onChange={handleEmailChange}
+        />
 
-          <input type="submit" id="createaccount-btn" value="Create Account" />
-        </form>
-        <Link to="/signin" id="signupform-link">
-          Already have an account? Sign In.
-        </Link>
-      </div>
-    );
-  }
+        <input type="submit" id="createaccount-btn" value="Create Account" />
+      </form>
+      <Link to="/signin" id="signupform-link">
+        Already have an account? Sign In.
+      </Link>
+    </div>
+  );
 }
 
 export default SignupForm;
