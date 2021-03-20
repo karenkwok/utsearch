@@ -101,6 +101,12 @@ io.on('connection', socket => {
     socket.on('disconnect', () => {
       socket.broadcast.emit("user left");
       delete users[socket.id];
+      io.sockets.emit("allUsers", users);
+    })
+
+    socket.on('quit', () => {
+      socket.broadcast.emit("user disconnected");
+      io.sockets.emit("allUsers", users);
     })
 
     //Call a user

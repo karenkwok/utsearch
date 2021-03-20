@@ -52,6 +52,8 @@ function VideoChat(){
 
   useEffect(() => {
     socket.current = io.connect("/");
+
+    //Get the user's webcam as the stream
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
       setStream(stream);
       if (userVideo.current) {
@@ -80,6 +82,13 @@ function VideoChat(){
       setUsers({});
       peerRef.current.destroy();
     })
+
+    socket.current.on("user disconnected", () => {
+      setReceivingCall(false);
+      setCaller("");
+      setCallAccepted(false);
+      setUsers({});
+    })
   }, []);
 
   function callPeer(id) {
@@ -100,6 +109,8 @@ function VideoChat(){
     });
 
     socket.current.on("callAccepted", signal => {
+      setUsers({});
+
       setCallAccepted(true);
       peer.signal(signal);
     })
@@ -118,11 +129,22 @@ function VideoChat(){
     })
 
     peer.on("stream", stream => {
+      setUsers({});
+      setReceivingCall(false);
+
       partnerVideo.current.srcObject = stream;
     });
     peerRef.current = peer;
 
     peer.signal(callerSignal);
+  }
+
+  function disconnectCall() {
+    socket.current.emit("quit");
+    setReceivingCall(false);
+    setCaller("");
+    setCallAccepted(false);
+    setUsers({});
   }
 
   let UserVideo;
@@ -148,6 +170,15 @@ function VideoChat(){
       </div>
     )
   }
+
+  let disconnectButton;
+  if (!receivingCall && Object.keys(users).length == 0) {
+    disconnectButton = (
+      <div>
+        <button onClick={disconnectCall}>Disconnect</button>
+      </div>
+    )
+  }
   return (
     <Container>
       <Row>
@@ -167,6 +198,9 @@ function VideoChat(){
       </Row>
       <Row>
         {incomingCall}
+      </Row>
+      <Row>
+        {disconnectButton}
       </Row>
     </Container>
   );
