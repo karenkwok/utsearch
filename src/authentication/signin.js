@@ -37,7 +37,7 @@ function SigninForm() {
         { withCredentials: true }
       )
       .then((result) => {
-        dispatch({type: "SET_USER", payload: result.data});
+        dispatch({ type: "SET_USER", payload: result.data });
         history.push("/search");
         console.log(result);
       })

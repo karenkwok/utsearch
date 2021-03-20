@@ -1,11 +1,14 @@
 /* jshint esversion: 6 */
 
-import { React, useState } from "react";
+import { React, useContext, useState } from "react";
 import "./signup.css";
 import "../index.css";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { gql } from "@apollo/client";
 import { client } from "../index";
+import { Context } from "../Store";
+
+const axios = require("axios");
 
 // mutation query
 const CREATE_USER = gql`
@@ -22,6 +25,9 @@ function SignupForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+
+  const [state, dispatch] = useContext(Context);
+  const history = useHistory();
 
   const handleUsernameChange = function (event) {
     setUsername(event.target.value);
@@ -51,6 +57,15 @@ function SignupForm() {
         mutation: CREATE_USER,
       })
       .then((result) => {
+        return axios.post(
+          "http://localhost:5000/signin",
+          { username, password },
+          { withCredentials: true }
+        );
+      })
+      .then((result) => {
+        dispatch({ type: "SET_USER", payload: result.data });
+        history.push("/search");
         console.log(result);
       })
       .catch((error) => {
