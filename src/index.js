@@ -31,9 +31,13 @@ function Search() {
   return <div>search</div>;
 }
 
+function ProfileGeneric() {
+  return <div>profile generic</div>;
+}
+
 function PrivateRoute({ children, ...rest }) {
   const [state, dispatch] = useContext(Context);
-  const isAuthenticated = state.user != undefined && state.user != null;
+  const isAuthenticated = state.user !== undefined && state.user !== null;
   return (
     <Route
       {...rest}
@@ -104,7 +108,6 @@ function Main() {
         })
         .then((res) => {
           dispatch({ type: "SET_USER", payload: res.data.profile });
-          history.push("/search");
           console.log(res);
         })
         .catch((err) => {
@@ -123,21 +126,24 @@ function Main() {
         <Route exact path="/">
           <Redirect to="/signin" />
         </Route>
-        <Route path="/signup">
+        <Route exact path="/signup">
           <SignupForm></SignupForm>
         </Route>
-        <Route path="/signin">
+        <Route exact path="/signin">
           <SigninForm></SigninForm>
         </Route>
-        <PrivateRoute path="/search">
+        <PrivateRoute exact path="/search">
           <Search></Search>
         </PrivateRoute>
-        <Route path="/profile">
-          <Profile></Profile>
-        </Route>
-        <Route path="/random-chat">
+        <Route exact path="/random-chat">
           <RandomChat></RandomChat>
         </Route>
+        <PrivateRoute exact path="/profile/:username">
+          <ProfileGeneric></ProfileGeneric>
+        </PrivateRoute>
+        <PrivateRoute exact path="/profile/:username/edit">
+          <Profile></Profile>
+        </PrivateRoute>
       </Switch>
     </div>
   );
