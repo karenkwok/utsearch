@@ -15,6 +15,7 @@ import { Redirect } from "react-router-dom";
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client";
 import Store, { Context } from "./Store";
+import axios from "axios";
 
 export const client = new ApolloClient({
   //https://idk-lmao.herokuapp.com/graphql production  http://localhost:5000/graphql local
@@ -45,6 +46,31 @@ function PrivateRoute({ children, ...rest }) {
       }}
     />
   );
+}
+
+function AuthButton() {
+  const [state, dispatch] = useContext(Context);
+  const history = useHistory();
+  if (state.user !== undefined && state.user !== null) {
+    return (
+      <p>
+        <button
+          onClick={() => {
+            axios
+              .get("http://localhost:5000/signout", { withCredentials: true })
+              .then(() => {
+                dispatch({ type: "SET_USER", payload: null });
+                history.push("/signin");
+              });
+          }}
+        >
+          Sign Out
+        </button>
+      </p>
+    );
+  } else {
+    return null;
+  }
 }
 
 function Main() {
@@ -88,6 +114,7 @@ function Main() {
   }
   return (
     <div>
+      <AuthButton></AuthButton>
       <Switch>
         <Route exact path="/">
           <Redirect to="/signin" />
