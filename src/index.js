@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, Children } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import SignupForm from "./authentication/signup";
@@ -23,6 +23,29 @@ export const client = new ApolloClient({
   // tell apollo client to send my session cookie to backend so that the request can be authenticated
   credentials: "include",
 });
+
+function Search() {
+  return <div>search</div>;
+}
+
+function PrivateRoute({ children, ...rest }) {
+  const [state, dispatch] = useContext(Context);
+  const isAuthenticated = state.user != undefined && state.user != null;
+  return (
+    <Route
+      {...rest}
+      render={({ location }) => {
+        if (isAuthenticated) {
+          return children;
+        } else {
+          return (
+            <Redirect to={{ pathname: "/signin", state: { from: location } }} />
+          );
+        }
+      }}
+    />
+  );
+}
 
 function Main() {
   const history = useHistory();
@@ -60,8 +83,8 @@ function Main() {
         });
     }
   }, [username]);
-  if(state.user === undefined) {
-    return <div></div>
+  if (state.user === undefined) {
+    return <div></div>;
   }
   return (
     <div>
@@ -75,6 +98,9 @@ function Main() {
         <Route path="/signin">
           <SigninForm></SigninForm>
         </Route>
+        <PrivateRoute path="/search">
+          <Search></Search>
+        </PrivateRoute>
       </Switch>
     </div>
   );
