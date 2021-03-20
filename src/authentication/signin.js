@@ -1,34 +1,79 @@
 /* jshint esversion: 6 */
 
-import React from "react";
-import ReactDOM from "react-dom";
+import { React, useContext, useState } from "react";
 import "./signin.css";
 import "../index.css";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { Context } from "../Store";
 
-class SigninForm extends React.Component {
-  render() {
-    return (
-      <div id="signinform-wrapper">
-        <h1>UTSearCh</h1>
-        <h2>Sign In</h2>
-        <form id="signinform">
-          <p className="signinform-labels">Username</p>
-          <input type="text" className="signinform-fields" name="username" />
+const axios = require("axios");
 
-          <p className="signinform-labels">Password</p>
-          <input
-            type="password"
-            className="signinform-fields"
-            name="password"
-          />
+function SigninForm() {
+  // initial form state values
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-          <input type="submit" id="signin-btn" value="Sign In" />
-        </form>
-        <Link to="/signup">Don't have an account? Sign Up.</Link>
-      </div>
-    );
-  }
+  const [state, dispatch] = useContext(Context);
+  const history = useHistory();
+
+  const handleUsernameChange = function (event) {
+    setUsername(event.target.value);
+  };
+
+  const handlePasswordChange = function (event) {
+    setPassword(event.target.value);
+  };
+
+  const handleSubmit = function (event) {
+    event.preventDefault();
+    axios
+      // https://idk-lmao.herokuapp.com/signin
+      .post(
+        "https://idk-lmao.herokuapp.com/signin",
+        {
+          username,
+          password,
+        },
+        { withCredentials: true }
+      )
+      .then((result) => {
+        dispatch({ type: "SET_USER", payload: result.data });
+        history.push("/search");
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  return (
+    <div id="signinform-wrapper">
+      <h1>UTSearCh</h1>
+      <h2>Sign In</h2>
+      <form id="signinform" onSubmit={handleSubmit}>
+        <p className="signinform-labels">Username</p>
+        <input
+          type="text"
+          className="signinform-fields"
+          name="username"
+          value={username}
+          onChange={handleUsernameChange}
+        />
+
+        <p className="signinform-labels">Password</p>
+        <input
+          type="password"
+          className="signinform-fields"
+          name="password"
+          value={password}
+          onChange={handlePasswordChange}
+        />
+
+        <input type="submit" id="signin-btn" value="Sign In" />
+      </form>
+      <Link to="/signup">Don't have an account? Sign Up.</Link>
+    </div>
+  );
 }
 
 export default SigninForm;

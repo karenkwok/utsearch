@@ -1,16 +1,16 @@
 /* jshint esversion: 6 */
 
 const express = require("express");
+const session = require("express-session");
 const http = require("http");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const { graphqlExpress, graphiqlExpress } = require("apollo-server-express");
-const { makeExecutableSchema } = require("graphql-tools");
+const { ApolloServer, AuthenticationError } = require("apollo-server-express");
 const User = require("./models/users");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const cors = require("cors");
 const socket = require("socket.io");
+const MongoStore = require("connect-mongo");
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 // The GraphQL schema in string form
 const typeDefs = `
   type User { username: String, email: String }
-  type Query { users: [User] }
+  type Query { users: [User], profile: User }
   input CreateUserInput {
     username: String
     password: String
@@ -38,9 +38,18 @@ const typeDefs = `
 // The resolvers
 const resolvers = {
   Query: {
-    users: async () => {
+    users: async (parent, args, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
       const allUsers = await User.find();
       return allUsers;
+    },
+    profile: async (parent, args, context) => {
+      // context.user is the "profile" (username and email)
+      // if no user with that cookie
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else return context.user;
     },
   },
   Mutation: {
@@ -53,25 +62,55 @@ const resolvers = {
   },
 };
 
-// Put together a schema
-const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers,
-});
-
 // Initialize the app
 const app = express();
 
 // enables communication if frontend is on diff port than backend
-app.use(cors({origin: "http://localhost:3000"}));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(
+  session({
+    secret: "plkojihughfgd",
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
-// The GraphQL endpoint
-app.use("/graphql", bodyParser.json(), graphqlExpress({ schema }));
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  playground: true,
+  context: ({ req }) => {
+    return { user: req.user };
+  },
+});
 
-// GraphiQL, a visual editor for queries
-app.use("/graphiql", graphiqlExpress({ endpointURL: "/graphql" }));
+server.applyMiddleware({
+  app,
+  cors: { origin: "http://localhost:3000" },
+});
+
+app.post(
+  "/signin",
+  express.json(),
+  passport.authenticate("local"),
+  function (req, res, next) {
+    res.json(req.user);
+  }
+);
+
+app.get("/signout", (req, res, next) => {
+  req.session.destroy();
+  res.clearCookie("connect.sid");
+  res.json("You have signed out.");
+});
 
 app.use(express.static("build"));
+
+// fixes the CANNOT GET/ when u visit a page thats not "/"
+app.get("*", (req, res, next) => {
+  res.sendFile("index.html", { root: __dirname + "/build" });
+});
 
 const PORT = process.env.PORT || 5000;
 
