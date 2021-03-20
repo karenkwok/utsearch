@@ -19,7 +19,7 @@ import axios from "axios";
 
 export const client = new ApolloClient({
   //https://idk-lmao.herokuapp.com/graphql production  http://localhost:5000/graphql local
-  uri: "http://localhost:5000/graphql",
+  uri: "https://idk-lmao.herokuapp.com/graphql",
   cache: new InMemoryCache(),
   // tell apollo client to send my session cookie to backend so that the request can be authenticated
   credentials: "include",
@@ -57,7 +57,7 @@ function AuthButton() {
         <button
           onClick={() => {
             axios
-              .get("http://localhost:5000/signout", { withCredentials: true })
+              .get("https://idk-lmao.herokuapp.com/signout", { withCredentials: true })
               .then(() => {
                 dispatch({ type: "SET_USER", payload: null });
                 history.push("/signin");
