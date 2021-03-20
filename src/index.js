@@ -102,6 +102,7 @@ function Main() {
               profile {
                 username
                 email
+                tags
               }
             }
           `,

@@ -16,6 +16,7 @@ function Profile() {
     return <p>"You can't do that."</p>;
   }
 
+  const tags = state.user.tags;
 
   //Tabs functionality from https://www.digitalocean.com/community/tutorials/react-tabs-component
   return (
@@ -33,6 +34,10 @@ function Profile() {
 
       <h1 id="profile-name">The Username</h1>
       <h3>FirstName LastName</h3>
+
+      {tags.map((tag) => {
+        return <div>{tag}</div>;
+      })}
 
       <div id="button-wrapper">
         <Tabs>

@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-import { React, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import "./signin.css";
 import "../index.css";
 import { Link, useHistory } from "react-router-dom";
