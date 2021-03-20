@@ -32,8 +32,23 @@ const Row = styled.div`
 
 const Video = styled.video`
   border: 1px solid blue;
+  width: 49%;
+  height: 100%;
+  margin: 1px;
+`;
+
+const EmptyVideo = styled.div`
+  border: 1px solid blue;
+  background-color: black;
+  width: 49%;
+  height: 100%;
+  border-radius: 30px;
+`;
+
+const Text = styled.div`
   width: 50%;
   height: 50%;
+  text-align: center;
 `;
 
 function VideoChat(){
@@ -50,7 +65,7 @@ function VideoChat(){
   const socket = useRef();
   const peerRef = useRef();
 
-  useEffect(() => {
+  function connectUser() {
     socket.current = io.connect("/");
 
     //Get the user's webcam as the stream
@@ -62,7 +77,6 @@ function VideoChat(){
     })
 
     socket.current.on("yourID", (id) => {
-      //TODO set with username
       setYourID(id);
     })
     socket.current.on("allUsers", (users) => {
@@ -76,19 +90,14 @@ function VideoChat(){
     })
 
     socket.current.on("user left", () => {
-      setReceivingCall(false);
-      setCaller("");
+      socket.current.destroy();
       setCallAccepted(false);
-      setUsers({});
-      peerRef.current.destroy();
+      connectUser();
     })
+  }
 
-    socket.current.on("user disconnected", () => {
-      setReceivingCall(false);
-      setCaller("");
-      setCallAccepted(false);
-      setUsers({});
-    })
+  useEffect(() => {
+    connectUser();
   }, []);
 
   function callPeer(id) {
@@ -112,6 +121,8 @@ function VideoChat(){
       setUsers({});
 
       setCallAccepted(true);
+      setReceivingCall(false);
+      socket.current.removeListener('allUsers');
       peer.signal(signal);
     })
     peerRef.current = peer;
@@ -119,13 +130,15 @@ function VideoChat(){
 
   function acceptCall() {
     setCallAccepted(true);
+    setReceivingCall(false);
+    socket.current.removeListener('allUsers');
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream: stream,
     });
     peer.on("signal", data => {
-      socket.current.emit("acceptCall", { signal: data, to: caller })
+      socket.current.emit("acceptCall", { signal: data, to: caller, from: yourID })
     })
 
     peer.on("stream", stream => {
@@ -140,11 +153,9 @@ function VideoChat(){
   }
 
   function disconnectCall() {
-    socket.current.emit("quit");
-    setReceivingCall(false);
-    setCaller("");
+    socket.current.destroy();
     setCallAccepted(false);
-    setUsers({});
+    connectUser();
   }
 
   let UserVideo;
@@ -159,13 +170,17 @@ function VideoChat(){
     PartnerVideo = (
       <Video playsInline ref={partnerVideo} autoPlay />
     );
+  } else {
+    PartnerVideo = (
+      <EmptyVideo />
+    );
   }
 
   let incomingCall;
   if (receivingCall) {
     incomingCall = (
       <div>
-        <p>{caller} is calling you</p>
+        <p>A secret stanger is calling you</p>
         <button onClick={acceptCall}>Accept</button>
       </div>
     )
@@ -179,22 +194,43 @@ function VideoChat(){
       </div>
     )
   }
+
+  let videoText = (
+    <>
+      <Text>You</Text>
+      <Text>Stranger</Text>
+    </>
+  )
+
+  let userButtons;
+  if (Object.keys(users).length > 1) {
+    userButtons = (
+      Object.keys(users).map((key, index) => {
+        if (key === yourID) {
+          return null;
+        }
+        return (
+          <button key={key} onClick={() => callPeer(key)}>Call Stranger {index}</button>
+        );
+      })
+    )
+  } else if (!callAccepted) {
+    userButtons = (
+      <Text>You are the only one here</Text>
+    )
+  }
   return (
     <Container>
       <Row>
         {UserVideo}
         {PartnerVideo}
       </Row>
+      <Row>
+        {videoText}
+      </Row>
 
       <Row>
-        {Object.keys(users).map(key => {
-          if (key === yourID) {
-            return null;
-          }
-          return (
-            <button onClick={() => callPeer(key)}>Call {key}</button>
-          );
-        })}
+        {userButtons}
       </Row>
       <Row>
         {incomingCall}

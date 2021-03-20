@@ -86,38 +86,52 @@ const server = http.createServer(app);
 const io = socket(server);
 
 const users = {};
+const connected = {};
+const pairs = [];
 
 io.on('connection', socket => {
   //For new connections, save user id
     if (!users[socket.id]) {
         users[socket.id] = socket.id;
+        connected[socket.id] = socket.id;
     }
 
     //Update all connected users with connected users
     socket.emit("yourID", socket.id);
-    io.sockets.emit("allUsers", users);
+    io.sockets.emit("allUsers", connected);
 
     //Delete users if they disconnect
     socket.on('disconnect', () => {
-      socket.broadcast.emit("user left");
-      delete users[socket.id];
-      io.sockets.emit("allUsers", users);
-    })
+      for (let pair of pairs) {
+        if (pair.includes(socket.id)) {
+          let index = pair.indexOf(socket.id);
+          if (index == 0) {
+            socket.to(pair[1]).emit("user left");
+          } else {
+            socket.to(pair[0]).emit("user left");
+          }
+        }
+      }
 
-    socket.on('quit', () => {
-      socket.broadcast.emit("user disconnected");
-      io.sockets.emit("allUsers", users);
-    })
+
+      delete users[socket.id];
+      delete connected[socket.id];
+      io.sockets.emit("allUsers", connected);
+    });
 
     //Call a user
     socket.on("callUser", (data) => {
-        io.to(data.userToCall).emit('hey', {signal: data.signalData, from: data.from});
-    })
+        io.to(data.userToCall).emit('hey', {signal: data.signalData, from: data.from, to: data.userToCall});
+    });
 
     //Let calling user know call is accepted
     socket.on("acceptCall", (data) => {
+        pairs.push([data.to, data.from]);
+        delete connected[data.to];
+        delete connected[data.from];
         io.to(data.to).emit('callAccepted', data.signal);
-    })
+        io.sockets.emit("allUsers", connected);
+    });
 });
 
 server.listen(PORT, function (err) {
