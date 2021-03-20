@@ -86,7 +86,7 @@ const server = new ApolloServer({
 
 server.applyMiddleware({
   app,
-  cors: { origin: "http://localhost:3000"},
+  cors: { origin: "http://localhost:3000" },
 });
 
 app.post(
@@ -105,6 +105,11 @@ app.get("/signout", (req, res, next) => {
 });
 
 app.use(express.static("build"));
+
+// fixes the CANNOT GET/ when u visit a page thats not "/"
+app.get("*", (req, res, next) => {
+  res.sendFile("index.html", { root: __dirname + "/build" });
+});
 
 const PORT = process.env.PORT || 5000;
 
