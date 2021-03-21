@@ -23,11 +23,14 @@ mongoose.connect(process.env.MONGODB_URI, {
 // The GraphQL schema in string form
 const typeDefs = `
   type User { username: String, email: String, tags: [String] }
-  type Query { users: [User], profile: User }
+  type Query { GetUsers(searchValue: String): [User], profile: User, profileGeneric(input: ProfileGenericInput): User }
   input CreateUserInput {
     username: String
     password: String
     email: String
+  }
+  input ProfileGenericInput {
+    username: String
   }
   type Mutation {
     CreateTag(input: String): [String], 
@@ -38,10 +41,13 @@ const typeDefs = `
 // The resolvers
 const resolvers = {
   Query: {
-    users: async (parent, args, context) => {
+    GetUsers: async (parent, args, context) => {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
-      const allUsers = await User.find();
+      const allUsers = await await User.find().or([
+        { tags: args.searchValue },
+        { username: args.searchValue },
+      ]);
       return allUsers;
     },
     profile: async (parent, args, context) => {
@@ -50,6 +56,14 @@ const resolvers = {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       else return context.user;
+    },
+    profileGeneric: async (parent, args, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else {
+        const profile = await User.findOne({ username: args.input.username });
+        return profile;
+      }
     },
   },
   Mutation: {
@@ -66,7 +80,11 @@ const resolvers = {
       }
     },
     CreateUser: async (_, { input }) => {
-      const newUser = User({ username: input.username, email: input.email, tags: [] });
+      const newUser = User({
+        username: input.username,
+        email: input.email,
+        tags: [],
+      });
       await newUser.setPassword(input.password);
       await newUser.save();
       return newUser;

@@ -5,6 +5,8 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import SignupForm from "./authentication/signup";
 import SigninForm from "./authentication/signin";
+import Search from "./search/search";
+import ProfileGeneric from "./search/profile-generic";
 import Profile from "./functions/profile";
 import RandomChat from "./functions/randomChat";
 import {
@@ -26,14 +28,6 @@ export const client = new ApolloClient({
   // tell apollo client to send my session cookie to backend so that the request can be authenticated
   credentials: "include",
 });
-
-function Search() {
-  return <div>search</div>;
-}
-
-function ProfileGeneric() {
-  return <div>profile generic</div>;
-}
 
 function PrivateRoute({ children, ...rest }) {
   const [state, dispatch] = useContext(Context);
