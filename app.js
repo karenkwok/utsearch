@@ -23,7 +23,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 // The GraphQL schema in string form
 const typeDefs = `
   type User { username: String, email: String, tags: [String] }
-  type Query { users: [User], profile: User, profileGeneric(input: ProfileGenericInput): User }
+  type Query { GetUsers(searchValue: String): [User], profile: User, profileGeneric(input: ProfileGenericInput): User }
   input CreateUserInput {
     username: String
     password: String
@@ -41,7 +41,7 @@ const typeDefs = `
 // The resolvers
 const resolvers = {
   Query: {
-    users: async (parent, args, context) => {
+    GetUsers: async (parent, args, context) => {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       const allUsers = await User.find();

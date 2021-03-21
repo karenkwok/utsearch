@@ -18,7 +18,7 @@ import {
 import { Redirect } from "react-router-dom";
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client";
-import { Context } from "./Store";
+import Store, { Context } from "./Store";
 import axios from "axios";
 
 export const client = new ApolloClient({
@@ -28,14 +28,6 @@ export const client = new ApolloClient({
   // tell apollo client to send my session cookie to backend so that the request can be authenticated
   credentials: "include",
 });
-
-function Search() {
-  return <div>search</div>;
-}
-
-function ProfileGeneric() {
-  return <div>profile generic</div>;
-}
 
 function PrivateRoute({ children, ...rest }) {
   const [state, dispatch] = useContext(Context);
