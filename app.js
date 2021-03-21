@@ -44,7 +44,10 @@ const resolvers = {
     GetUsers: async (parent, args, context) => {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
-      const allUsers = await User.find();
+      const allUsers = await await User.find().or([
+        { tags: args.searchValue },
+        { username: args.searchValue },
+      ]);
       return allUsers;
     },
     profile: async (parent, args, context) => {
@@ -58,7 +61,7 @@ const resolvers = {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       else {
-        const profile = await User.findOne({username: args.input.username});
+        const profile = await User.findOne({ username: args.input.username });
         return profile;
       }
     },
@@ -77,7 +80,11 @@ const resolvers = {
       }
     },
     CreateUser: async (_, { input }) => {
-      const newUser = User({ username: input.username, email: input.email, tags: [] });
+      const newUser = User({
+        username: input.username,
+        email: input.email,
+        tags: [],
+      });
       await newUser.setPassword(input.password);
       await newUser.save();
       return newUser;
