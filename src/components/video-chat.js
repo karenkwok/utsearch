@@ -10,11 +10,11 @@ import { client } from "../index";
 import styled from "styled-components";
 
 /*
-Video Chat Functionality
+Base Video Chat Structure
 https://github.com/coding-with-chaim/react-video-chat
 https://www.youtube.com/watch?v=BpN6ZwFjbCY
 
-Disconnected Call
+Handling Disconnected Call
 https://www.youtube.com/watch?v=7a_vgmEZrhE
 */
 
@@ -55,10 +55,19 @@ function VideoChat(){
   const [yourID, setYourID] = useState("");
   const [users, setUsers] = useState({});
   const [stream, setStream] = useState();
+  const [callerStream, setCallerStream] = useState();
+
   const [receivingCall, setReceivingCall] = useState(false);
   const [caller, setCaller] = useState("");
   const [callerSignal, setCallerSignal] = useState();
   const [callAccepted, setCallAccepted] = useState(false);
+
+  const [muteBtnState, setMuteBtnState] = useState("Mute Me");
+  const [hideBtnState, setHideBtnState] = useState("Hide Me");
+  const [muteCallerBtnState, setMuteCallerBtnState] = useState("Mute Stranger");
+  const [hideCallerBtnState, setHideCallerBtnState] = useState("Hide Stranger");
+
+
 
   const userVideo = useRef();
   const partnerVideo = useRef();
@@ -112,6 +121,7 @@ function VideoChat(){
     })
 
     peer.on("stream", stream => {
+      setCallerStream(stream);
       if (partnerVideo.current) {
         partnerVideo.current.srcObject = stream;
       }
@@ -144,6 +154,7 @@ function VideoChat(){
     peer.on("stream", stream => {
       setUsers({});
       setReceivingCall(false);
+      setCallerStream(stream);
 
       partnerVideo.current.srcObject = stream;
     });
@@ -219,11 +230,71 @@ function VideoChat(){
       <Text>You are the only one here</Text>
     )
   }
+
+  function muteMyVideo(){
+    if (hideBtnState === "Hide Me") {
+      setHideBtnState("Show Me");
+    } else {
+      setHideBtnState("Hide Me");
+    }
+    stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled;
+  }
+
+  function muteMySound(){
+    if (muteCallerBtnState === "Mute Stranger") {
+      setMuteCallerBtnState("Unmute Stranger");
+    } else {
+      setMuteCallerBtnState("Mute Stranger");
+    }
+    stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled;
+  }
+
+  function muteTheirVideo(){
+    if (hideCallerBtnState === "Hide Stranger") {
+      setHideCallerBtnState("Show Stanger");
+    } else {
+      setHideCallerBtnState("Hide Stanger");
+    }
+    callerStream.getVideoTracks()[0].enabled = !callerStream.getVideoTracks()[0].enabled;
+  }
+
+  function muteTheirSound(){
+    if (muteCallerBtnState === "Mute Stranger") {
+      setMuteCallerBtnState("Unmute Stranger");
+    } else {
+      setMuteCallerBtnState("Mute Stranger");
+    }
+    callerStream.getAudioTracks()[0].enabled = !callerStream.getAudioTracks()[0].enabled;
+  }
+
+  let muteButtons;
+  if (callAccepted) {
+    muteButtons =  (
+      <>
+      <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
+      <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
+
+      <button key="muteTheirVid" onClick={() => muteTheirVideo()}>{hideCallerBtnState}</button>
+      <button key="muteTheirSound" onClick={() => muteTheirSound()}>{muteCallerBtnState}</button>
+      </>
+    )
+  } else {
+    muteButtons =  (
+      <>
+      <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
+      <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
+      </>
+    )
+  }
+
   return (
     <Container>
       <Row>
         {UserVideo}
         {PartnerVideo}
+      </Row>
+      <Row>
+        {muteButtons}
       </Row>
       <Row>
         {videoText}

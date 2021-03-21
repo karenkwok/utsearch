@@ -128,7 +128,7 @@ app.get("*", (req, res, next) => {
 const PORT = process.env.PORT || 5000;
 
 /*
-Video Chat Functionality:
+Base Video Chat Structure:
 https://github.com/coding-with-chaim/react-video-chat
 https://www.youtube.com/watch?v=BpN6ZwFjbCY
 */
