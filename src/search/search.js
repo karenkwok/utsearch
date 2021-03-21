@@ -79,7 +79,7 @@ function Search() {
                 </div>
                 <div className="result-text">
                   <div className="result-username">
-                    <Link to="/profile-generic" className="username">
+                    <Link to={"/profile/" + searchResult.username} className="username">
                       {searchResult.username}
                     </Link>
                   </div>
