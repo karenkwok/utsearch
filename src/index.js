@@ -7,7 +7,6 @@ import SignupForm from "./authentication/signup";
 import SigninForm from "./authentication/signin";
 import Profile from "./functions/profile";
 import RandomChat from "./functions/randomChat";
-
 import {
   BrowserRouter as Router,
   Switch,
@@ -32,9 +31,13 @@ function Search() {
   return <div>search</div>;
 }
 
+function ProfileGeneric() {
+  return <div>profile generic</div>;
+}
+
 function PrivateRoute({ children, ...rest }) {
   const [state, dispatch] = useContext(Context);
-  const isAuthenticated = state.user != undefined && state.user != null;
+  const isAuthenticated = state.user !== undefined && state.user !== null;
   return (
     <Route
       {...rest}
@@ -60,7 +63,9 @@ function AuthButton() {
         <button
           onClick={() => {
             axios
-              .get("https://idk-lmao.herokuapp.com/signout", { withCredentials: true })
+              .get("https://idk-lmao.herokuapp.com/signout", {
+                withCredentials: true,
+              })
               .then(() => {
                 dispatch({ type: "SET_USER", payload: null });
                 history.push("/signin");
@@ -97,13 +102,13 @@ function Main() {
               profile {
                 username
                 email
+                tags
               }
             }
           `,
         })
         .then((res) => {
           dispatch({ type: "SET_USER", payload: res.data.profile });
-          history.push("/search");
           console.log(res);
         })
         .catch((err) => {
@@ -122,17 +127,23 @@ function Main() {
         <Route exact path="/">
           <Redirect to="/signin" />
         </Route>
-        <Route path="/signup">
+        <Route exact path="/signup">
           <SignupForm></SignupForm>
         </Route>
-        <Route path="/signin">
+        <Route exact path="/signin">
           <SigninForm></SigninForm>
         </Route>
-        <Route path="/random-chat">
+        <PrivateRoute exact path="/search">
+          <Search></Search>
+        </PrivateRoute>
+        <Route exact path="/random-chat">
           <RandomChat></RandomChat>
         </Route>
-        <PrivateRoute path="/search">
-          <Search></Search>
+        <PrivateRoute exact path="/profile/:username">
+          <ProfileGeneric></ProfileGeneric>
+        </PrivateRoute>
+        <PrivateRoute exact path="/profile/:username/edit">
+          <Profile></Profile>
         </PrivateRoute>
       </Switch>
     </div>

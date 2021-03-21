@@ -23,7 +23,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // The GraphQL schema in string form
 const typeDefs = `
-  type User { username: String, email: String }
+  type User { username: String, email: String, tags: [String] }
   type Query { users: [User], profile: User }
   input CreateUserInput {
     username: String
@@ -31,6 +31,7 @@ const typeDefs = `
     email: String
   }
   type Mutation {
+    CreateTag(input: String): [String], 
     CreateUser(input: CreateUserInput): User
   }
 `;
@@ -53,8 +54,20 @@ const resolvers = {
     },
   },
   Mutation: {
+    CreateTag: async (_, { input }, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else {
+        const updatedUser = await User.findOneAndUpdate(
+          { username: context.user.username },
+          { $push: { tags: input } },
+          { new: true }
+        );
+        return updatedUser.tags;
+      }
+    },
     CreateUser: async (_, { input }) => {
-      const newUser = User({ username: input.username, email: input.email });
+      const newUser = User({ username: input.username, email: input.email, tags: [] });
       await newUser.setPassword(input.password);
       await newUser.save();
       return newUser;
