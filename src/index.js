@@ -130,9 +130,9 @@ function Main() {
         <PrivateRoute exact path="/search">
           <Search></Search>
         </PrivateRoute>
-        <Route exact path="/random-chat">
+        <PrivateRoute exact path="/random-chat">
           <RandomChat></RandomChat>
-        </Route>
+        </PrivateRoute>
         <PrivateRoute exact path="/profile/:username">
           <ProfileGeneric></ProfileGeneric>
         </PrivateRoute>
