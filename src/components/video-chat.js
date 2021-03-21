@@ -134,6 +134,13 @@ function VideoChat(){
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  var xpath = "//button[text()='Sign Out']";
+  var matchingElement = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+  matchingElement.onclick = function() {
+    leavePageDisconnect();
+  }
+
   /* Connection events if user is the caller */
   function callPeer(id) {
     const peer = new Peer({
@@ -188,6 +195,19 @@ function VideoChat(){
     peerRef.current = peer;
 
     peer.signal(callerSignal);
+  }
+
+  function leavePageDisconnect() {
+    stream.getTracks().forEach(function(track) {
+      track.stop();
+    });
+
+    socket.current.destroy();
+    setCallAccepted(false);
+    setMuteBtnState("Mute Me");
+    setHideBtnState("Hide Me");
+    setMuteCallerBtnState("Mute Stranger");
+    setHideCallerBtnState("Hide Stranger");
   }
 
   // Disconnect from the call
