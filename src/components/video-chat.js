@@ -4,9 +4,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import "../index.css";
-import { Link } from "react-router-dom";
-import { gql } from "@apollo/client";
-import { client } from "../index";
 import styled from "styled-components";
 
 /*
@@ -28,52 +25,66 @@ const Container = styled.div`
 const Row = styled.div`
   display: flex;
   width: 100%;
+  justify-content: center;
+  margin: 10px 0 10px 0;
+`;
+
+const Box = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  width: 50%;
+`;
+
+const StrangerList = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const Video = styled.video`
   border: 1px solid blue;
-  width: 49%;
-  height: 100%;
-  margin: 1px;
+  width: 320px;
+  height: auto;
+  margin: 10px;
 `;
 
 const EmptyVideo = styled.div`
   border: 1px solid blue;
   background-color: black;
-  width: 49%;
-  height: 100%;
-  border-radius: 30px;
-`;
-
-const Text = styled.div`
-  width: 50%;
-  height: 50%;
-  text-align: center;
+  width: 320px;
+  height: auto;
+  border-radius: 10px;
+  margin: 10px;
 `;
 
 function VideoChat(){
+  // States for the call connection steps
   const [yourID, setYourID] = useState("");
   const [users, setUsers] = useState({});
   const [stream, setStream] = useState();
   const [callerStream, setCallerStream] = useState();
-
   const [receivingCall, setReceivingCall] = useState(false);
   const [caller, setCaller] = useState("");
   const [callerSignal, setCallerSignal] = useState();
   const [callAccepted, setCallAccepted] = useState(false);
 
+  // Video Call Button option states
   const [muteBtnState, setMuteBtnState] = useState("Mute Me");
   const [hideBtnState, setHideBtnState] = useState("Hide Me");
   const [muteCallerBtnState, setMuteCallerBtnState] = useState("Mute Stranger");
   const [hideCallerBtnState, setHideCallerBtnState] = useState("Hide Stranger");
 
-
-
+  //Hooks for the video streams
   const userVideo = useRef();
   const partnerVideo = useRef();
+
+  //Hooks for the socket and peer
   const socket = useRef();
   const peerRef = useRef();
 
+  /* Events for the connected user */
   function connectUser() {
     socket.current = io.connect("/");
 
@@ -99,16 +110,23 @@ function VideoChat(){
     })
 
     socket.current.on("user left", () => {
+      setMuteBtnState("Mute Me");
+      setHideBtnState("Hide Me");
+      setMuteCallerBtnState("Mute Stranger");
+      setHideCallerBtnState("Hide Stranger");
       socket.current.destroy();
       setCallAccepted(false);
       connectUser();
     })
   }
 
+  /* Upon clicking past intro, automatically attempt to connect user */
   useEffect(() => {
     connectUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /* Connection events if user is the caller */
   function callPeer(id) {
     const peer = new Peer({
       initiator: true,
@@ -138,6 +156,7 @@ function VideoChat(){
     peerRef.current = peer;
   }
 
+  /* Accept the call and share stream from receiving end */
   function acceptCall() {
     setCallAccepted(true);
     setReceivingCall(false);
@@ -163,11 +182,55 @@ function VideoChat(){
     peer.signal(callerSignal);
   }
 
+  // Disconnect from the call
   function disconnectCall() {
     socket.current.destroy();
     setCallAccepted(false);
+    setMuteBtnState("Mute Me");
+    setHideBtnState("Hide Me");
+    setMuteCallerBtnState("Mute Stranger");
+    setHideCallerBtnState("Hide Stranger");
     connectUser();
   }
+
+  /* Functions for muting/hiding video/sound */
+  function muteMyVideo(){
+    if (hideBtnState === "Hide Me") {
+      setHideBtnState("Show Me");
+    } else {
+      setHideBtnState("Hide Me");
+    }
+    stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled;
+  }
+
+  function muteMySound(){
+    if (muteBtnState === "Mute Me") {
+      setMuteBtnState("Unmute Me");
+    } else {
+      setMuteBtnState("Mute Me");
+    }
+    stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled;
+  }
+
+  function muteTheirVideo(){
+    if (hideCallerBtnState === "Hide Stranger") {
+      setHideCallerBtnState("Show Stanger");
+    } else {
+      setHideCallerBtnState("Hide Stranger");
+    }
+    callerStream.getVideoTracks()[0].enabled = !callerStream.getVideoTracks()[0].enabled;
+  }
+
+  function muteTheirSound(){
+    if (muteCallerBtnState === "Mute Stranger") {
+      setMuteCallerBtnState("Unmute Stranger");
+    } else {
+      setMuteCallerBtnState("Mute Stranger");
+    }
+    callerStream.getAudioTracks()[0].enabled = !callerStream.getAudioTracks()[0].enabled;
+  }
+
+  /* Conditional Elements */
 
   let UserVideo;
   if (stream) {
@@ -198,7 +261,7 @@ function VideoChat(){
   }
 
   let disconnectButton;
-  if (!receivingCall && Object.keys(users).length == 0) {
+  if (!receivingCall && Object.keys(users).length === 0) {
     disconnectButton = (
       <div>
         <button onClick={disconnectCall}>Disconnect</button>
@@ -208,85 +271,60 @@ function VideoChat(){
 
   let videoText = (
     <>
-      <Text>You</Text>
-      <Text>Stranger</Text>
+      <Box>You</Box>
+      <Box>Stranger</Box>
     </>
   )
 
   let userButtons;
   if (Object.keys(users).length > 1) {
     userButtons = (
-      Object.keys(users).map((key, index) => {
-        if (key === yourID) {
-          return null;
-        }
-        return (
-          <button key={key} onClick={() => callPeer(key)}>Call Stranger {index}</button>
-        );
-      })
+      <StrangerList>
+        {Object.keys(users).map((key, index) => {
+          if (key === yourID) {
+            return null;
+          }
+          return (
+            <button key={key} onClick={() => callPeer(key)}>Call Stranger {index}</button>
+          );
+        })}
+      </StrangerList>
     )
   } else if (!callAccepted) {
     userButtons = (
-      <Text>You are the only one here</Text>
+      <StrangerList>You are the only one here</StrangerList>
     )
-  }
-
-  function muteMyVideo(){
-    if (hideBtnState === "Hide Me") {
-      setHideBtnState("Show Me");
-    } else {
-      setHideBtnState("Hide Me");
-    }
-    stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled;
-  }
-
-  function muteMySound(){
-    if (muteBtnState === "Mute Me") {
-      setMuteBtnState("Unmute Me");
-    } else {
-      setMuteBtnState("Mute Me");
-    }
-    stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled;
-  }
-
-  function muteTheirVideo(){
-    if (hideCallerBtnState === "Hide Stranger") {
-      setHideCallerBtnState("Show Stanger");
-    } else {
-      setHideCallerBtnState("Hide Stanger");
-    }
-    callerStream.getVideoTracks()[0].enabled = !callerStream.getVideoTracks()[0].enabled;
-  }
-
-  function muteTheirSound(){
-    if (muteCallerBtnState === "Mute Stranger") {
-      setMuteCallerBtnState("Unmute Stranger");
-    } else {
-      setMuteCallerBtnState("Mute Stranger");
-    }
-    callerStream.getAudioTracks()[0].enabled = !callerStream.getAudioTracks()[0].enabled;
   }
 
   let muteButtons;
   if (callAccepted) {
     muteButtons =  (
       <>
+      <Box>
       <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
       <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
+      </Box>
 
+      <Box>
       <button key="muteTheirVid" onClick={() => muteTheirVideo()}>{hideCallerBtnState}</button>
       <button key="muteTheirSound" onClick={() => muteTheirSound()}>{muteCallerBtnState}</button>
+      </Box>
       </>
     )
   } else {
     muteButtons =  (
       <>
-      <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
-      <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
+        <Box>
+          <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
+          <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
+        </Box>
+
+        <Box></Box>
       </>
     )
   }
 
+  /* Render the elements onto the page */
   return (
     <Container>
       <Row>
@@ -294,10 +332,10 @@ function VideoChat(){
         {PartnerVideo}
       </Row>
       <Row>
-        {muteButtons}
+        {videoText}
       </Row>
       <Row>
-        {videoText}
+        {muteButtons}
       </Row>
 
       <Row>
