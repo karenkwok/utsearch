@@ -1,13 +1,42 @@
 /* jshint esversion: 6 */
 
-import React from "react";
+import React, { useEffect, useContext, useState } from "react";
 import ReactDOM from "react-dom";
 import "../index.css";
 import "./profile-generic.css";
 import { useParams } from "react-router";
+import { Context } from "../Store";
+import { client } from "..";
+import { gql } from "@apollo/client";
 
 function ProfileGeneric() {
+  const [state, dispatch] = useContext(Context);
+  const [tags, setTags] = useState([]);
   const { username } = useParams();
+
+  useEffect(() => {
+    client
+      .query({
+        query: gql`
+          query($input: ProfileGenericInput!) {
+            profileGeneric(input: $input) {
+              username
+              tags
+            }
+          }
+        `,
+        variables: { input: {
+          username: username
+        } },
+      })
+      .then((result) => {
+        setTags(result.data.profileGeneric.tags);
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
 
   return (
     <div id="profilegeneric-wrapper">
@@ -23,12 +52,9 @@ function ProfileGeneric() {
       </div>
       <div id="profilegeneric-bio">this is my biography.</div>
       <div id="profilegeneric-tags">
-        <div className="profilegeneric-tag">these</div>
-        <div className="profilegeneric-tag">are</div>
-        <div className="profilegeneric-tag">my</div>
-        <div className="profilegeneric-tag">super</div>
-        <div className="profilegeneric-tag">awesome</div>
-        <div className="profilegeneric-tag">tags.</div>
+        {tags.map((tag) => {
+          return <div className="profilegeneric-tag">{tag}</div>;
+        })}
       </div>
     </div>
   );
