@@ -241,10 +241,10 @@ function VideoChat(){
   }
 
   function muteMySound(){
-    if (muteCallerBtnState === "Mute Stranger") {
-      setMuteCallerBtnState("Unmute Stranger");
+    if (muteBtnState === "Mute Me") {
+      setMuteBtnState("Unmute Me");
     } else {
-      setMuteCallerBtnState("Mute Stranger");
+      setMuteBtnState("Mute Me");
     }
     stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled;
   }
