@@ -4,14 +4,17 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "../index.css";
 import "./profile-generic.css";
+import { useParams } from "react-router";
 
 function ProfileGeneric() {
+  const { username } = useParams();
+
   return (
     <div id="profilegeneric-wrapper">
       <div>
         <img id="profilegeneric-picture" src={"../media/profilepic.png"} />
       </div>
-      <h2>Username</h2>
+      <h2>{username}</h2>
       <div id="profilegeneric-buttons">
         <button className="profilegeneric-button">+Friend</button>
         <button className="profilegeneric-button">Call</button>
