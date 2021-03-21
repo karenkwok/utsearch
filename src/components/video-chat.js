@@ -24,9 +24,14 @@ const Container = styled.div`
 
 const Row = styled.div`
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
   justify-content: center;
-  margin: 10px 0 10px 0;
+  margin: 0 0 10px 0;
+`;
+
+const Title = styled.h1`
+  margin: 0;
 `;
 
 const Box = styled.div`
@@ -40,13 +45,16 @@ const Box = styled.div`
 const StrangerList = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  height: 100px;
+  overflow: scroll;
+  padding: 20px;
+  min-height: 0;
 `;
 
 const Video = styled.video`
   border: 1px solid blue;
   width: 320px;
-  height: auto;
+  height: 240px;
   margin: 10px;
 `;
 
@@ -54,7 +62,7 @@ const EmptyVideo = styled.div`
   border: 1px solid blue;
   background-color: black;
   width: 320px;
-  height: auto;
+  height: 240px;
   border-radius: 10px;
   margin: 10px;
 `;
@@ -214,7 +222,7 @@ function VideoChat(){
 
   function muteTheirVideo(){
     if (hideCallerBtnState === "Hide Stranger") {
-      setHideCallerBtnState("Show Stanger");
+      setHideCallerBtnState("Show Stranger");
     } else {
       setHideCallerBtnState("Hide Stranger");
     }
@@ -250,16 +258,6 @@ function VideoChat(){
     );
   }
 
-  let incomingCall;
-  if (receivingCall) {
-    incomingCall = (
-      <div>
-        <p>A secret stanger is calling you</p>
-        <button onClick={acceptCall}>Accept</button>
-      </div>
-    )
-  }
-
   let disconnectButton;
   if (!receivingCall && Object.keys(users).length === 0) {
     disconnectButton = (
@@ -269,17 +267,30 @@ function VideoChat(){
     )
   }
 
-  let videoText = (
-    <>
-      <Box>You</Box>
-      <Box>Stranger</Box>
-    </>
-  )
+  let videoText;
+  if (!receivingCall) {
+    videoText = (
+      <>
+        <Box>You</Box>
+        <Box>Stranger</Box>
+      </>
+    )
+  } else {
+    videoText = (
+      <>
+        <Box>You</Box>
+        <Box>
+            A secret stranger is calling you
+        </Box>
+      </>
+    )
+  }
 
   let userButtons;
   if (Object.keys(users).length > 1) {
     userButtons = (
       <StrangerList>
+        <Title>Current Strangers Available:</Title>
         {Object.keys(users).map((key, index) => {
           if (key === yourID) {
             return null;
@@ -312,21 +323,39 @@ function VideoChat(){
       </>
     )
   } else {
-    muteButtons =  (
-      <>
-        <Box>
-          <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
-          <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
-        </Box>
+    if (!receivingCall) {
+      muteButtons =  (
+        <>
+          <Box>
+            <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
+            <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
+          </Box>
 
-        <Box></Box>
-      </>
-    )
+          <Box></Box>
+        </>
+      )
+    } else {
+      muteButtons =  (
+        <>
+          <Box>
+            <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
+            <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
+          </Box>
+
+          <Box>
+              <button onClick={acceptCall}>Accept</button>
+          </Box>
+        </>
+      )
+    }
   }
 
   /* Render the elements onto the page */
   return (
     <Container>
+      <Row>
+        <Title>Random Chat - Who Will You Meet?</Title>
+      </Row>
       <Row>
         {UserVideo}
         {PartnerVideo}
@@ -340,9 +369,6 @@ function VideoChat(){
 
       <Row>
         {userButtons}
-      </Row>
-      <Row>
-        {incomingCall}
       </Row>
       <Row>
         {disconnectButton}
