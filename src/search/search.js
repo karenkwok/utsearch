@@ -83,7 +83,7 @@ function Search() {
                       {searchResult.username}
                     </Link>
                   </div>
-                  <div className="result-bio">i eat pizza</div>
+                  <div className="result-bio">this is my biography.</div>
                   <div className="result-tags">
                     {searchResult.tags.map((tag) => {
                       return <div className="result-tag">{tag}</div>;
