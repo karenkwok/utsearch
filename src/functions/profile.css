@@ -1,9 +1,9 @@
 #profile-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 50px;
-    height: 550px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  height: 550px;
 }
 
 .profile-input {
@@ -16,7 +16,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-
 }
 
 #img-btn {
@@ -29,7 +28,7 @@
   border-radius: 100%;
 }
 
-#button-wrapper{
+#button-wrapper {
   display: flex;
   flex-direction: row;
   justify-content: space-around;

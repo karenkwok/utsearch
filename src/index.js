@@ -55,6 +55,7 @@ function AuthButton() {
     return (
       <p>
         <button
+          id="signout-btn"
           onClick={() => {
             axios
               .get("https://idk-lmao.herokuapp.com/signout", {
