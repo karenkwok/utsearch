@@ -11,6 +11,7 @@ import { gql } from "@apollo/client";
 
 function ProfileGeneric() {
   const [state, dispatch] = useContext(Context);
+  const [bio, setBio] = useState([]);
   const [tags, setTags] = useState([]);
   const { username } = useParams();
 
@@ -21,6 +22,7 @@ function ProfileGeneric() {
           query($input: ProfileGenericInput!) {
             profileGeneric(input: $input) {
               username
+              bio
               tags
             }
           }
@@ -30,6 +32,7 @@ function ProfileGeneric() {
         } },
       })
       .then((result) => {
+        setBio(result.data.profileGeneric.bio);
         setTags(result.data.profileGeneric.tags);
         console.log(result);
       })
@@ -50,7 +53,7 @@ function ProfileGeneric() {
         <button className="profilegeneric-button">Chat</button>
         <button className="profilegeneric-button">Block</button>
       </div>
-      <div id="profilegeneric-bio">this is my biography.</div>
+      <div id="profilegeneric-bio">{bio}</div>
       <div id="profilegeneric-tags">
         {tags.map((tag) => {
           return <div className="profilegeneric-tag">{tag}</div>;

@@ -15,6 +15,7 @@ const GET_USERS = gql`
   query($searchValue: String!) {
     GetUsers(searchValue: $searchValue) {
       username
+      bio
       tags
     }
   }
@@ -83,7 +84,7 @@ function Search() {
                       {searchResult.username}
                     </Link>
                   </div>
-                  <div className="result-bio">this is my biography.</div>
+                  <div className="result-bio">{searchResult.bio}</div>
                   <div className="result-tags">
                     {searchResult.tags.map((tag) => {
                       return <div className="result-tag">{tag}</div>;
