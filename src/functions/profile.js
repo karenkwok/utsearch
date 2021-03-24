@@ -10,6 +10,12 @@ import { Context } from "../Store";
 import { client } from "..";
 import { gql } from "@apollo/client";
 
+const EDIT_BIO = gql`
+  mutation($input: String!) {
+    CreateBio(input: $input)
+  }
+`;
+
 const CREATE_TAG = gql`
   mutation($input: String!) {
     CreateTag(input: $input)
@@ -18,6 +24,7 @@ const CREATE_TAG = gql`
 
 function Profile() {
   const [state, dispatch] = useContext(Context);
+  const [bio, setBio] = useState("");
   const [tag, setTag] = useState("");
   const [tags, setTags] = useState(state.user.tags);
   const { username } = useParams();
@@ -26,8 +33,26 @@ function Profile() {
     return <p>"You can't do that."</p>;
   }
 
+  const handleBioChange = function (event) {
+    setBio(event.target.value);
+  };
+
   const handleTagChange = function (event) {
     setTag(event.target.value);
+  };
+
+  const handleBioSave = function () {
+    client
+      .mutate({ variables: { input: bio }, mutation: EDIT_BIO })
+      .then((result) => {
+        dispatch({ type: "EDIT_BIO", payload: result.data.CreateBio });
+        setBio(result.data.CreateBio);
+        setBio("");
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const handleTagSave = function () {
@@ -64,6 +89,8 @@ function Profile() {
 
       <h1 id="profile-name">{username}</h1>
 
+      {state.user.bio}
+
       {tags.map((tag) => {
         return <div>{tag}</div>;
       })}
@@ -77,6 +104,8 @@ function Profile() {
                 placeholder="Your Bio"
                 name="Text1"
                 rows="5"
+                onChange={handleBioChange}
+                value={bio}
               ></textarea>
             </div>
             <div>
@@ -89,7 +118,8 @@ function Profile() {
                 value={tag}
               ></textarea>
             </div>
-            <button onClick={handleTagSave}>Save</button>
+            <button onClick={handleBioSave}>Save Bio</button>
+            <button onClick={handleTagSave}>Save Tags</button>
           </div>
           <div className="profile-buttons" label="Friends">
             Your friends list is empty :(
