@@ -19,7 +19,6 @@ function Credits() {
         <li><a href="https://www.youtube.com/watch?v=BpN6ZwFjbCY">Video Tutorial</a></li>
       </ul>
 
-      <hr />
 
 
       <h3> Handling Disconnected Calls </h3>
@@ -28,7 +27,6 @@ function Credits() {
         <li><a href="https://www.youtube.com/watch?v=7a_vgmEZrhE">Video Tutorial</a></li>
       </ul>
 
-      <hr />
 
 
       <h3> Tabs Component in React Structure </h3>
