@@ -102,7 +102,8 @@ function Profile() {
             <div>
               <textarea
                 className="profile-input"
-                placeholder="Your Bio"
+                placeholder="Enter your bio (max 255 characters)"
+                maxLength="255"
                 name="Text1"
                 rows="5"
                 onChange={handleBioChange}
@@ -112,7 +113,8 @@ function Profile() {
             <div>
               <textarea
                 className="profile-input"
-                placeholder="Your Tags"
+                placeholder="Enter a tag (max 40 characters)"
+                maxLength="40"
                 name="Text1"
                 rows="5"
                 onChange={handleTagChange}
