@@ -1,24 +1,41 @@
 /* jshint esversion: 6 */
 
-import { useContext, useState } from "react";
-import "./signin.css";
 import "../index.css";
-import { Link, useHistory } from "react-router-dom";
-import { Context } from "../Store";
+import "./credits.css"
 
 function Credits() {
   /* Render the elements onto the page */
   return (
     <div>
-      <h1> Basic Video Chat Structure </h1>
-      <a href="https://github.com/coding-with-chaim/react-video-chat">Code</a>
-      <a href="https://www.youtube.com/watch?v=BpN6ZwFjbCY">Video Tutorial</a>
+      <h1>Credits</h1>
 
-      <h1> Handling Disconnected Calls </h1>
-      <a href="https://www.youtube.com/watch?v=7a_vgmEZrhE">Video Tutorial</a>
+      <p>Special thanks to joshtronic and Coding With Chaim</p>
+      <p>Without these tutorials, this project would not be possible.</p>
 
-      <h1> Alternating Tabs in React Structure </h1>
-      <a href="https://www.digitalocean.com/community/tutorials/react-tabs-component">Online Tutorial</a>
+      <h3> Basic Video Chat Structure </h3>
+      <h4> By Coding With Chaim </h4>
+      <ul>
+        <li><a href="https://github.com/coding-with-chaim/react-video-chat">Code</a></li>
+        <li><a href="https://www.youtube.com/watch?v=BpN6ZwFjbCY">Video Tutorial</a></li>
+      </ul>
+
+      <hr />
+
+
+      <h3> Handling Disconnected Calls </h3>
+      <h4> By Coding With Chaim </h4>
+      <ul>
+        <li><a href="https://www.youtube.com/watch?v=7a_vgmEZrhE">Video Tutorial</a></li>
+      </ul>
+
+      <hr />
+
+
+      <h3> Tabs Component in React Structure </h3>
+      <h4>By joshtronic</h4>
+      <ul>
+        <li><a href="https://www.digitalocean.com/community/tutorials/react-tabs-component">Online Tutorial</a></li>
+      </ul>
     </div>
   );
 }
