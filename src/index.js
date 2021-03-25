@@ -53,23 +53,21 @@ function AuthButton() {
   const history = useHistory();
   if (state.user !== undefined && state.user !== null) {
     return (
-      <p>
-        <button
-          id="signout-btn"
-          onClick={() => {
-            axios
-              .get("https://idk-lmao.herokuapp.com/signout", {
-                withCredentials: true,
-              })
-              .then(() => {
-                dispatch({ type: "SET_USER", payload: null });
-                history.push("/signin");
-              });
-          }}
-        >
-          Sign Out
-        </button>
-      </p>
+      <button
+        id="signout-btn"
+        onClick={() => {
+          axios
+            .get("http://localhost:5000/signout", {
+              withCredentials: true,
+            })
+            .then(() => {
+              dispatch({ type: "SET_USER", payload: null });
+              history.push("/signin");
+            });
+        }}
+      >
+        Sign Out
+      </button>
     );
   } else {
     return null;
@@ -117,32 +115,36 @@ function Main() {
     return <div></div>;
   }
   return (
-    <div>
+    <div id="body-wrapper">
+      <header></header>
       {/* authbutton is logout button */}
       <AuthButton></AuthButton>
-      <Switch>
-        <Route exact path="/">
-          <Redirect to="/signin" />
-        </Route>
-        <Route exact path="/signup">
-          <SignupForm></SignupForm>
-        </Route>
-        <Route exact path="/signin">
-          <SigninForm></SigninForm>
-        </Route>
-        <PrivateRoute exact path="/search">
-          <Search></Search>
-        </PrivateRoute>
-        <PrivateRoute exact path="/random-chat">
-          <RandomChat></RandomChat>
-        </PrivateRoute>
-        <PrivateRoute exact path="/profile/:username">
-          <ProfileGeneric></ProfileGeneric>
-        </PrivateRoute>
-        <PrivateRoute exact path="/profile/:username/edit">
-          <Profile></Profile>
-        </PrivateRoute>
-      </Switch>
+      <div id="meat">
+        <Switch>
+          <Route exact path="/">
+            <Redirect to="/signin" />
+          </Route>
+          <Route exact path="/signup">
+            <SignupForm></SignupForm>
+          </Route>
+          <Route exact path="/signin">
+            <SigninForm></SigninForm>
+          </Route>
+          <PrivateRoute exact path="/search">
+            <Search></Search>
+          </PrivateRoute>
+          <PrivateRoute exact path="/random-chat">
+            <RandomChat></RandomChat>
+          </PrivateRoute>
+          <PrivateRoute exact path="/profile/:username">
+            <ProfileGeneric></ProfileGeneric>
+          </PrivateRoute>
+          <PrivateRoute exact path="/profile/:username/edit">
+            <Profile></Profile>
+          </PrivateRoute>
+        </Switch>
+      </div>
+      <footer></footer>
     </div>
   );
 }
