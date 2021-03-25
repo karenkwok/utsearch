@@ -9,6 +9,8 @@ import Search from "./search/search";
 import ProfileGeneric from "./search/profile-generic";
 import Profile from "./functions/profile";
 import RandomChat from "./functions/randomChat";
+import Credits from "./functions/credits";
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -127,6 +129,10 @@ function Main() {
         <Route exact path="/signin">
           <SigninForm></SigninForm>
         </Route>
+        <Route exact path="/credits">
+          <Credits></Credits>
+        </Route>
+
         <PrivateRoute exact path="/search">
           <Search></Search>
         </PrivateRoute>
