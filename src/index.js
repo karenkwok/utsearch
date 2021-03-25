@@ -118,6 +118,7 @@ function Main() {
   }
   return (
     <div>
+      {/* authbutton is logout button */}
       <AuthButton></AuthButton>
       <Switch>
         <Route exact path="/">

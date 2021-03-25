@@ -8,6 +8,7 @@ import { useParams } from "react-router";
 import { Context } from "../Store";
 import { client } from "..";
 import { gql } from "@apollo/client";
+import profilepic from './profilepic.png';
 
 function ProfileGeneric() {
   const [state, dispatch] = useContext(Context);
@@ -44,7 +45,7 @@ function ProfileGeneric() {
   return (
     <div id="profilegeneric-wrapper">
       <div>
-        <img id="profilegeneric-picture" src={"../media/profilepic.png"} />
+        <img id="profilegeneric-picture" src={profilepic} />
       </div>
       <h2>{username}</h2>
       <div id="profilegeneric-buttons">

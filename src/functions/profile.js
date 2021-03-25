@@ -9,6 +9,7 @@ import { useParams } from "react-router";
 import { Context } from "../Store";
 import { client } from "..";
 import { gql } from "@apollo/client";
+import profilepic from './profilepic.png';
 
 const EDIT_BIO = gql`
   mutation($input: String!) {
@@ -79,7 +80,7 @@ function Profile() {
       <div id="profile-picture-wrapper">
         <img
           id="profile-picture"
-          src={"../media/default.png"}
+          src={profilepic}
           alt="Profile Picture"
         />
         <button id="img-btn">
