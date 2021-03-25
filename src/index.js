@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-import React, { useEffect, useContext, Children } from "react";
+import React, { useEffect, useContext } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import SignupForm from "./authentication/signup";
@@ -57,6 +57,7 @@ function AuthButton() {
     return (
       <p>
         <button
+          id="signout-btn"
           onClick={() => {
             axios
               .get("https://idk-lmao.herokuapp.com/signout", {
@@ -98,6 +99,7 @@ function Main() {
               profile {
                 username
                 email
+                bio
                 tags
               }
             }

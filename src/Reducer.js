@@ -4,6 +4,8 @@ const Reducer = (state, action) => {
   switch (action.type) {
     case "SET_USER":
       return { ...state, user: action.payload };
+    case "EDIT_BIO":
+      return { ...state, user: { ...state.user, bio: action.payload } };
   }
 };
 

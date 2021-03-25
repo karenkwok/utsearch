@@ -23,7 +23,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // The GraphQL schema in string form
 const typeDefs = `
-  type User { username: String, email: String, tags: [String] }
+  type User { username: String, email: String, bio: String, tags: [String] }
   type Query { GetUsers(searchValue: String): [User], profile: User, profileGeneric(input: ProfileGenericInput): User }
   input CreateUserInput {
     username: String
@@ -34,6 +34,7 @@ const typeDefs = `
     username: String
   }
   type Mutation {
+    CreateBio(input: String): String,
     CreateTag(input: String): [String], 
     CreateUser(input: CreateUserInput): User
   }
@@ -68,6 +69,18 @@ const resolvers = {
     },
   },
   Mutation: {
+    CreateBio: async (_, { input }, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else {
+        const updatedUser = await User.findOneAndUpdate(
+          { username: context.user.username },
+          { bio: input },
+          { new: true }
+        );
+        return updatedUser.bio;
+      }
+    },
     CreateTag: async (_, { input }, context) => {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
@@ -84,6 +97,7 @@ const resolvers = {
       const newUser = User({
         username: input.username,
         email: input.email,
+        bio: "",
         tags: [],
       });
       await newUser.setPassword(input.password);
@@ -159,49 +173,52 @@ const users = {};
 const connected = {};
 const pairs = [];
 
-io.on('connection', socket => {
+io.on("connection", (socket) => {
   //For new connections, save user id
-    if (!users[socket.id]) {
-        users[socket.id] = socket.id;
-        connected[socket.id] = socket.id;
-    }
+  if (!users[socket.id]) {
+    users[socket.id] = socket.id;
+    connected[socket.id] = socket.id;
+  }
 
-    //Update all connected users with connected users
-    socket.emit("yourID", socket.id);
-    io.sockets.emit("allUsers", connected);
+  //Update all connected users with connected users
+  socket.emit("yourID", socket.id);
+  io.sockets.emit("allUsers", connected);
 
-    //Delete users if they disconnect
-    socket.on('disconnect', () => {
-      for (let pair of pairs) {
-        if (pair.includes(socket.id)) {
-          let index = pair.indexOf(socket.id);
-          if (index == 0) {
-            socket.to(pair[1]).emit("user left");
-          } else {
-            socket.to(pair[0]).emit("user left");
-          }
+  //Delete users if they disconnect
+  socket.on("disconnect", () => {
+    for (let pair of pairs) {
+      if (pair.includes(socket.id)) {
+        let index = pair.indexOf(socket.id);
+        if (index == 0) {
+          socket.to(pair[1]).emit("user left");
+        } else {
+          socket.to(pair[0]).emit("user left");
         }
       }
+    }
 
+    delete users[socket.id];
+    delete connected[socket.id];
+    io.sockets.emit("allUsers", connected);
+  });
 
-      delete users[socket.id];
-      delete connected[socket.id];
-      io.sockets.emit("allUsers", connected);
+  //Call a user
+  socket.on("callUser", (data) => {
+    io.to(data.userToCall).emit("hey", {
+      signal: data.signalData,
+      from: data.from,
+      to: data.userToCall,
     });
+  });
 
-    //Call a user
-    socket.on("callUser", (data) => {
-        io.to(data.userToCall).emit('hey', {signal: data.signalData, from: data.from, to: data.userToCall});
-    });
-
-    //Let calling user know call is accepted
-    socket.on("acceptCall", (data) => {
-        pairs.push([data.to, data.from]);
-        delete connected[data.to];
-        delete connected[data.from];
-        io.to(data.to).emit('callAccepted', data.signal);
-        io.sockets.emit("allUsers", connected);
-    });
+  //Let calling user know call is accepted
+  socket.on("acceptCall", (data) => {
+    pairs.push([data.to, data.from]);
+    delete connected[data.to];
+    delete connected[data.from];
+    io.to(data.to).emit("callAccepted", data.signal);
+    io.sockets.emit("allUsers", connected);
+  });
 });
 
 HTTPServer.listen(PORT, function (err) {

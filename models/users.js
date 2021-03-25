@@ -9,6 +9,7 @@ const User = new Schema({
   username: String,
   password: String,
   email: String,
+  bio: String,
   tags: [String],
 });
 

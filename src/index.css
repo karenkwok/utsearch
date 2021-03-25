@@ -21,6 +21,32 @@ footer {
   background-color: rgb(0, 42, 92);
 }
 
+#signout-btn {
+  position: fixed;
+  top: 120px;
+  right: 60px;
+
+  margin-left: 3px;
+  margin-right: 3px;
+  padding: 10px;
+
+  background-color: white;
+  color: #4d4d4d;
+  font-size: large;
+  border: solid 1px;
+  border-radius: 15px;
+}
+
+#signout-btn:focus {
+  outline: none;
+}
+
+#signout-btn:hover {
+  background-color: rgb(0, 42, 92);
+  color: white;
+  cursor: pointer;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
