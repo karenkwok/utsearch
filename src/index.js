@@ -9,6 +9,8 @@ import Search from "./search/search";
 import ProfileGeneric from "./search/profile-generic";
 import Profile from "./functions/profile";
 import RandomChat from "./functions/randomChat";
+import Credits from "./functions/credits";
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -191,6 +193,9 @@ function Main() {
           <PrivateRoute exact path="/profile/:username/edit">
             <Profile></Profile>
           </PrivateRoute>
+          <Route exact path="/credits">
+            <Credits></Credits>
+          </Route>
         </Switch>
       </div>
       <footer></footer>
