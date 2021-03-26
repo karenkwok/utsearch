@@ -20,6 +20,10 @@ import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client";
 import Store, { Context } from "./Store";
 import axios from "axios";
+import Button from "@material-ui/core/Button";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import { Link } from "react-router-dom";
 
 export const client = new ApolloClient({
   //https://idk-lmao.herokuapp.com/graphql production  http://localhost:5000/graphql local
@@ -48,26 +52,63 @@ function PrivateRoute({ children, ...rest }) {
   );
 }
 
-function AuthButton() {
+function SimpleMenu() {
   const [state, dispatch] = useContext(Context);
   const history = useHistory();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSignOut = () => {
+    handleClose();
+    axios
+      .get("http://localhost:5000/signout", {
+        withCredentials: true,
+      })
+      .then(() => {
+        dispatch({ type: "SET_USER", payload: null });
+        history.push("/signin");
+      });
+  };
+
   if (state.user !== undefined && state.user !== null) {
+    const username = state.user.username;
     return (
-      <button
-        id="signout-btn"
-        onClick={() => {
-          axios
-            .get("http://localhost:5000/signout", {
-              withCredentials: true,
-            })
-            .then(() => {
-              dispatch({ type: "SET_USER", payload: null });
-              history.push("/signin");
-            });
-        }}
-      >
-        Sign Out
-      </button>
+      <div>
+        <Button
+          aria-controls="simple-menu"
+          aria-haspopup="true"
+          onClick={handleClick}
+        >
+          Open Menu
+        </Button>
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={handleClose}>
+            <Link to={"/profile/" + username}>Profile</Link>
+          </MenuItem>
+          <MenuItem onClick={handleClose}>
+            <Link to={"/search"}>Search</Link>
+          </MenuItem>
+          <MenuItem onClick={handleClose}>
+            <Link to={"/random-chat"}>Random Chat</Link>
+          </MenuItem>
+          <MenuItem onClick={handleSignOut}>
+            <Link to={"/"}>Sign Out</Link>
+          </MenuItem>
+        </Menu>
+      </div>
     );
   } else {
     return null;
@@ -116,9 +157,9 @@ function Main() {
   }
   return (
     <div id="body-wrapper">
-      <header></header>
-      {/* authbutton is logout button */}
-      <AuthButton></AuthButton>
+      <header>
+        <SimpleMenu></SimpleMenu>
+      </header>
       <div id="meat">
         <Switch>
           <Route exact path="/">
