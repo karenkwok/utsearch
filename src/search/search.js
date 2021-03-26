@@ -10,6 +10,7 @@ import Icon from "@material-ui/core/Icon";
 import { Context } from "../Store";
 import { client } from "..";
 import { gql } from "@apollo/client";
+import profilepic from "./profilepic.png";
 
 const GET_USERS = gql`
   query($searchValue: String!) {
@@ -71,7 +72,7 @@ function Search() {
               <div>
                 <img
                   className="result-picture"
-                  src={"../media/profilepic.png"}
+                  src={profilepic}
                 />
               </div>
               <div className="result-text">

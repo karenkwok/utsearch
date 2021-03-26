@@ -65,14 +65,16 @@ function ProfileGeneric() {
       <div>
         <img id="profilegeneric-picture" src={profilepic} />
       </div>
-      <h2>{username}</h2>
+      <h2 id="profilegeneric-username">{username}</h2>
       <div id="profilegeneric-buttons">
         <button className="profilegeneric-button">+Friend</button>
         <button className="profilegeneric-button">Call</button>
         <button className="profilegeneric-button">Chat</button>
         <button className="profilegeneric-button">Block</button>
       </div>
-      <div id="profilegeneric-bio">{bio}</div>
+      <div id="profilegeneric-bio-wrapper">
+        <div id="profilegeneric-bio">{bio}</div>
+      </div>
       <div id="profilegeneric-tags">
         {tags.map((tag) => {
           return <div className="profilegeneric-tag">{tag}</div>;

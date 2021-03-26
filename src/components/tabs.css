@@ -4,6 +4,11 @@
   justify-content: center;
   border-bottom: 1px solid #ccc;
   padding-left: 0;
+  cursor: pointer;
+}
+
+.tab-list:focus {
+  outline: none;
 }
 
 .tab-list-item {
@@ -13,5 +18,5 @@
 }
 
 .tab-list-active {
-  background-color: #67C2FF;
+  background-color: #67c2ff;
 }

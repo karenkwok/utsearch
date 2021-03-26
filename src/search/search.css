@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   width: 100vh;
+  margin-top: 20px;
 }
 
 #search-bar {
@@ -86,6 +87,7 @@
   flex-direction: column;
   justify-content: left;
   padding-left: 10px;
+  width: 85%;
 }
 
 .result-username {

@@ -79,21 +79,25 @@ function Profile() {
   return (
     <div id="profile-wrapper">
       <button id="img-btn">
-          <Link to={"/profile/" + username}>
-            <Icon>visibility</Icon>
-          </Link>
-        </button>
+        <Link to={"/profile/" + username}>
+          <Icon>visibility</Icon>
+        </Link>
+      </button>
       <div id="profile-picture-wrapper">
         <img id="profile-picture" src={profilepic} alt="Profile Picture" />
       </div>
 
-      <h1 id="profile-name">{username}</h1>
+      <h2 id="profile-name">{username}</h2>
 
-      {state.user.bio}
+      <div id="profile-bio-wrapper">
+        <div id="profile-bio">{state.user.bio}</div>
+      </div>
 
-      {tags.map((tag) => {
-        return <div>{tag}</div>;
-      })}
+      <div id="profile-tags">
+        {tags.map((tag) => {
+          return <div className="profile-tag">{tag}</div>;
+        })}
+      </div>
 
       <div id="button-wrapper">
         <Tabs>
@@ -121,7 +125,7 @@ function Profile() {
                   onChange={handleTagChange}
                   value={tag}
                 ></textarea>
-                <button onClick={handleTagSave}>Save Tags</button>
+                <button onClick={handleTagSave}>Save Tag</button>
               </div>
             </div>
           </div>
