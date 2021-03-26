@@ -24,15 +24,15 @@ const GET_USERS = gql`
 function Search() {
   const [state, dispatch] = useContext(Context);
   const [searchValue, setSearchValue] = useState("");
-  const [searchValue2, setSearchValue2] = useState(searchValue);
+  const [searchValue2, setSearchValue2] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
   const handleSearchValueChange = function (event) {
     setSearchValue(event.target.value);
-    setSearchValue2(event.target.value);
   };
 
   const handleSearch = function () {
+    setSearchValue2(searchValue);
     client
       .query({
         variables: {
@@ -50,6 +50,53 @@ function Search() {
       });
   };
 
+  let results;
+  if (searchResults.length === 0) {
+    if (searchValue2 === "") {
+      results = <div></div>;
+    } else {
+      results = (
+        <div id="search-results">
+          <p>No results found for "{searchValue2}".</p>
+        </div>
+      );
+    }
+  } else {
+    results = (
+      <div id="search-results">
+        <p>Search results for "{searchValue2}".</p>
+        {searchResults.map((searchResult) => {
+          return (
+            <div className="result-example">
+              <div>
+                <img
+                  className="result-picture"
+                  src={"../media/profilepic.png"}
+                />
+              </div>
+              <div className="result-text">
+                <div className="result-username">
+                  <Link
+                    to={"/profile/" + searchResult.username}
+                    className="username"
+                  >
+                    {searchResult.username}
+                  </Link>
+                </div>
+                <div className="result-bio">{searchResult.bio}</div>
+                <div className="result-tags">
+                  {searchResult.tags.map((tag) => {
+                    return <div className="result-tag">{tag}</div>;
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <div id="search-wrapper">
       <div id="search-bar">
@@ -66,36 +113,7 @@ function Search() {
           <Icon>search_icon</Icon>
         </button>
       </div>
-      <div id="search-results">
-        <h3>Search Results for {searchValue2}</h3>
-        <div id="search-results-container">
-          {searchResults.map((searchResult) => {
-            return (
-              <div className="result-example">
-                <div>
-                  <img
-                    className="result-picture"
-                    src={"../media/profilepic.png"}
-                  />
-                </div>
-                <div className="result-text">
-                  <div className="result-username">
-                    <Link to={"/profile/" + searchResult.username} className="username">
-                      {searchResult.username}
-                    </Link>
-                  </div>
-                  <div className="result-bio">{searchResult.bio}</div>
-                  <div className="result-tags">
-                    {searchResult.tags.map((tag) => {
-                      return <div className="result-tag">{tag}</div>;
-                    })}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      {results}
     </div>
   );
 }
