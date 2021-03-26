@@ -62,7 +62,7 @@ function ProfileGeneric() {
   return (
     <div id="profilegeneric-wrapper">
       {editbtn}
-      <div>
+      <div id="profilegeneric-picture-wrapper">
         <img id="profilegeneric-picture" src={profilepic} />
       </div>
       <h2 id="profilegeneric-username">{username}</h2>
