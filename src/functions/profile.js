@@ -9,7 +9,8 @@ import { useParams } from "react-router";
 import { Context } from "../Store";
 import { client } from "..";
 import { gql } from "@apollo/client";
-import profilepic from './profilepic.png';
+import profilepic from "./profilepic.png";
+import { Link } from "react-router-dom";
 
 const EDIT_BIO = gql`
   mutation($input: String!) {
@@ -77,15 +78,13 @@ function Profile() {
   //Tabs functionality from https://www.digitalocean.com/community/tutorials/react-tabs-component
   return (
     <div id="profile-wrapper">
-      <div id="profile-picture-wrapper">
-        <img
-          id="profile-picture"
-          src={profilepic}
-          alt="Profile Picture"
-        />
-        <button id="img-btn">
-          <Icon>edit_icon</Icon>
+      <button id="img-btn">
+          <Link to={"/profile/" + username}>
+            <Icon>visibility</Icon>
+          </Link>
         </button>
+      <div id="profile-picture-wrapper">
+        <img id="profile-picture" src={profilepic} alt="Profile Picture" />
       </div>
 
       <h1 id="profile-name">{username}</h1>
@@ -99,30 +98,32 @@ function Profile() {
       <div id="button-wrapper">
         <Tabs>
           <div className="profile-buttons" label="My Info">
-            <div>
-              <textarea
-                className="profile-input"
-                placeholder="Enter your bio (max 255 characters)"
-                maxLength="255"
-                name="Text1"
-                rows="5"
-                onChange={handleBioChange}
-                value={bio}
-              ></textarea>
+            <div id="textarea-wrapper">
+              <div className="textarea-save">
+                <textarea
+                  className="profile-input"
+                  placeholder="Enter your bio (max 255 characters)"
+                  maxLength="255"
+                  name="Text1"
+                  rows="5"
+                  onChange={handleBioChange}
+                  value={bio}
+                ></textarea>
+                <button onClick={handleBioSave}>Save Bio</button>
+              </div>
+              <div className="textarea-save">
+                <textarea
+                  className="profile-input"
+                  placeholder="Enter a tag (max 40 characters)"
+                  maxLength="40"
+                  name="Text1"
+                  rows="5"
+                  onChange={handleTagChange}
+                  value={tag}
+                ></textarea>
+                <button onClick={handleTagSave}>Save Tags</button>
+              </div>
             </div>
-            <div>
-              <textarea
-                className="profile-input"
-                placeholder="Enter a tag (max 40 characters)"
-                maxLength="40"
-                name="Text1"
-                rows="5"
-                onChange={handleTagChange}
-                value={tag}
-              ></textarea>
-            </div>
-            <button onClick={handleBioSave}>Save Bio</button>
-            <button onClick={handleTagSave}>Save Tags</button>
           </div>
           <div className="profile-buttons" label="Friends">
             Your friends list is empty :(
