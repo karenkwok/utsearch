@@ -61,32 +61,48 @@ function SimpleMenu() {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleSignOut = () => {
-    handleClose();
-    axios
-      .get("http://localhost:5000/signout", {
-        withCredentials: true,
-      })
-      .then(() => {
-        dispatch({ type: "SET_USER", payload: null });
-        history.push("/signin");
-      });
-  };
-
   if (state.user !== undefined && state.user !== null) {
     const username = state.user.username;
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    const handleProfile = () => {
+      handleClose();
+      history.push("/profile/" + username);
+    };
+
+    const handleSearch = () => {
+      handleClose();
+      history.push("/search");
+    };
+
+    const handleRandomChat = () => {
+      handleClose();
+      history.push("/random-chat");
+    };
+
+    const handleSignOut = () => {
+      handleClose();
+      axios
+        .get("http://localhost:5000/signout", {
+          withCredentials: true,
+        })
+        .then(() => {
+          dispatch({ type: "SET_USER", payload: null });
+          history.push("/signin");
+        });
+    };
     return (
       <div>
         <Button
+          id="openmenu-btn"
           aria-controls="simple-menu"
           aria-haspopup="true"
           onClick={handleClick}
         >
-          Open Menu
+          {username}
         </Button>
         <Menu
           id="simple-menu"
@@ -95,18 +111,10 @@ function SimpleMenu() {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={handleClose}>
-            <Link to={"/profile/" + username}>Profile</Link>
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <Link to={"/search"}>Search</Link>
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <Link to={"/random-chat"}>Random Chat</Link>
-          </MenuItem>
-          <MenuItem onClick={handleSignOut}>
-            <Link to={"/"}>Sign Out</Link>
-          </MenuItem>
+          <MenuItem onClick={handleProfile}>Profile</MenuItem>
+          <MenuItem onClick={handleSearch}>Search</MenuItem>
+          <MenuItem onClick={handleRandomChat}>Random Chat</MenuItem>
+          <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
         </Menu>
       </div>
     );

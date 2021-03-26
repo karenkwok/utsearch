@@ -33,6 +33,10 @@ footer {
   background-color: rgb(0, 42, 92);
 }
 
+#openmenu-btn {
+  color: white;
+}
+
 #meat {
   display: flex;
   flex-direction: column;
