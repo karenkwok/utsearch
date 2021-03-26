@@ -137,9 +137,9 @@ function VideoChat(){
   var xpath = "//button[text()='Sign Out']";
   var matchingElement = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
-  matchingElement.onclick = function() {
+  /*matchingElement.onclick = function() {
     leavePageDisconnect();
-  }
+  }*/
 
   /* Connection events if user is the caller */
   function callPeer(id) {
