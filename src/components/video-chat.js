@@ -134,10 +134,24 @@ function VideoChat(){
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  var xpath = "//button[text()='Sign Out']";
-  var matchingElement = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+  var signOutButtonXpath = "//li[text()='Sign Out']";
+  var signOutButton = document.evaluate(signOutButtonXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
-  matchingElement.onclick = function() {
+  var profileXpath = "//li[text()='Profile']";
+  var profileButton = document.evaluate(profileXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+  var searchXpath = "//li[text()='Search']";
+  var searchButton = document.evaluate(searchXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+  signOutButton.onclick = function() {
+    leavePageDisconnect();
+  }
+
+  profileButton.onclick = function() {
+    leavePageDisconnect();
+  }
+
+  searchButton.onclick = function() {
     leavePageDisconnect();
   }
 
