@@ -88,7 +88,7 @@ function SimpleMenu() {
     const handleSignOut = () => {
       handleClose();
       axios
-        .get("http://localhost:5000/signout", {
+        .get("https://idk-lmao.herokuapp.com/signout", {
           withCredentials: true,
         })
         .then(() => {
