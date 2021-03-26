@@ -149,7 +149,7 @@ function VideoChat(){
 
   profileButton.onclick = function() {
     leavePageDisconnect();
-  }
+  } 
 
   searchButton.onclick = function() {
     leavePageDisconnect();
