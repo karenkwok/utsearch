@@ -12,11 +12,35 @@ import profilepic from "./profilepic.png";
 import Icon from "@material-ui/core/Icon";
 import { Link } from "react-router-dom";
 
+const EDIT_FRIENDS = gql`
+  mutation($input: String!) {
+    CreateFriends(input: $input)
+  }
+`;
+
+const EDIT_BLOCKED = gql`
+  mutation($input: String!) {
+    CreateBlocked(input: $input)
+  }
+`;
+
 function ProfileGeneric() {
   const [state, dispatch] = useContext(Context);
   const [bio, setBio] = useState([]);
   const [tags, setTags] = useState([]);
   const { username } = useParams();
+
+  const handleBlockedSave = function () {
+    client
+      .mutate({ variables: { input: username }, mutation: EDIT_BLOCKED })
+      .then((result) => {
+        dispatch({ type: "EDIT_BLOCKED", payload: result.data.CreateBlocked });
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   useEffect(() => {
     client
@@ -70,7 +94,7 @@ function ProfileGeneric() {
         <button className="profilegeneric-button">+Friend</button>
         <button className="profilegeneric-button">Call</button>
         <button className="profilegeneric-button">Chat</button>
-        <button className="profilegeneric-button">Block</button>
+        <button className="profilegeneric-button" onClick={handleBlockedSave}>Block</button>
       </div>
       <div id="profilegeneric-bio-wrapper">
         <div id="profilegeneric-bio">{bio}</div>
