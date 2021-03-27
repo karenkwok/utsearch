@@ -4,7 +4,11 @@ const express = require("express");
 const session = require("express-session");
 const http = require("http");
 const mongoose = require("mongoose");
-const { ApolloServer, AuthenticationError } = require("apollo-server-express");
+const {
+  ApolloServer,
+  AuthenticationError,
+  ApolloError,
+} = require("apollo-server-express");
 const User = require("./models/users");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
@@ -75,6 +79,12 @@ const resolvers = {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       else {
+        if (await User.findOne({ username: input }) === null) {
+          throw new ApolloError("User does not exist.");
+        }
+        else if (context.user.username === input) {
+          throw new ApolloError("You can't add yourself as a friend!");
+        }
         const updatedUser = await User.findOneAndUpdate(
           { username: context.user.username },
           { $addToSet: { friends: input } },
@@ -87,6 +97,12 @@ const resolvers = {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       else {
+        if (await User.findOne({ username: input }) === null) {
+          throw new ApolloError("User does not exist.");
+        }
+        else if (context.user.username === input) {
+          throw new ApolloError("You can't block yourself!");
+        }
         const updatedUser = await User.findOneAndUpdate(
           { username: context.user.username },
           { $addToSet: { blocked: input } },
