@@ -148,6 +148,8 @@ function Main() {
                 email
                 bio
                 tags
+                friends
+                blocked
               }
             }
           `,
