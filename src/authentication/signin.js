@@ -3,6 +3,7 @@
 import { useContext, useState } from "react";
 import "./signin.css";
 import "../index.css";
+import { domain } from "../index";
 import { Link, useHistory } from "react-router-dom";
 import { Context } from "../Store";
 
@@ -27,9 +28,8 @@ function SigninForm() {
   const handleSubmit = function (event) {
     event.preventDefault();
     axios
-      // https://idk-lmao.herokuapp.com/signin
       .post(
-        "https://idk-lmao.herokuapp.com/signin",
+        domain + "/signin",
         {
           username,
           password,
