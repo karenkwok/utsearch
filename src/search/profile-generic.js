@@ -12,11 +12,36 @@ import profilepic from "./profilepic.png";
 import Icon from "@material-ui/core/Icon";
 import { Link } from "react-router-dom";
 
+const EDIT_FRIENDS = gql`
+  mutation($input: String!) {
+    CreateFriends(input: $input)
+  }
+`;
+
+const EDIT_BLOCKED = gql`
+  mutation($input: String!) {
+    CreateBlocked(input: $input)
+  }
+`;
+
 function ProfileGeneric() {
   const [state, dispatch] = useContext(Context);
   const [bio, setBio] = useState([]);
   const [tags, setTags] = useState([]);
+  const [blocked, setBlocked] = useState([]);
   const { username } = useParams();
+
+  const handleBlockedSave = function () {
+    client
+      .mutate({ variables: { input: username }, mutation: EDIT_BLOCKED })
+      .then((result) => {
+        dispatch({ type: "EDIT_BLOCKED", payload: result.data.CreateBlocked });
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   useEffect(() => {
     client
@@ -27,6 +52,7 @@ function ProfileGeneric() {
               username
               bio
               tags
+              blocked
             }
           }
         `,
@@ -39,6 +65,7 @@ function ProfileGeneric() {
       .then((result) => {
         setBio(result.data.profileGeneric.bio);
         setTags(result.data.profileGeneric.tags);
+        setBlocked(result.data.profileGeneric.blocked);
         console.log(result);
       })
       .catch((error) => {
@@ -47,8 +74,28 @@ function ProfileGeneric() {
   });
 
   let editbtn;
+  let fourbtns;
   if (state.user.username !== username) {
+    // if other people's blocked list has my name or my blocked list has the name of the person whose profile i'm on
+    let isBlocked = blocked.includes(state.user.username) || state.user.blocked.includes(username);
+    let buttonClass;
+    if(isBlocked === true) {
+      buttonClass = "blocked";
+    }
+    else {
+      buttonClass = "notBlocked";
+    }
     editbtn = <div></div>;
+    fourbtns = (
+      <div>
+        <button className={"profilegeneric-button " + buttonClass}>+Friend</button>
+        <button className={"profilegeneric-button " + buttonClass}>Call</button>
+        <button className={"profilegeneric-button " + buttonClass}>Chat</button>
+        <button className={"profilegeneric-button " + buttonClass} onClick={handleBlockedSave}>
+          Block
+        </button>
+      </div>
+    );
   } else {
     editbtn = (
       <button id="edit-btn">
@@ -57,6 +104,7 @@ function ProfileGeneric() {
         </Link>
       </button>
     );
+    fourbtns = <div></div>;
   }
 
   return (
@@ -66,12 +114,7 @@ function ProfileGeneric() {
         <img id="profilegeneric-picture" src={profilepic} />
       </div>
       <h2 id="profilegeneric-username">{username}</h2>
-      <div id="profilegeneric-buttons">
-        <button className="profilegeneric-button">+Friend</button>
-        <button className="profilegeneric-button">Call</button>
-        <button className="profilegeneric-button">Chat</button>
-        <button className="profilegeneric-button">Block</button>
-      </div>
+      <div id="profilegeneric-buttons">{fourbtns}</div>
       <div id="profilegeneric-bio-wrapper">
         <div id="profilegeneric-bio">{bio}</div>
       </div>

@@ -75,6 +75,19 @@ function Profile() {
       });
   };
 
+  let blockedResults;
+  if (state.user.blocked.length === 0) {
+    blockedResults = <div>Your blocked list is empty.</div>;
+  } else {
+    blockedResults = (
+      <div>
+        {state.user.blocked.map((block) => {
+          return <div>{block}</div>;
+        })}
+      </div>
+    );
+  }
+
   //Tabs functionality from https://www.digitalocean.com/community/tutorials/react-tabs-component
   return (
     <div id="profile-wrapper">
@@ -133,7 +146,7 @@ function Profile() {
             Your friends list is empty :(
           </div>
           <div className="profile-buttons" label="Blocked">
-            Your blocked list is empty :)
+            {blockedResults}
           </div>
         </Tabs>
       </div>

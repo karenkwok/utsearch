@@ -4,7 +4,11 @@ const express = require("express");
 const session = require("express-session");
 const http = require("http");
 const mongoose = require("mongoose");
-const { ApolloServer, AuthenticationError } = require("apollo-server-express");
+const {
+  ApolloServer,
+  AuthenticationError,
+  ApolloError,
+} = require("apollo-server-express");
 const User = require("./models/users");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
@@ -23,7 +27,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // The GraphQL schema in string form
 const typeDefs = `
-  type User { username: String, email: String, bio: String, tags: [String] }
+  type User { username: String, email: String, bio: String, tags: [String], friends: [String], blocked: [String] }
   type Query { GetUsers(searchValue: String): [User], profile: User, profileGeneric(input: ProfileGenericInput): User }
   input CreateUserInput {
     username: String
@@ -34,6 +38,8 @@ const typeDefs = `
     username: String
   }
   type Mutation {
+    CreateFriends(input: String): [String],
+    CreateBlocked(input: String): [String],
     CreateBio(input: String): String,
     CreateTag(input: String): [String], 
     CreateUser(input: CreateUserInput): User
@@ -69,6 +75,42 @@ const resolvers = {
     },
   },
   Mutation: {
+    CreateFriends: async (_, { input }, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else {
+        if (await User.findOne({ username: input }) === null) {
+          throw new ApolloError("User does not exist.");
+        }
+        else if (context.user.username === input) {
+          throw new ApolloError("You can't add yourself as a friend!");
+        }
+        const updatedUser = await User.findOneAndUpdate(
+          { username: context.user.username },
+          { $addToSet: { friends: input } },
+          { new: true }
+        );
+        return updatedUser.friends;
+      }
+    },
+    CreateBlocked: async (_, { input }, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else {
+        if (await User.findOne({ username: input }) === null) {
+          throw new ApolloError("User does not exist.");
+        }
+        else if (context.user.username === input) {
+          throw new ApolloError("You can't block yourself!");
+        }
+        const updatedUser = await User.findOneAndUpdate(
+          { username: context.user.username },
+          { $addToSet: { blocked: input } },
+          { new: true }
+        );
+        return updatedUser.blocked;
+      }
+    },
     CreateBio: async (_, { input }, context) => {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
