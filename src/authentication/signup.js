@@ -5,7 +5,7 @@ import "./signup.css";
 import "../index.css";
 import { Link, useHistory } from "react-router-dom";
 import { gql } from "@apollo/client";
-import { client } from "../index";
+import { client, domain } from "../index";
 import { Context } from "../Store";
 
 const axios = require("axios");
@@ -58,7 +58,7 @@ function SignupForm() {
       })
       .then((result) => {
         return axios.post(
-          "https://idk-lmao.herokuapp.com/signin",
+          domain + "/signin",
           { username, password },
           { withCredentials: true }
         );
