@@ -71,8 +71,19 @@ function ProfileGeneric() {
   });
 
   let editbtn;
+  let fourbtns;
   if (state.user.username !== username) {
     editbtn = <div></div>;
+    fourbtns = (
+      <div>
+        <button className="profilegeneric-button">+Friend</button>
+        <button className="profilegeneric-button">Call</button>
+        <button className="profilegeneric-button">Chat</button>
+        <button className="profilegeneric-button" onClick={handleBlockedSave}>
+          Block
+        </button>
+      </div>
+    );
   } else {
     editbtn = (
       <button id="edit-btn">
@@ -81,6 +92,7 @@ function ProfileGeneric() {
         </Link>
       </button>
     );
+    fourbtns = <div></div>;
   }
 
   return (
@@ -90,12 +102,7 @@ function ProfileGeneric() {
         <img id="profilegeneric-picture" src={profilepic} />
       </div>
       <h2 id="profilegeneric-username">{username}</h2>
-      <div id="profilegeneric-buttons">
-        <button className="profilegeneric-button">+Friend</button>
-        <button className="profilegeneric-button">Call</button>
-        <button className="profilegeneric-button">Chat</button>
-        <button className="profilegeneric-button" onClick={handleBlockedSave}>Block</button>
-      </div>
+      <div id="profilegeneric-buttons">{fourbtns}</div>
       <div id="profilegeneric-bio-wrapper">
         <div id="profilegeneric-bio">{bio}</div>
       </div>
