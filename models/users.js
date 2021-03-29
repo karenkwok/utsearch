@@ -12,6 +12,8 @@ const User = new Schema({
   bio: String,
   tags: [String],
   friends: [String],
+  friendRequestsReceived: [String],
+  friendRequestsSent: [String],
   blocked: [String],
 });
 
