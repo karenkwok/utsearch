@@ -173,7 +173,14 @@ const users = {};
 const connected = {};
 const pairs = [];
 
-io.on("connection", (socket) => {
+const randomChatNameSpace = io.of('/random-chat');
+const defaultNameSpace = io.of('/');
+
+defaultNameSpace.on("connection", (socket) => {
+  socket.on('test', function() {console.log("ROOT")});
+})
+
+randomChatNameSpace.on("connection", (socket) => {
   //For new connections, save user id
   if (!users[socket.id]) {
     users[socket.id] = socket.id;
@@ -182,7 +189,7 @@ io.on("connection", (socket) => {
 
   //Update all connected users with connected users
   socket.emit("yourID", socket.id);
-  io.sockets.emit("allUsers", connected);
+  randomChatNameSpace.emit("allUsers", connected);
 
   //Delete users if they disconnect
   socket.on("disconnect", () => {
@@ -199,12 +206,12 @@ io.on("connection", (socket) => {
 
     delete users[socket.id];
     delete connected[socket.id];
-    io.sockets.emit("allUsers", connected);
+    randomChatNameSpace.emit("allUsers", connected);
   });
 
   //Call a user
   socket.on("callUser", (data) => {
-    io.to(data.userToCall).emit("hey", {
+    randomChatNameSpace.to(data.userToCall).emit("hey", {
       signal: data.signalData,
       from: data.from,
       to: data.userToCall,
@@ -216,8 +223,8 @@ io.on("connection", (socket) => {
     pairs.push([data.to, data.from]);
     delete connected[data.to];
     delete connected[data.from];
-    io.to(data.to).emit("callAccepted", data.signal);
-    io.sockets.emit("allUsers", connected);
+    randomChatNameSpace.to(data.to).emit("callAccepted", data.signal);
+    randomChatNameSpace.emit("allUsers", connected);
   });
 });
 

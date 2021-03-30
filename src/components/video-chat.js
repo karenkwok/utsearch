@@ -94,7 +94,7 @@ function VideoChat(){
 
   /* Events for the connected user */
   function connectUser() {
-    socket.current = io.connect("/");
+    socket.current = io.connect('/random-chat');
 
     //Get the user's webcam as the stream
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
