@@ -51,6 +51,7 @@ const typeDefs = `
     username: String
   }
   type Mutation {
+    FriendRequestResponse(user: String, acceptRequest: Boolean): User,
     CreateFriendRequest(input: String): [String],
     CreateFriends(input: String): [String],
     CreateBlocked(input: String): [String],
@@ -89,13 +90,59 @@ const resolvers = {
     },
   },
   Mutation: {
-    CreateFriendRequest: async (_, { input }, context) => {
-      if(!context.user) throw new AuthenticationError("You must be logged in.");
+    FriendRequestResponse: async (_, { user, acceptRequest }, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
       else {
-        if (await User.findOne({ username: input }) === null) {
+        if ((await User.findOne({ username: user })) === null) {
           throw new ApolloError("User does not exist.");
+        } else if (context.user.username === user) {
+          throw new ApolloError("You can't add yourself as a friend!");
         }
-        else if (context.user.username === input) {
+        if (acceptRequest === true) {
+          const updatedUser = await User.findOneAndUpdate(
+            { username: context.user.username },
+            {
+              $addToSet: { friends: user },
+              $pull: { friendRequestsReceived: user },
+            },
+            { new: true }
+          );
+          const updatedOtherUser = await User.findOneAndUpdate(
+            { username: user },
+            {
+              $addToSet: { friends: context.user.username },
+              $pull: { friendRequestsSent: context.user.username },
+            },
+            { new: true }
+          );
+          return updatedUser;
+        } else {
+          const updatedUser = await User.findOneAndUpdate(
+            { username: context.user.username },
+            {
+              $pull: { friendRequestsReceived: user },
+            },
+            { new: true }
+          );
+          const updatedOtherUser = await User.findOneAndUpdate(
+            { username: user },
+            {
+              $pull: { friendRequestsSent: context.user.username },
+            },
+            { new: true }
+          );
+          return updatedUser;
+        }
+      }
+    },
+    CreateFriendRequest: async (_, { input }, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else {
+        if ((await User.findOne({ username: input })) === null) {
+          throw new ApolloError("User does not exist.");
+        } else if (context.user.username === input) {
           throw new ApolloError("You can't add yourself as a friend!");
         }
         const updatedUser = await User.findOneAndUpdate(
@@ -115,10 +162,9 @@ const resolvers = {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       else {
-        if (await User.findOne({ username: input }) === null) {
+        if ((await User.findOne({ username: input })) === null) {
           throw new ApolloError("User does not exist.");
-        }
-        else if (context.user.username === input) {
+        } else if (context.user.username === input) {
           throw new ApolloError("You can't add yourself as a friend!");
         }
         const updatedUser = await User.findOneAndUpdate(
@@ -133,10 +179,9 @@ const resolvers = {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       else {
-        if (await User.findOne({ username: input }) === null) {
+        if ((await User.findOne({ username: input })) === null) {
           throw new ApolloError("User does not exist.");
-        }
-        else if (context.user.username === input) {
+        } else if (context.user.username === input) {
           throw new ApolloError("You can't block yourself!");
         }
         const updatedUser = await User.findOneAndUpdate(
