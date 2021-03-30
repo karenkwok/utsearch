@@ -27,9 +27,13 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Link } from "react-router-dom";
 
+//https://utsearch.tech new production
+//https://idk-lmao.herokuapp.com/graphql production
+//http://localhost:5000 local
+export const domain = "https://utsearch.tech";
+
 export const client = new ApolloClient({
-  //https://idk-lmao.herokuapp.com/graphql production  http://localhost:5000/graphql local
-  uri: "https://idk-lmao.herokuapp.com/graphql",
+  uri: domain + "/graphql",
   cache: new InMemoryCache(),
   // tell apollo client to send my session cookie to backend so that the request can be authenticated
   credentials: "include",
@@ -88,7 +92,7 @@ function SimpleMenu() {
     const handleSignOut = () => {
       handleClose();
       axios
-        .get("https://idk-lmao.herokuapp.com/signout", {
+        .get(domain + "/signout", {
           withCredentials: true,
         })
         .then(() => {
@@ -148,6 +152,8 @@ function Main() {
                 email
                 bio
                 tags
+                friends
+                blocked
               }
             }
           `,

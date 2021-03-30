@@ -35,12 +35,9 @@
   margin-left: 3px;
   margin-right: 3px;
   padding: 10px;
-
-  background-color: white;
-  color: rgb(0, 42, 92);
   font-size: large;
   border: solid 1px;
-  border-radius: 15px;
+  border-radius: 15px;  
 }
 
 .profilegeneric-button:focus {
@@ -48,9 +45,23 @@
 }
 
 .profilegeneric-button:hover {
+  cursor: pointer;
+}
+
+.blocked, .blocked:hover {
+  background-color: white;
+  color: lightgray;
+  cursor: not-allowed;
+}
+
+.notBlocked {
+  background-color: white;
+  color: rgb(0, 42, 92);
+}
+
+.notBlocked:hover {
   background-color: #0366d6;
   color: white;
-  cursor: pointer;
 }
 
 #profilegeneric-bio-wrapper {

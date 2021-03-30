@@ -11,6 +11,8 @@ const User = new Schema({
   email: String,
   bio: String,
   tags: [String],
+  friends: [String],
+  blocked: [String],
 });
 
 User.plugin(passportLocalMongoose);
