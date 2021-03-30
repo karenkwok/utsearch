@@ -98,7 +98,11 @@ const resolvers = {
           throw new ApolloError("User does not exist.");
         } else if (context.user.username === user) {
           throw new ApolloError("You can't add yourself as a friend!");
+        } else {
+          const currentUser = await User.findOne( { username: context.user.username } );
+          if (currentUser.friendRequestsReceived.includes(user) === false) throw new ApolloError("This user did not send you a friend request.");
         }
+
         if (acceptRequest === true) {
           const updatedUser = await User.findOneAndUpdate(
             { username: context.user.username },
