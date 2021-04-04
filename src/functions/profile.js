@@ -12,6 +12,27 @@ import { gql } from "@apollo/client";
 import profilepic from "./profilepic.png";
 import { Link } from "react-router-dom";
 
+const EDIT_FRIEND_RESPONSE = gql`
+  mutation($user: String!, $acceptRequest: Boolean!) {
+    FriendRequestResponse(user: $user, acceptRequest: $acceptRequest) {
+      username
+      email
+      bio
+      tags
+      friends
+      friendRequestsReceived
+      friendRequestsSent
+      blocked
+    }
+  }
+`;
+
+const EDIT_FRIEND_REQUESTS = gql`
+  mutation($input: String!) {
+    CreateFriendRequest(input: $input)
+  }
+`;
+
 const EDIT_BIO = gql`
   mutation($input: String!) {
     CreateBio(input: $input)
@@ -82,7 +103,11 @@ function Profile() {
     blockedResults = (
       <div>
         {state.user.blocked.map((block) => {
-          return <div><Link to={"/profile/" + block}>{block}</Link></div>;
+          return (
+            <div>
+              <Link to={"/profile/" + block}>{block}</Link>
+            </div>
+          );
         })}
       </div>
     );
@@ -95,7 +120,11 @@ function Profile() {
     friendResults = (
       <div>
         {state.user.friends.map((friend) => {
-          return <div><Link to={"/profile/" + friend}>{friend}</Link></div>;
+          return (
+            <div>
+              <Link to={"/profile/" + friend}>{friend}</Link>
+            </div>
+          );
         })}
       </div>
     );
@@ -108,7 +137,38 @@ function Profile() {
     friendRequestResults = (
       <div>
         {state.user.friendRequestsReceived.map((friendRequest) => {
-          return <div><Link to={"/profile/" + friendRequest}>{friendRequest}</Link></div>;
+          return (
+            <div>
+              <Link to={"/profile/" + friendRequest}>{friendRequest}</Link>
+              <button
+                onClick={() => {
+                  client
+                    .mutate({
+                      variables: { user: friendRequest, acceptRequest: true },
+                      mutation: EDIT_FRIEND_RESPONSE,
+                    })
+                    .then((result) => {
+                      dispatch({ type: "SET_USER", payload: result.data.FriendRequestResponse });
+                      console.log(result);
+                    });
+                }}
+              >
+                Accept
+              </button>
+              <button
+              onClick={() => {
+                client
+                  .mutate({
+                    variables: { user: friendRequest, acceptRequest: false },
+                    mutation: EDIT_FRIEND_RESPONSE,
+                  })
+                  .then((result) => {
+                    dispatch({ type: "SET_USER", payload: result.data.FriendRequestResponse });
+                    console.log(result);
+                  });
+              }}>Reject</button>
+            </div>
+          );
         })}
       </div>
     );
