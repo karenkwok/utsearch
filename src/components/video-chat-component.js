@@ -79,13 +79,15 @@ function VideoChatComponent(){
   const [callerSignal, setCallerSignal] = useState();
   const [callAccepted, setCallAccepted] = useState(false);
 
+  const [callerUsername, setCallerUsername] = useState("");
+
   const [state, dispatch] = useContext(Context);
 
   // Video Call Button option states
   const [muteBtnState, setMuteBtnState] = useState("Mute Me");
   const [hideBtnState, setHideBtnState] = useState("Hide Me");
-  const [muteCallerBtnState, setMuteCallerBtnState] = useState("Mute Stranger");
-  const [hideCallerBtnState, setHideCallerBtnState] = useState("Hide Stranger");
+  const [muteCallerBtnState, setMuteCallerBtnState] = useState("Mute");
+  const [hideCallerBtnState, setHideCallerBtnState] = useState("Hide");
 
   //Hooks for the video streams
   const userVideo = useRef();
@@ -120,13 +122,15 @@ function VideoChatComponent(){
       setReceivingCall(true);
       setCaller(data.from);
       setCallerSignal(data.signal);
+
+      setCallerUsername(data.fromUsername);
     })
 
     socket.current.on("user left", () => {
       setMuteBtnState("Mute Me");
       setHideBtnState("Hide Me");
-      setMuteCallerBtnState("Mute Stranger");
-      setHideCallerBtnState("Hide Stranger");
+      setMuteCallerBtnState("Mute");
+      setHideCallerBtnState("Hide");
       socket.current.destroy();
       setCallAccepted(false);
       connectUser();
@@ -179,13 +183,14 @@ function VideoChatComponent(){
       }
     });
 
-    socket.current.on("callAccepted", signal => {
+    socket.current.on("callAccepted", data => {
       setUsers({});
 
       setCallAccepted(true);
       setReceivingCall(false);
       socket.current.removeListener('allUsers');
-      peer.signal(signal);
+      peer.signal(data.signal);
+      setCallerUsername(data.username);
     })
     peerRef.current = peer;
   }
@@ -225,8 +230,8 @@ function VideoChatComponent(){
     setCallAccepted(false);
     setMuteBtnState("Mute Me");
     setHideBtnState("Hide Me");
-    setMuteCallerBtnState("Mute Stranger");
-    setHideCallerBtnState("Hide Stranger");
+    setMuteCallerBtnState("Mute");
+    setHideCallerBtnState("Hide");
   }
 
   // Disconnect from the call
@@ -235,8 +240,8 @@ function VideoChatComponent(){
     setCallAccepted(false);
     setMuteBtnState("Mute Me");
     setHideBtnState("Hide Me");
-    setMuteCallerBtnState("Mute Stranger");
-    setHideCallerBtnState("Hide Stranger");
+    setMuteCallerBtnState("Mute");
+    setHideCallerBtnState("Hide");
     connectUser();
   }
 
@@ -260,19 +265,19 @@ function VideoChatComponent(){
   }
 
   function muteTheirVideo(){
-    if (hideCallerBtnState === "Hide Stranger") {
-      setHideCallerBtnState("Show Stranger");
+    if (hideCallerBtnState === "Hide") {
+      setHideCallerBtnState("Show");
     } else {
-      setHideCallerBtnState("Hide Stranger");
+      setHideCallerBtnState("Hide");
     }
     callerStream.getVideoTracks()[0].enabled = !callerStream.getVideoTracks()[0].enabled;
   }
 
   function muteTheirSound(){
-    if (muteCallerBtnState === "Mute Stranger") {
-      setMuteCallerBtnState("Unmute Stranger");
+    if (muteCallerBtnState === "Mute") {
+      setMuteCallerBtnState("Unmute");
     } else {
-      setMuteCallerBtnState("Mute Stranger");
+      setMuteCallerBtnState("Mute");
     }
     callerStream.getAudioTracks()[0].enabled = !callerStream.getAudioTracks()[0].enabled;
   }
@@ -311,7 +316,7 @@ function VideoChatComponent(){
     videoText = (
       <>
         <Box>You</Box>
-        <Box>Stranger</Box>
+        <Box>{callerUsername}</Box>
       </>
     )
   } else {
@@ -319,7 +324,7 @@ function VideoChatComponent(){
       <>
         <Box>You</Box>
         <Box>
-            A secret stranger is calling you
+            {callerUsername} is calling you
         </Box>
       </>
     )
@@ -329,7 +334,7 @@ function VideoChatComponent(){
   if (Object.keys(users).length > 1) {
     userButtons = (
       <StrangerList>
-        <Title>Current Strangers Available:</Title>
+        <Title>Current Callers Available:</Title>
         {users.map((user, index) => {
 
           let key = 0;

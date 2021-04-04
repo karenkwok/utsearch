@@ -315,9 +315,16 @@ videoChatNameSpace.on("connection", (socket) => {
 
   //Call a user
   socket.on("callUser", (data) => {
+    let callerUsername = "";
+    for (let i = 0; i < (videoConnected.length); i++) {
+      if (videoConnected[i][0] == data.from) {
+        callerUsername = videoConnected[i][1];
+      }
+    }
     videoChatNameSpace.to(data.userToCall).emit("hey", {
       signal: data.signalData,
       from: data.from,
+      fromUsername: callerUsername,
       to: data.userToCall,
     });
   });
@@ -332,15 +339,16 @@ videoChatNameSpace.on("connection", (socket) => {
         videoConnected.splice(i, 1);
       }
     }
-
+    let callerUser = '';
     for (let i = 0; i < videoConnected.length; i++) {
       if (videoConnected[i][0] == data.from) {
-       videoConnected.splice(i, 1);
+        callerUser = videoConnected[i][1];
+        videoConnected.splice(i, 1);
      }
     }
 
     //Notify parties of the changes
-    videoChatNameSpace.to(data.to).emit("callAccepted", data.signal);
+    videoChatNameSpace.to(data.to).emit("callAccepted", {signal: data.signal, username: callerUser});
     videoChatNameSpace.emit("allUsers", videoConnected);
   });
 });
