@@ -1,5 +1,7 @@
 /* jshint esversion: 6 */
 
+//TODO why does it crash when you refresh????
+
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Context } from "../Store";
 import io from "socket.io-client";
@@ -43,7 +45,7 @@ const Box = styled.div`
   width: 50%;
 `;
 
-const StrangerList = styled.div`
+const UserList = styled.div`
   display: flex;
   flex-direction: column;
   height: 100px;
@@ -52,23 +54,16 @@ const StrangerList = styled.div`
   min-height: 0;
 `;
 
-const Video = styled.video`
-  border: 1px solid blue;
-  width: 320px;
-  height: 240px;
-  margin: 10px;
+//TODO put an image?
+const AudioPlayer = styled.audio`
+
 `;
 
-const EmptyVideo = styled.div`
-  border: 1px solid blue;
-  background-color: black;
-  width: 320px;
-  height: 240px;
-  border-radius: 10px;
-  margin: 10px;
+const EmptyAudio = styled.div`
+  display: none;
 `;
 
-function VideoChatComponent(){
+function CallComponent(){
   // States for the call connection steps
   const [yourID, setYourID] = useState("");
   const [users, setUsers] = useState({});
@@ -83,15 +78,13 @@ function VideoChatComponent(){
 
   const [state, dispatch] = useContext(Context);
 
-  // Video Call Button option states
+  // Audio Call Button option states
   const [muteBtnState, setMuteBtnState] = useState("Mute Me");
-  const [hideBtnState, setHideBtnState] = useState("Hide Me");
   const [muteCallerBtnState, setMuteCallerBtnState] = useState("Mute");
-  const [hideCallerBtnState, setHideCallerBtnState] = useState("Hide");
 
-  //Hooks for the video streams
-  const userVideo = useRef();
-  const partnerVideo = useRef();
+  //Hooks for the audio streams
+  const userAudio = useRef();
+  const partnerAudio = useRef();
 
   //Hooks for the socket and peer
   const socket = useRef();
@@ -101,11 +94,11 @@ function VideoChatComponent(){
   function connectUser() {
     socket.current = io.connect('/video-chat');
 
-    //Get the user's webcam as the stream
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+    //Get the user's microphone as the stream
+    navigator.mediaDevices.getUserMedia({ video: false, audio: true }).then(stream => {
       setStream(stream);
-      if (userVideo.current) {
-        userVideo.current.srcObject = stream;
+      if (userAudio.current) {
+        userAudio.current.srcObject = stream;
       }
     })
 
@@ -128,9 +121,7 @@ function VideoChatComponent(){
 
     socket.current.on("user left", () => {
       setMuteBtnState("Mute Me");
-      setHideBtnState("Hide Me");
       setMuteCallerBtnState("Mute");
-      setHideCallerBtnState("Hide");
       socket.current.destroy();
       setCallAccepted(false);
       connectUser();
@@ -178,8 +169,8 @@ function VideoChatComponent(){
 
     peer.on("stream", stream => {
       setCallerStream(stream);
-      if (partnerVideo.current) {
-        partnerVideo.current.srcObject = stream;
+      if (partnerAudio.current) {
+        partnerAudio.current.srcObject = stream;
       }
     });
 
@@ -214,7 +205,7 @@ function VideoChatComponent(){
       setReceivingCall(false);
       setCallerStream(stream);
 
-      partnerVideo.current.srcObject = stream;
+      partnerAudio.current.srcObject = stream;
     });
     peerRef.current = peer;
 
@@ -229,9 +220,7 @@ function VideoChatComponent(){
     socket.current.destroy();
     setCallAccepted(false);
     setMuteBtnState("Mute Me");
-    setHideBtnState("Hide Me");
     setMuteCallerBtnState("Mute");
-    setHideCallerBtnState("Hide");
   }
 
   // Disconnect from the call
@@ -239,22 +228,11 @@ function VideoChatComponent(){
     socket.current.destroy();
     setCallAccepted(false);
     setMuteBtnState("Mute Me");
-    setHideBtnState("Hide Me");
     setMuteCallerBtnState("Mute");
-    setHideCallerBtnState("Hide");
     connectUser();
   }
 
-  /* Functions for muting/hiding video/sound */
-  function muteMyVideo(){
-    if (hideBtnState === "Hide Me") {
-      setHideBtnState("Show Me");
-    } else {
-      setHideBtnState("Hide Me");
-    }
-    stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled;
-  }
-
+  /* Functions for muting sound */
   function muteMySound(){
     if (muteBtnState === "Mute Me") {
       setMuteBtnState("Unmute Me");
@@ -262,15 +240,6 @@ function VideoChatComponent(){
       setMuteBtnState("Mute Me");
     }
     stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled;
-  }
-
-  function muteTheirVideo(){
-    if (hideCallerBtnState === "Hide") {
-      setHideCallerBtnState("Show");
-    } else {
-      setHideCallerBtnState("Hide");
-    }
-    callerStream.getVideoTracks()[0].enabled = !callerStream.getVideoTracks()[0].enabled;
   }
 
   function muteTheirSound(){
@@ -284,21 +253,21 @@ function VideoChatComponent(){
 
   /* Conditional Elements */
 
-  let UserVideo;
+  let userAudioPlayer;
   if (stream) {
-    UserVideo = (
-      <Video playsInline muted ref={userVideo} autoPlay />
+    userAudioPlayer = (
+      <AudioPlayer playsInline muted ref={userAudio} autoPlay />
     );
   }
 
-  let PartnerVideo;
+  let partnerAudioPlayer;
   if (callAccepted) {
-    PartnerVideo = (
-      <Video playsInline ref={partnerVideo} autoPlay />
+    partnerAudioPlayer = (
+      <AudioPlayer playsInline ref={partnerAudio} autoPlay />
     );
   } else {
-    PartnerVideo = (
-      <EmptyVideo />
+    partnerAudioPlayer = (
+      <EmptyAudio />
     );
   }
 
@@ -333,22 +302,23 @@ function VideoChatComponent(){
   let userButtons;
   if (Object.keys(users).length > 1) {
     userButtons = (
-      <StrangerList>
+      <UserList>
         <Title>Current Callers Available:</Title>
         {users.map((user, index) => {
 
           if (user[0] === yourID) {
             return null;
           }
+          console.log(state.user.blocked);
           return (
             <button key={user[0]} onClick={() => callPeer(user[0])}>Call {user[1]}</button>
           );
         })}
-      </StrangerList>
+      </UserList>
     )
   } else if (!callAccepted) {
     userButtons = (
-      <StrangerList>You are the only one here</StrangerList>
+      <UserList>You are the only one here</UserList>
     )
   }
 
@@ -357,12 +327,10 @@ function VideoChatComponent(){
     muteButtons =  (
       <>
       <Box>
-      <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
       <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
       </Box>
 
       <Box>
-      <button key="muteTheirVid" onClick={() => muteTheirVideo()}>{hideCallerBtnState}</button>
       <button key="muteTheirSound" onClick={() => muteTheirSound()}>{muteCallerBtnState}</button>
       </Box>
       </>
@@ -372,7 +340,6 @@ function VideoChatComponent(){
       muteButtons =  (
         <>
           <Box>
-            <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
             <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
           </Box>
 
@@ -383,7 +350,6 @@ function VideoChatComponent(){
       muteButtons =  (
         <>
           <Box>
-            <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
             <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
           </Box>
 
@@ -399,11 +365,11 @@ function VideoChatComponent(){
   return (
     <Container>
       <Row>
-        <Title>Video Chat - Chat With Friends!</Title>
+        <Title>UTSCall - Call Your Friends!</Title>
       </Row>
       <Row>
-        {UserVideo}
-        {PartnerVideo}
+        {userAudioPlayer}
+        {partnerAudioPlayer}
       </Row>
       <Row>
         {videoText}
@@ -422,4 +388,4 @@ function VideoChatComponent(){
   );
 }
 
-export default VideoChatComponent;
+export default CallComponent;

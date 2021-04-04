@@ -11,6 +11,7 @@ import Profile from "./functions/profile";
 import RandomChat from "./functions/randomChat";
 import Credits from "./functions/credits";
 import VideoChat from "./functions/videoChat";
+import Call from "./functions/call"
 
 import {
   BrowserRouter as Router,
@@ -196,6 +197,9 @@ function Main() {
           </PrivateRoute>
           <PrivateRoute exact path="/video-chat">
             <VideoChat></VideoChat>
+          </PrivateRoute>
+          <PrivateRoute exact path="/call">
+            <Call></Call>
           </PrivateRoute>
           <PrivateRoute exact path="/profile/:username">
             <ProfileGeneric></ProfileGeneric>
