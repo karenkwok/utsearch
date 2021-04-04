@@ -1,6 +1,7 @@
 /* jshint esversion: 6 */
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
+import { Context } from "../Store";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import "../index.css";
@@ -67,7 +68,7 @@ const EmptyVideo = styled.div`
   margin: 10px;
 `;
 
-function VideoChat(){
+function VideoChatComponent(){
   // States for the call connection steps
   const [yourID, setYourID] = useState("");
   const [users, setUsers] = useState({});
@@ -77,6 +78,8 @@ function VideoChat(){
   const [caller, setCaller] = useState("");
   const [callerSignal, setCallerSignal] = useState();
   const [callAccepted, setCallAccepted] = useState(false);
+
+  const [state, dispatch] = useContext(Context);
 
   // Video Call Button option states
   const [muteBtnState, setMuteBtnState] = useState("Mute Me");
@@ -94,7 +97,7 @@ function VideoChat(){
 
   /* Events for the connected user */
   function connectUser() {
-    socket.current = io.connect('/random-chat');
+    socket.current = io.connect('/video-chat');
 
     //Get the user's webcam as the stream
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
@@ -106,7 +109,9 @@ function VideoChat(){
 
     socket.current.on("yourID", (id) => {
       setYourID(id);
-    })
+      socket.current.emit("ConnectUsername", {username: state.user.username});
+    });
+
     socket.current.on("allUsers", (users) => {
       setUsers(users);
     })
@@ -149,7 +154,7 @@ function VideoChat(){
 
   profileButton.onclick = function() {
     leavePageDisconnect();
-  } 
+  }
 
   searchButton.onclick = function() {
     leavePageDisconnect();
@@ -325,12 +330,14 @@ function VideoChat(){
     userButtons = (
       <StrangerList>
         <Title>Current Strangers Available:</Title>
-        {Object.keys(users).map((key, index) => {
-          if (key === yourID) {
+        {users.map((user, index) => {
+
+          let key = 0;
+          if (user[0] === yourID) {
             return null;
           }
           return (
-            <button key={key} onClick={() => callPeer(key)}>Call Stranger {index}</button>
+            <button key={user[0]} onClick={() => callPeer(user[0])}>Call {user[1]}</button>
           );
         })}
       </StrangerList>
@@ -388,7 +395,7 @@ function VideoChat(){
   return (
     <Container>
       <Row>
-        <Title>Random Chat - Who Will You Meet?</Title>
+        <Title>Video Chat - Chat With Friends!</Title>
       </Row>
       <Row>
         {UserVideo}
@@ -411,4 +418,4 @@ function VideoChat(){
   );
 }
 
-export default VideoChat;
+export default VideoChatComponent;

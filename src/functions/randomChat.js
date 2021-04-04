@@ -4,7 +4,7 @@ import React from 'react';
 import "./randomChat.css";
 import "../index.css";
 
-import VideoChat from "../components/video-chat";
+import RandomChatComponent from "../components/random-chat-component";
 
 
 
@@ -37,7 +37,7 @@ class RandomChat extends React.Component {
             <button id="meet-student-button" onClick={this.startMeeting}>Meet A Student!</button>
           </>
           :
-          <VideoChat/>
+          <RandomChatComponent/>
         }
       </div>
     );

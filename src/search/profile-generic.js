@@ -90,7 +90,10 @@ function ProfileGeneric() {
       <div>
         <button className={"profilegeneric-button " + buttonClass}>+Friend</button>
         <button className={"profilegeneric-button " + buttonClass}>Call</button>
-        <button className={"profilegeneric-button " + buttonClass}>Chat</button>
+
+        <Link to="/video-chat">
+          <button className={"profilegeneric-button " + buttonClass}>Chat</button>
+        </Link>
         <button className={"profilegeneric-button " + buttonClass} onClick={handleBlockedSave}>
           Block
         </button>

@@ -41,7 +41,7 @@ const typeDefs = `
     CreateFriends(input: String): [String],
     CreateBlocked(input: String): [String],
     CreateBio(input: String): String,
-    CreateTag(input: String): [String], 
+    CreateTag(input: String): [String],
     CreateUser(input: CreateUserInput): User
   }
 `;
@@ -216,11 +216,8 @@ const connected = {};
 const pairs = [];
 
 const randomChatNameSpace = io.of('/random-chat');
-const defaultNameSpace = io.of('/');
-
-defaultNameSpace.on("connection", (socket) => {
-  socket.on('test', function() {console.log("ROOT")});
-})
+const messengerNameSpace = io.of('/messenger');
+const videoChatNameSpace = io.of('/video-chat');
 
 randomChatNameSpace.on("connection", (socket) => {
   //For new connections, save user id
@@ -267,6 +264,84 @@ randomChatNameSpace.on("connection", (socket) => {
     delete connected[data.from];
     randomChatNameSpace.to(data.to).emit("callAccepted", data.signal);
     randomChatNameSpace.emit("allUsers", connected);
+  });
+});
+
+const videoUsers = [];
+const videoConnected = [];
+const videoPairs = [];
+
+videoChatNameSpace.on("connection", (socket) => {
+  //Return id to socket
+  socket.emit("yourID", socket.id);
+
+  //Get socket's username and then update list
+  socket.on("ConnectUsername", (data) => {
+    //For new connections, save user id and their username
+    if (!users[socket.id]) {
+      videoUsers[socket.id] = socket.id;
+      videoConnected.push([socket.id, data.username]);
+    }
+
+    //Notify all current users of connected usernames
+    videoChatNameSpace.emit("allUsers", videoConnected);
+  });
+
+  //Delete users if they disconnect
+  socket.on("disconnect", () => {
+    for (let pair of videoPairs) {
+      //If one disconnects, notify other user
+      if (pair.includes(socket.id)) {
+        let index = pair.indexOf(socket.id);
+        if (index == 0) {
+          socket.to(pair[1]).emit("user left");
+        } else {
+          socket.to(pair[0]).emit("user left");
+        }
+      }
+    }
+
+    //Delete socket id and username pair from the list
+    delete videoUsers[socket.id];
+    for (let i = 0; i < (videoConnected.length); i++) {
+      if (videoConnected[i][0] == socket.id) {
+        videoConnected.splice(i, 1);
+      }
+    }
+
+    //Notify all other users of the change
+    videoChatNameSpace.emit("allUsers", connected);
+  });
+
+  //Call a user
+  socket.on("callUser", (data) => {
+    videoChatNameSpace.to(data.userToCall).emit("hey", {
+      signal: data.signalData,
+      from: data.from,
+      to: data.userToCall,
+    });
+  });
+
+  //Let calling user know call is accepted
+  socket.on("acceptCall", (data) => {
+    videoPairs.push([data.to, data.from]);
+
+    //Users are not connected, now in a call
+    for (let i = 0; i < (videoConnected.length); i++) {
+      if (videoConnected[i][0] == data.to) {
+        videoConnected.splice(i, 1);
+      }
+    }
+
+    for (let i = 0; i < videoConnected.length; i++) {
+      if (videoConnected[i][0] == data.from) {
+       videoConnected.splice(i, 1);
+     }
+    }
+
+    //Notify parties of the changes
+    videoChatNameSpace.to(data.to).emit("callAccepted", data.signal);
+    videoChatNameSpace.emit("allUsers", videoConnected);
   });
 });
 
