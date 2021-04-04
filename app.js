@@ -99,8 +99,13 @@ const resolvers = {
         } else if (context.user.username === user) {
           throw new ApolloError("You can't add yourself as a friend!");
         } else {
-          const currentUser = await User.findOne( { username: context.user.username } );
-          if (currentUser.friendRequestsReceived.includes(user) === false) throw new ApolloError("This user did not send you a friend request.");
+          const currentUser = await User.findOne({
+            username: context.user.username,
+          });
+          if (currentUser.friendRequestsReceived.includes(user) === false)
+            throw new ApolloError(
+              "This user did not send you a friend request."
+            );
         }
 
         if (acceptRequest === true) {
@@ -148,6 +153,16 @@ const resolvers = {
           throw new ApolloError("User does not exist.");
         } else if (context.user.username === input) {
           throw new ApolloError("You can't add yourself as a friend!");
+        } else if (context.user.blocked.includes(input)) {
+          throw new ApolloError("You blocked this user.");
+        } else if (
+          (await User.findOne({ username: input })).blocked.includes(
+            context.user.username
+          )
+        ) {
+          throw new ApolloError("This user blocked you.");
+        } else if (context.user.friends.includes(input)) {
+          throw new ApolloError("This user is already your friend!");
         }
         const updatedUser = await User.findOneAndUpdate(
           { username: context.user.username },
