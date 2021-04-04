@@ -27,12 +27,6 @@ const EDIT_FRIEND_RESPONSE = gql`
   }
 `;
 
-const EDIT_FRIEND_REQUESTS = gql`
-  mutation($input: String!) {
-    CreateFriendRequest(input: $input)
-  }
-`;
-
 const EDIT_BIO = gql`
   mutation($input: String!) {
     CreateBio(input: $input)
@@ -98,7 +92,7 @@ function Profile() {
 
   let blockedResults;
   if (state.user.blocked.length === 0) {
-    blockedResults = <div>Your blocked list is empty.</div>;
+    blockedResults = <div>You're not blocking anyone &#128526;</div>;
   } else {
     blockedResults = (
       <div>
@@ -115,7 +109,7 @@ function Profile() {
 
   let friendResults;
   if (state.user.friends.length === 0) {
-    friendResults = <div>Your friends list is empty.</div>;
+    friendResults = <div>You have no friends &#128546;</div>;
   } else {
     friendResults = (
       <div>
@@ -132,7 +126,7 @@ function Profile() {
 
   let friendRequestResults;
   if (state.user.friendRequestsReceived.length === 0) {
-    friendRequestResults = <div>You have no friend requests.</div>;
+    friendRequestResults = <div>You have no friend requests &#128546;</div>;
   } else {
     friendRequestResults = (
       <div>

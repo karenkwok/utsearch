@@ -153,6 +153,7 @@ function Main() {
                 bio
                 tags
                 friendRequestsReceived
+                friendRequestsSent
                 friends
                 blocked
               }

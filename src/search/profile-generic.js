@@ -12,9 +12,9 @@ import profilepic from "./profilepic.png";
 import Icon from "@material-ui/core/Icon";
 import { Link } from "react-router-dom";
 
-const EDIT_FRIENDS = gql`
+const EDIT_FRIEND_REQUESTS = gql`
   mutation($input: String!) {
-    CreateFriends(input: $input)
+    CreateFriendRequest(input: $input)
   }
 `;
 
@@ -30,6 +30,24 @@ function ProfileGeneric() {
   const [tags, setTags] = useState([]);
   const [blocked, setBlocked] = useState([]);
   const { username } = useParams();
+
+  const handleFriendSave = function () {
+    client
+      .mutate({
+        variables: { input: username },
+        mutation: EDIT_FRIEND_REQUESTS,
+      })
+      .then((result) => {
+        dispatch({
+          type: "EDIT_FRIEND_REQUESTS",
+          payload: result.data.CreateFriendRequest,
+        });
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const handleBlockedSave = function () {
     client
@@ -73,6 +91,7 @@ function ProfileGeneric() {
       });
   });
 
+  let friendButton;
   let editbtn;
   let fourbtns;
   if (state.user.username !== username) {
@@ -86,12 +105,35 @@ function ProfileGeneric() {
     } else {
       buttonClass = "notBlocked";
     }
+    if (state.user.friends.includes(username)) {
+      friendButton = (
+        <button className={"profilegeneric-button " + buttonClass}>
+          Friends
+        </button>
+      );
+    } else if (
+      state.user.friendRequestsReceived.includes(username) ||
+      state.user.friendRequestsSent.includes(username)
+    ) {
+      friendButton = (
+        <button className={"profilegeneric-button " + buttonClass}>
+          Pending Friend
+        </button>
+      );
+    } else {
+      friendButton = (
+        <button
+          className={"profilegeneric-button " + buttonClass}
+          onClick={handleFriendSave}
+        >
+          +Friend
+        </button>
+      );
+    }
     editbtn = <div></div>;
     fourbtns = (
       <div>
-        <button className={"profilegeneric-button " + buttonClass}>
-          +Friend
-        </button>
+        {friendButton}
         <button className={"profilegeneric-button " + buttonClass}>Call</button>
         <button className={"profilegeneric-button " + buttonClass}>Chat</button>
         <button
