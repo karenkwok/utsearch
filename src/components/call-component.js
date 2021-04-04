@@ -55,6 +55,7 @@ const UserList = styled.div`
 `;
 
 //TODO put an image?
+//TODO have toggle for show friends only
 const AudioPlayer = styled.audio`
 
 `;

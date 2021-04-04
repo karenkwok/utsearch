@@ -91,6 +91,16 @@ function SimpleMenu() {
       history.push("/random-chat");
     };
 
+    const handleVideoChat = () => {
+      handleClose();
+      history.push("/video-chat");
+    }
+
+    const handleCall = () => {
+      handleClose();
+      history.push("/call");
+    }
+
     const handleSignOut = () => {
       handleClose();
       axios
@@ -122,6 +132,8 @@ function SimpleMenu() {
           <MenuItem onClick={handleProfile}>Profile</MenuItem>
           <MenuItem onClick={handleSearch}>Search</MenuItem>
           <MenuItem onClick={handleRandomChat}>Random Chat</MenuItem>
+          <MenuItem onClick={handleVideoChat}>Video Chat</MenuItem>
+          <MenuItem onClick={handleCall}>Call</MenuItem>
           <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
         </Menu>
       </div>

@@ -1,5 +1,7 @@
 /* jshint esversion: 6 */
 
+//TODO why does it crash when you refresh????
+
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Context } from "../Store";
 import io from "socket.io-client";
@@ -340,6 +342,7 @@ function VideoChatComponent(){
           if (user[0] === yourID) {
             return null;
           }
+          console.log(state.user.blocked);
           return (
             <button key={user[0]} onClick={() => callPeer(user[0])}>Call {user[1]}</button>
           );
