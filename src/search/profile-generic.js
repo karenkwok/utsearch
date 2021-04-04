@@ -77,21 +77,27 @@ function ProfileGeneric() {
   let fourbtns;
   if (state.user.username !== username) {
     // if other people's blocked list has my name or my blocked list has the name of the person whose profile i'm on
-    let isBlocked = blocked.includes(state.user.username) || state.user.blocked.includes(username);
+    let isBlocked =
+      blocked.includes(state.user.username) ||
+      state.user.blocked.includes(username);
     let buttonClass;
-    if(isBlocked === true) {
+    if (isBlocked === true) {
       buttonClass = "blocked";
-    }
-    else {
+    } else {
       buttonClass = "notBlocked";
     }
     editbtn = <div></div>;
     fourbtns = (
       <div>
-        <button className={"profilegeneric-button " + buttonClass}>+Friend</button>
+        <button className={"profilegeneric-button " + buttonClass}>
+          +Friend
+        </button>
         <button className={"profilegeneric-button " + buttonClass}>Call</button>
         <button className={"profilegeneric-button " + buttonClass}>Chat</button>
-        <button className={"profilegeneric-button " + buttonClass} onClick={handleBlockedSave}>
+        <button
+          className={"profilegeneric-button " + buttonClass}
+          onClick={handleBlockedSave}
+        >
           Block
         </button>
       </div>

@@ -82,7 +82,33 @@ function Profile() {
     blockedResults = (
       <div>
         {state.user.blocked.map((block) => {
-          return <div>{block}</div>;
+          return <div><Link to={"/profile/" + block}>{block}</Link></div>;
+        })}
+      </div>
+    );
+  }
+
+  let friendResults;
+  if (state.user.friends.length === 0) {
+    friendResults = <div>Your friends list is empty.</div>;
+  } else {
+    friendResults = (
+      <div>
+        {state.user.friends.map((friend) => {
+          return <div><Link to={"/profile/" + friend}>{friend}</Link></div>;
+        })}
+      </div>
+    );
+  }
+
+  let friendRequestResults;
+  if (state.user.friendRequestsReceived.length === 0) {
+    friendRequestResults = <div>You have no friend requests.</div>;
+  } else {
+    friendRequestResults = (
+      <div>
+        {state.user.friendRequestsReceived.map((friendRequest) => {
+          return <div><Link to={"/profile/" + friendRequest}>{friendRequest}</Link></div>;
         })}
       </div>
     );
@@ -142,8 +168,11 @@ function Profile() {
               </div>
             </div>
           </div>
+          <div className="profile-buttons" label="Requests">
+            {friendRequestResults}
+          </div>
           <div className="profile-buttons" label="Friends">
-            Your friends list is empty :(
+            {friendResults}
           </div>
           <div className="profile-buttons" label="Blocked">
             {blockedResults}

@@ -152,6 +152,7 @@ function Main() {
                 email
                 bio
                 tags
+                friendRequestsReceived
                 friends
                 blocked
               }
