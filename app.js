@@ -1,5 +1,7 @@
 /* jshint esversion: 6 */
 
+//import sslRedirect from "heroku-ssl-redirect";
+const sslRedirect = require("heroku-ssl-redirect").default;
 const express = require("express");
 const session = require("express-session");
 const http = require("http");
@@ -251,6 +253,10 @@ const resolvers = {
 
 // Initialize the app
 const app = express();
+
+if (process.env.NODE_ENV === "production") {
+  app.use(sslRedirect());
+}
 
 // enables communication if frontend is on diff port than backend
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
