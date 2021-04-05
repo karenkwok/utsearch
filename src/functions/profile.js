@@ -126,7 +126,7 @@ function Profile() {
 
   let friendRequestResults;
   if (state.user.friendRequestsReceived.length === 0) {
-    friendRequestResults = <div>You have no friend requests &#128546;</div>;
+    friendRequestResults = <div>You have no friend requests &#128550;</div>;
   } else {
     friendRequestResults = (
       <div>
