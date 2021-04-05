@@ -74,7 +74,6 @@ function Profile() {
       });
   };
 
-  //Tabs functionality from https://www.digitalocean.com/community/tutorials/react-tabs-component
   return (
     <div id="profile-wrapper">
       <button id="img-btn">

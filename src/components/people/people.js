@@ -3,6 +3,7 @@
 import { useContext, useState } from "react";
 import "./people.css";
 import "../../index.css";
+import Maps from "./maps/maps";
 import Tabs from "../../components/tabs";
 import { useParams } from "react-router";
 import { Context } from "../../Store";
@@ -129,6 +130,7 @@ function People() {
           {blockedResults}
         </div>
       </Tabs>
+      <Maps></Maps>
     </div>
   );
 }
