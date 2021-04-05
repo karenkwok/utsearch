@@ -19,6 +19,7 @@
     "express-session": "^1.17.1",
     "graphql": "^15.5.0",
     "graphql-tools": "^7.0.4",
+    "heroku-ssl-redirect": "^0.1.1",
     "mongoose": "^5.11.19",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
