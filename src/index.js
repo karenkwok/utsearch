@@ -8,6 +8,7 @@ import SigninForm from "./authentication/signin";
 import Search from "./search/search";
 import ProfileGeneric from "./search/profile-generic";
 import Profile from "./functions/profile";
+import People from "./components/people/people";
 import RandomChat from "./functions/randomChat";
 import Credits from "./functions/credits";
 
@@ -84,6 +85,11 @@ function SimpleMenu() {
       history.push("/search");
     };
 
+    const handlePeople = () => {
+      handleClose();
+      history.push("/people");
+    };
+
     const handleRandomChat = () => {
       handleClose();
       history.push("/random-chat");
@@ -119,6 +125,7 @@ function SimpleMenu() {
         >
           <MenuItem onClick={handleProfile}>Profile</MenuItem>
           <MenuItem onClick={handleSearch}>Search</MenuItem>
+          <MenuItem onClick={handlePeople}>People</MenuItem>
           <MenuItem onClick={handleRandomChat}>Random Chat</MenuItem>
           <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
         </Menu>
@@ -200,6 +207,9 @@ function Main() {
           </PrivateRoute>
           <PrivateRoute exact path="/profile/:username/edit">
             <Profile></Profile>
+          </PrivateRoute>
+          <PrivateRoute exact path="/people">
+            <People></People>
           </PrivateRoute>
           <Route exact path="/credits">
             <Credits></Credits>
