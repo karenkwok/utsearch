@@ -78,7 +78,7 @@ function Profile() {
     <div id="profile-wrapper">
       <button id="img-btn">
         <Link to={"/profile/" + username}>
-          <Icon>visibility</Icon>
+          <Icon id="visibility">visibility</Icon>
         </Link>
       </button>
       <div id="profile-picture-wrapper">
@@ -106,11 +106,11 @@ function Profile() {
                   placeholder="Enter your bio (max 255 characters)"
                   maxLength="255"
                   name="Text1"
-                  rows="5"
+                  rows="6"
                   onChange={handleBioChange}
                   value={bio}
                 ></textarea>
-                <button onClick={handleBioSave}>Save Bio</button>
+                <button className="profile-save" onClick={handleBioSave}>Save Bio</button>
               </div>
               <div className="textarea-save">
                 <textarea
@@ -118,11 +118,11 @@ function Profile() {
                   placeholder="Enter a tag (max 40 characters)"
                   maxLength="40"
                   name="Text1"
-                  rows="5"
+                  rows="6"
                   onChange={handleTagChange}
                   value={tag}
                 ></textarea>
-                <button onClick={handleTagSave}>Save Tag</button>
+                <button className="profile-save" onClick={handleTagSave}>Save Tag</button>
               </div>
             </div>
           </div>

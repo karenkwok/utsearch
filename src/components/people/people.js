@@ -39,7 +39,7 @@ function People() {
         {state.user.blocked.map((block) => {
           return (
             <div>
-              <Link to={"/profile/" + block}>{block}</Link>
+              <Link className="people" to={"/profile/" + block}>{block}</Link>
             </div>
           );
         })}
@@ -56,7 +56,7 @@ function People() {
         {state.user.friends.map((friend) => {
           return (
             <div>
-              <Link to={"/profile/" + friend}>{friend}</Link>
+              <Link className="people" to={"/profile/" + friend}>{friend}</Link>
             </div>
           );
         })}
@@ -73,8 +73,8 @@ function People() {
         {state.user.friendRequestsReceived.map((friendRequest) => {
           return (
             <div>
-              <Link to={"/profile/" + friendRequest}>{friendRequest}</Link>
-              <button
+              <Link className="people" to={"/profile/" + friendRequest}>{friendRequest}</Link>
+              <button id="people-accept"
                 onClick={() => {
                   client
                     .mutate({
@@ -92,7 +92,7 @@ function People() {
               >
                 Accept
               </button>
-              <button
+              <button id="people-reject"
                 onClick={() => {
                   client
                     .mutate({

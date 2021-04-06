@@ -107,7 +107,7 @@ function ProfileGeneric() {
     }
     if (state.user.friends.includes(username)) {
       friendButton = (
-        <button className={"profilegeneric-button " + buttonClass}>
+        <button id="profilegeneric-friends" className={"profilegeneric-button " + buttonClass}>
           Friends
         </button>
       );
@@ -116,7 +116,7 @@ function ProfileGeneric() {
       state.user.friendRequestsSent.includes(username)
     ) {
       friendButton = (
-        <button className={"profilegeneric-button " + buttonClass}>
+        <button id="profilegeneric-pendingfriend" className={"profilegeneric-button " + buttonClass}>
           Pending Friend
         </button>
       );
@@ -148,7 +148,7 @@ function ProfileGeneric() {
     editbtn = (
       <button id="edit-btn">
         <Link to={"/profile/" + username + "/edit"}>
-          <Icon>edit_icon</Icon>
+          <Icon id="edit">edit_icon</Icon>
         </Link>
       </button>
     );
