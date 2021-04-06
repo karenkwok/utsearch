@@ -37,7 +37,8 @@ const typeDefs = `
     friends: [String],
     friendRequestsReceived: [String],
     friendRequestsSent: [String],
-    blocked: [String]
+    blocked: [String],
+    myLocation: MyLocation
   }
   type Query {
     GetUsers(searchValue: String): [User],
@@ -53,6 +54,7 @@ const typeDefs = `
     username: String
   }
   type Mutation {
+    CreateLocation(lat: Float, long: Float): User,
     FriendRequestResponse(user: String, acceptRequest: Boolean): User,
     CreateFriendRequest(input: String): [String],
     CreateFriends(input: String): [String],
@@ -60,6 +62,10 @@ const typeDefs = `
     CreateBio(input: String): String,
     CreateTag(input: String): [String], 
     CreateUser(input: CreateUserInput): User
+  }
+  type MyLocation {
+    lat: Float,
+    long: Float
   }
 `;
 
@@ -92,6 +98,17 @@ const resolvers = {
     },
   },
   Mutation: {
+    CreateLocation: async (_, { lat, long }, context) => {
+      if (!context.user) throw new AuthenticationError("You must be logged in.");
+      else {
+        const updatedUser = await User.findOneAndUpdate(
+          { username: context.user.username },
+          { myLocation: {lat: lat, long: long} },
+          { new: true }
+        );
+        return updatedUser;
+      }
+    },
     FriendRequestResponse: async (_, { user, acceptRequest }, context) => {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");

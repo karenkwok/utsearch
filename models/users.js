@@ -15,6 +15,7 @@ const User = new Schema({
   friendRequestsReceived: [String],
   friendRequestsSent: [String],
   blocked: [String],
+  myLocation: {lat: Number, long: Number}
 });
 
 User.plugin(passportLocalMongoose);
