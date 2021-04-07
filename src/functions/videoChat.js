@@ -13,7 +13,7 @@ class VideoChat extends React.Component {
     return (
 
       <div id="video-chat-wrapper">
-      <VideoChatComponent url={'/video-chat'}/>
+      <VideoChatComponent />
       </div>
     );
   }

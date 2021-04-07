@@ -13,7 +13,7 @@ class Call extends React.Component {
     return (
 
       <div id="video-chat-wrapper">
-      <CallComponent url={'/call'}/>
+      <CallComponent />
       </div>
     );
   }

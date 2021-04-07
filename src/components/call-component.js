@@ -93,7 +93,7 @@ function CallComponent(){
 
   /* Events for the connected user */
   function connectUser() {
-    socket.current = io.connect('/video-chat');
+    socket.current = io.connect('/call');
 
     //Get the user's microphone as the stream
     navigator.mediaDevices.getUserMedia({ video: false, audio: true }).then(stream => {
