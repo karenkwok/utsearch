@@ -13,6 +13,8 @@ const Reducer = (state, action) => {
         ...state,
         user: { ...state.user, friendRequestsSent: action.payload },
       };
+    case "EDIT_LOCATION":
+      return { ...state, user: { ...state.user, myLocation: action.payload } };
   }
 };
 
