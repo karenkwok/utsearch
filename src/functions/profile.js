@@ -4,7 +4,6 @@ import { useContext, useState } from "react";
 import "./profile.css";
 import "../index.css";
 import Icon from "@material-ui/core/Icon";
-import Tabs from "../components/tabs";
 import { useParams } from "react-router";
 import { Context } from "../Store";
 import { client } from "..";
@@ -75,25 +74,11 @@ function Profile() {
       });
   };
 
-  let blockedResults;
-  if (state.user.blocked.length === 0) {
-    blockedResults = <div>Your blocked list is empty.</div>;
-  } else {
-    blockedResults = (
-      <div>
-        {state.user.blocked.map((block) => {
-          return <div>{block}</div>;
-        })}
-      </div>
-    );
-  }
-
-  //Tabs functionality from https://www.digitalocean.com/community/tutorials/react-tabs-component
   return (
     <div id="profile-wrapper">
       <button id="img-btn">
         <Link to={"/profile/" + username}>
-          <Icon>visibility</Icon>
+          <Icon id="visibility">visibility</Icon>
         </Link>
       </button>
       <div id="profile-picture-wrapper">
@@ -113,7 +98,6 @@ function Profile() {
       </div>
 
       <div id="button-wrapper">
-        <Tabs>
           <div className="profile-buttons" label="My Info">
             <div id="textarea-wrapper">
               <div className="textarea-save">
@@ -122,11 +106,11 @@ function Profile() {
                   placeholder="Enter your bio (max 255 characters)"
                   maxLength="255"
                   name="Text1"
-                  rows="5"
+                  rows="6"
                   onChange={handleBioChange}
                   value={bio}
                 ></textarea>
-                <button onClick={handleBioSave}>Save Bio</button>
+                <button className="profile-save" onClick={handleBioSave}>Save Bio</button>
               </div>
               <div className="textarea-save">
                 <textarea
@@ -134,21 +118,14 @@ function Profile() {
                   placeholder="Enter a tag (max 40 characters)"
                   maxLength="40"
                   name="Text1"
-                  rows="5"
+                  rows="6"
                   onChange={handleTagChange}
                   value={tag}
                 ></textarea>
-                <button onClick={handleTagSave}>Save Tag</button>
+                <button className="profile-save" onClick={handleTagSave}>Save Tag</button>
               </div>
             </div>
           </div>
-          <div className="profile-buttons" label="Friends">
-            Your friends list is empty :(
-          </div>
-          <div className="profile-buttons" label="Blocked">
-            {blockedResults}
-          </div>
-        </Tabs>
       </div>
     </div>
   );

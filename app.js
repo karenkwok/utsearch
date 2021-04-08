@@ -1,5 +1,7 @@
 /* jshint esversion: 6 */
 
+//import sslRedirect from "heroku-ssl-redirect";
+const sslRedirect = require("heroku-ssl-redirect").default;
 const express = require("express");
 const session = require("express-session");
 const http = require("http");
@@ -27,8 +29,22 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // The GraphQL schema in string form
 const typeDefs = `
-  type User { username: String, email: String, bio: String, tags: [String], friends: [String], blocked: [String] }
-  type Query { GetUsers(searchValue: String): [User], profile: User, profileGeneric(input: ProfileGenericInput): User }
+  type User {
+    username: String,
+    email: String,
+    bio: String,
+    tags: [String],
+    friends: [String],
+    friendRequestsReceived: [String],
+    friendRequestsSent: [String],
+    blocked: [String],
+    myLocation: MyLocation
+  }
+  type Query {
+    GetUsers(searchValue: String): [User],
+    profile: User,
+    profileGeneric(input: ProfileGenericInput): User
+  }
   input CreateUserInput {
     username: String
     password: String
@@ -38,11 +54,18 @@ const typeDefs = `
     username: String
   }
   type Mutation {
+    CreateLocation(lat: Float, long: Float): User,
+    FriendRequestResponse(user: String, acceptRequest: Boolean): User,
+    CreateFriendRequest(input: String): [String],
     CreateFriends(input: String): [String],
     CreateBlocked(input: String): [String],
     CreateBio(input: String): String,
     CreateTag(input: String): [String],
     CreateUser(input: CreateUserInput): User
+  }
+  type MyLocation {
+    lat: Float,
+    long: Float
   }
 `;
 
@@ -75,14 +98,111 @@ const resolvers = {
     },
   },
   Mutation: {
+    CreateLocation: async (_, { lat, long }, context) => {
+      if (!context.user) throw new AuthenticationError("You must be logged in.");
+      else {
+        const updatedUser = await User.findOneAndUpdate(
+          { username: context.user.username },
+          { myLocation: {lat: lat, long: long} },
+          { new: true }
+        );
+        return updatedUser;
+      }
+    },
+    FriendRequestResponse: async (_, { user, acceptRequest }, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else {
+        if ((await User.findOne({ username: user })) === null) {
+          throw new ApolloError("User does not exist.");
+        } else if (context.user.username === user) {
+          throw new ApolloError("You can't add yourself as a friend!");
+        } else {
+          const currentUser = await User.findOne({
+            username: context.user.username,
+          });
+          if (currentUser.friendRequestsReceived.includes(user) === false)
+            throw new ApolloError(
+              "This user did not send you a friend request."
+            );
+        }
+
+        if (acceptRequest === true) {
+          const updatedUser = await User.findOneAndUpdate(
+            { username: context.user.username },
+            {
+              $addToSet: { friends: user },
+              $pull: { friendRequestsReceived: user },
+            },
+            { new: true }
+          );
+          const updatedOtherUser = await User.findOneAndUpdate(
+            { username: user },
+            {
+              $addToSet: { friends: context.user.username },
+              $pull: { friendRequestsSent: context.user.username },
+            },
+            { new: true }
+          );
+          return updatedUser;
+        } else {
+          const updatedUser = await User.findOneAndUpdate(
+            { username: context.user.username },
+            {
+              $pull: { friendRequestsReceived: user },
+            },
+            { new: true }
+          );
+          const updatedOtherUser = await User.findOneAndUpdate(
+            { username: user },
+            {
+              $pull: { friendRequestsSent: context.user.username },
+            },
+            { new: true }
+          );
+          return updatedUser;
+        }
+      }
+    },
+    CreateFriendRequest: async (_, { input }, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else {
+        if ((await User.findOne({ username: input })) === null) {
+          throw new ApolloError("User does not exist.");
+        } else if (context.user.username === input) {
+          throw new ApolloError("You can't add yourself as a friend!");
+        } else if (context.user.blocked.includes(input)) {
+          throw new ApolloError("You blocked this user.");
+        } else if (
+          (await User.findOne({ username: input })).blocked.includes(
+            context.user.username
+          )
+        ) {
+          throw new ApolloError("This user blocked you.");
+        } else if (context.user.friends.includes(input)) {
+          throw new ApolloError("This user is already your friend!");
+        }
+        const updatedUser = await User.findOneAndUpdate(
+          { username: context.user.username },
+          { $addToSet: { friendRequestsSent: input } },
+          { new: true }
+        );
+        const updatedOtherUser = await User.findOneAndUpdate(
+          { username: input },
+          { $addToSet: { friendRequestsReceived: context.user.username } },
+          { new: true }
+        );
+        return updatedUser.friendRequestsSent;
+      }
+    },
     CreateFriends: async (_, { input }, context) => {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       else {
-        if (await User.findOne({ username: input }) === null) {
+        if ((await User.findOne({ username: input })) === null) {
           throw new ApolloError("User does not exist.");
-        }
-        else if (context.user.username === input) {
+        } else if (context.user.username === input) {
           throw new ApolloError("You can't add yourself as a friend!");
         }
         const updatedUser = await User.findOneAndUpdate(
@@ -97,10 +217,9 @@ const resolvers = {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       else {
-        if (await User.findOne({ username: input }) === null) {
+        if ((await User.findOne({ username: input })) === null) {
           throw new ApolloError("User does not exist.");
-        }
-        else if (context.user.username === input) {
+        } else if (context.user.username === input) {
           throw new ApolloError("You can't block yourself!");
         }
         const updatedUser = await User.findOneAndUpdate(
@@ -151,6 +270,10 @@ const resolvers = {
 
 // Initialize the app
 const app = express();
+
+if (process.env.NODE_ENV === "production") {
+  app.use(sslRedirect());
+}
 
 // enables communication if frontend is on diff port than backend
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));

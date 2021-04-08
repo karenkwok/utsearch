@@ -1,5 +1,27 @@
 #edit-btn {
   margin-top: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+
+  background-color: rgb(0, 42, 92);
+  border: none;
+  border-radius: 50px;
+  outline: none;
+}
+
+#edit-btn:hover {
+  background-color: #5e8de9;
+  cursor: pointer;
+}
+
+#edit {
+  color: white;
+}
+
+#edit:focus {
+  outline: none;
 }
 
 #profilegeneric-wrapper {
@@ -62,6 +84,24 @@
 .notBlocked:hover {
   background-color: #0366d6;
   color: white;
+}
+
+#profilegeneric-friends {
+  color: #00cc00;
+}
+
+#profilegeneric-friends:hover {
+  background-color: white;
+  cursor: default;
+}
+
+#profilegeneric-pendingfriend {
+  color: #ff8c1a;
+}
+
+#profilegeneric-pendingfriend:hover {
+  background-color: white;
+  cursor: default;
 }
 
 #profilegeneric-bio-wrapper {

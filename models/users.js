@@ -12,7 +12,10 @@ const User = new Schema({
   bio: String,
   tags: [String],
   friends: [String],
+  friendRequestsReceived: [String],
+  friendRequestsSent: [String],
   blocked: [String],
+  myLocation: {lat: Number, long: Number}
 });
 
 User.plugin(passportLocalMongoose);

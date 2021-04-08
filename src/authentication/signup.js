@@ -3,7 +3,7 @@
 import { React, useContext, useState } from "react";
 import "./signup.css";
 import "../index.css";
-import { Link, useHistory } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import { gql } from "@apollo/client";
 import { client, domain } from "../index";
 import { Context } from "../Store";
@@ -28,6 +28,10 @@ function SignupForm() {
 
   const [state, dispatch] = useContext(Context);
   const history = useHistory();
+
+  if (state.user !== null && state.user !== undefined) {
+    return <Redirect to={{ pathname: "/search" }} />;
+  }
 
   const handleUsernameChange = function (event) {
     setUsername(event.target.value);

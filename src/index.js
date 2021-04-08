@@ -8,6 +8,7 @@ import SigninForm from "./authentication/signin";
 import Search from "./search/search";
 import ProfileGeneric from "./search/profile-generic";
 import Profile from "./functions/profile";
+import People from "./components/people/people";
 import RandomChat from "./functions/randomChat";
 import Credits from "./functions/credits";
 import VideoChat from "./functions/videoChat";
@@ -86,6 +87,11 @@ function SimpleMenu() {
       history.push("/search");
     };
 
+    const handlePeople = () => {
+      handleClose();
+      history.push("/people");
+    };
+
     const handleRandomChat = () => {
       handleClose();
       history.push("/random-chat");
@@ -131,6 +137,7 @@ function SimpleMenu() {
         >
           <MenuItem onClick={handleProfile}>Profile</MenuItem>
           <MenuItem onClick={handleSearch}>Search</MenuItem>
+          <MenuItem onClick={handlePeople}>People</MenuItem>
           <MenuItem onClick={handleRandomChat}>Random Chat</MenuItem>
           <MenuItem onClick={handleVideoChat}>Video Chat</MenuItem>
           <MenuItem onClick={handleCall}>Call</MenuItem>
@@ -166,6 +173,8 @@ function Main() {
                 email
                 bio
                 tags
+                friendRequestsReceived
+                friendRequestsSent
                 friends
                 blocked
               }
@@ -218,6 +227,9 @@ function Main() {
           </PrivateRoute>
           <PrivateRoute exact path="/profile/:username/edit">
             <Profile></Profile>
+          </PrivateRoute>
+          <PrivateRoute exact path="/people">
+            <People></People>
           </PrivateRoute>
           <Route exact path="/credits">
             <Credits></Credits>

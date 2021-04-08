@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import "./signin.css";
 import "../index.css";
 import { domain } from "../index";
-import { Link, useHistory } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import { Context } from "../Store";
 
 const axios = require("axios");
@@ -16,6 +16,10 @@ function SigninForm() {
 
   const [state, dispatch] = useContext(Context);
   const history = useHistory();
+
+  if (state.user !== null && state.user !== undefined) {
+    return <Redirect to={{ pathname: "/search" }} />;
+  }
 
   const handleUsernameChange = function (event) {
     setUsername(event.target.value);

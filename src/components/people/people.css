@@ -1,0 +1,51 @@
+.people {
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.people:focus {
+  outline: none;
+}
+
+.people:hover {
+  text-decoration: underline;
+}
+
+#people-accept {
+  margin-left: 3px;
+  margin-right: 3px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+
+  background-color: #00e600;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  outline: none;
+}
+
+#people-accept:hover {
+  background-color: #009900;
+  cursor: pointer;
+}
+
+#people-reject {
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  outline: none;
+}
+
+#people-reject:hover {
+  background-color: #b30000;
+  cursor: pointer;
+}
