@@ -133,9 +133,7 @@ function ProfileGeneric() {
     editbtn = <div></div>;
     fourbtns = (
       <div>
-        <button className={"profilegeneric-button " + buttonClass} onClick={handleBlockedSave}>
         {friendButton}
-        </button>
         <Link to="/call">
           <button className={"profilegeneric-button " + buttonClass}>Call</button>
         </Link>
