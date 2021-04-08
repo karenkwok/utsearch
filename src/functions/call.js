@@ -21,19 +21,17 @@ class Call extends React.Component {
   render() {
     return (
 
-      <div id="call-wrapper">
+      <div id="random-chat-wrapper">
 
         {!this.state.call ?
           <>
-            <h1>Meet A Student!</h1>
-            <h3>Welcome to Random Chat!</h3>
-            <p>Random Chat is a great way to meet new friends from UTSC!
-            </p>
+            <h1>Call</h1>
+            <h3>Welcome to Call!</h3>
             <p>
-              We show other anonymous students currently online, where you can send and/or accept invites to a video call!
+              Here, you will be shown a list of users online and you can call!
             </p>
 
-            <button id="meet-student-button" onClick={this.startMeeting}>Meet A Student!</button>
+            <button id="meet-student-button" onClick={this.startMeeting}>Let's Call!</button>
           </>
           :
           <CallComponent/>
