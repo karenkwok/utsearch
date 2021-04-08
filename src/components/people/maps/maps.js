@@ -53,7 +53,7 @@ function Maps() {
         setLong(position.coords.longitude);
         client
           .mutate({
-            variables: { lat: lat, long: long },
+            variables: { lat: position.coords.latitude, long: position.coords.longitude },
             mutation: EDIT_LOCATION,
           })
           .then((result) => {
