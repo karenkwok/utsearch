@@ -41,6 +41,7 @@ const typeDefs = `
     myLocation: MyLocation
   }
   type Query {
+    GetFriendsLocation: [FriendsLocation],
     GetUsers(searchValue: String): [User],
     profile: User,
     profileGeneric(input: ProfileGenericInput): User
@@ -67,11 +68,24 @@ const typeDefs = `
     lat: Float,
     long: Float
   }
+  type FriendsLocation {
+    username: String,
+    myLocation: MyLocation
+  }
 `;
 
 // The resolvers
 const resolvers = {
   Query: {
+    GetFriendsLocation: async (_, { }, context) => {
+      if (!context.user) throw new AuthenticationError("You must be logged in.");
+      else {
+        const userFriends = await User.find(
+          { username: { $in: context.user.friends } }
+        );
+        return userFriends;
+      }
+    },
     GetUsers: async (parent, args, context) => {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
