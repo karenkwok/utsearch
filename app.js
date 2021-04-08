@@ -77,12 +77,14 @@ const typeDefs = `
 // The resolvers
 const resolvers = {
   Query: {
-    GetFriendsLocation: async (_, { }, context) => {
-      if (!context.user) throw new AuthenticationError("You must be logged in.");
+    GetFriendsLocation: async (_, {}, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
       else {
-        const userFriends = await User.find(
-          { username: { $in: context.user.friends } }
-        );
+        const userFriends = await User.find({
+          username: { $in: context.user.friends },
+          myLocation: { $ne: null },
+        });
         return userFriends;
       }
     },
@@ -113,11 +115,12 @@ const resolvers = {
   },
   Mutation: {
     CreateLocation: async (_, { lat, long }, context) => {
-      if (!context.user) throw new AuthenticationError("You must be logged in.");
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
       else {
         const updatedUser = await User.findOneAndUpdate(
           { username: context.user.username },
-          { myLocation: {lat: lat, long: long} },
+          { myLocation: { lat: lat, long: long } },
           { new: true }
         );
         return updatedUser;
