@@ -48,9 +48,26 @@ function SignupForm() {
 
   const handleSubmit = function (event) {
     event.preventDefault();
+    if (!username) {
+      setError("You must enter a username.");
+      return;
+    }
+    else if (!password) {
+      setError("You must enter a password.");
+      return;
+    }
+    else if (!email) {
+      setError("You must enter an email.");
+      return;
+    }
+    /*
+    else if (username.findOne) {
+      setError("Username already taken.");
+      return;
+    }*/
     // check if email is invalid
     // https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
-    if (
+    else if (
       email.search(
         /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
       ) === -1
