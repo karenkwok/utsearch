@@ -148,6 +148,7 @@ function ProfileGeneric() {
       blockbtn = (
         <button
           className={"profilegeneric-button " + buttonClass}
+          id="blocked-btn"
         >
           Blocked
         </button>
