@@ -51,6 +51,10 @@
   outline: none;
 }
 
+#signup-error {
+  color: red;
+}
+
 #createaccount-btn {
   margin-top: 20px;
   margin-bottom: 20px;

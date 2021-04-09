@@ -70,6 +70,12 @@
   cursor: pointer;
 }
 
+#blocked-btn {
+  background-color: white;
+  color: red;
+  cursor: not-allowed;
+}
+
 .blocked, .blocked:hover {
   background-color: white;
   color: lightgray;
