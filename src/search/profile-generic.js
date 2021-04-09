@@ -136,7 +136,7 @@ function ProfileGeneric() {
       friendButton = (
         <button
           className={"profilegeneric-button " + buttonClass}
-          onClick={handleFriendSave}
+          onClick={isBlocked === true ? undefined : handleFriendSave}
         >
           +Friend
         </button>
@@ -148,7 +148,6 @@ function ProfileGeneric() {
       blockbtn = (
         <button
           className={"profilegeneric-button " + buttonClass}
-          onClick={handleBlockedSave}
         >
           Blocked
         </button>
