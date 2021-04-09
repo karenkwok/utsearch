@@ -55,7 +55,7 @@ function SignupForm() {
         /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
       ) === -1
     ) {
-      setError("Email is invalid.");
+      setError("Invalid email.");
       return;
     };
     
@@ -121,7 +121,7 @@ function SignupForm() {
           value={email}
           onChange={handleEmailChange}
         />
-        <div>{error}</div>
+        <div id="signup-error">{error}</div>
         <input type="submit" id="createaccount-btn" value="Create Account" />
       </form>
       <Link to="/signin" id="signupform-link">
