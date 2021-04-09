@@ -164,6 +164,13 @@ function VideoChatComponent(){
     })
   }, [ locationKeys, stream]);
 
+  var signOutButtonXpath = "//li[text()='Sign Out']";
+  var signOutButton = document.evaluate(signOutButtonXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+  signOutButton.onclick = function() {
+    leavePageDisconnect();
+  }
+
   /* Connection events if user is the caller */
   function callPeer(id) {
     const peer = new Peer({
