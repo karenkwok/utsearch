@@ -25,10 +25,10 @@ class Call extends React.Component {
 
         {!this.state.call ?
           <>
-            <h1>Call</h1>
-            <h3>Welcome to Call!</h3>
+            <h1>UTSCall - Call Your Friends</h1>
+            <h3>Welcome to UTSCall!</h3>
             <p>
-              Here, you will be shown a list of users online and you can call!
+              Here, you will be shown a list of users online and you can call! Blocked users will not be shown.
             </p>
 
             <button id="meet-student-button" onClick={this.startMeeting}>Let's Call!</button>

@@ -1,13 +1,13 @@
 /* jshint esversion: 6 */
 
-//TODO why does it crash when you refresh????
-
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Context } from "../Store";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import "../index.css";
 import styled from "styled-components";
+import "./chat-components.css"
+import { useHistory} from "react-router-dom";
 
 /*
 Base Video Chat Structure
@@ -54,8 +54,6 @@ const UserList = styled.div`
   min-height: 0;
 `;
 
-//TODO put an image?
-//TODO have toggle for show friends only
 const AudioPlayer = styled.audio`
 
 `;
@@ -91,6 +89,8 @@ function CallComponent(){
   const socket = useRef();
   const peerRef = useRef();
 
+  const history = useHistory();
+
   /* Events for the connected user */
   function connectUser() {
     socket.current = io.connect('/call');
@@ -121,11 +121,7 @@ function CallComponent(){
     })
 
     socket.current.on("user left", () => {
-      setMuteBtnState("Mute Me");
-      setMuteCallerBtnState("Mute");
-      socket.current.destroy();
-      setCallAccepted(false);
-      connectUser();
+      disconnectCall();
     })
   }
 
@@ -228,6 +224,7 @@ function CallComponent(){
   function disconnectCall() {
     socket.current.destroy();
     setCallAccepted(false);
+    setCallerUsername("");
     setMuteBtnState("Mute Me");
     setMuteCallerBtnState("Mute");
     connectUser();
@@ -250,6 +247,15 @@ function CallComponent(){
       setMuteCallerBtnState("Mute");
     }
     callerStream.getAudioTracks()[0].enabled = !callerStream.getAudioTracks()[0].enabled;
+  }
+
+  function goToProfile(){
+    socket.current.destroy();
+    setCallAccepted(false);
+    setCallerUsername("");
+    setMuteBtnState("Mute Me");
+    setMuteCallerBtnState("Mute");
+    history.push("/profile/" + callerUsername);
   }
 
   /* Conditional Elements */
@@ -282,11 +288,18 @@ function CallComponent(){
   }
 
   let videoText;
-  if (!receivingCall) {
+  if (callerUsername === "") {
     videoText = (
       <>
         <Box>You</Box>
-        <Box>{callerUsername}</Box>
+        <Box></Box>
+      </>
+    )
+  } else if (!receivingCall) {
+    videoText = (
+      <>
+        <Box>You</Box>
+        <Box onClick={() => goToProfile()}><span class="username">{callerUsername}</span></Box>
       </>
     )
   } else {
@@ -309,8 +322,10 @@ function CallComponent(){
 
           if (user[0] === yourID) {
             return null;
+          } else if (state.user.blocked.includes(user[1])) {
+            return null;
           }
-          console.log(state.user.blocked);
+
           return (
             <button key={user[0]} onClick={() => callPeer(user[0])}>Call {user[1]}</button>
           );
