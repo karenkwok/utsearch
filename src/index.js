@@ -11,6 +11,8 @@ import Profile from "./functions/profile";
 import People from "./components/people/people";
 import RandomChat from "./functions/randomChat";
 import Credits from "./functions/credits";
+import VideoChat from "./functions/videoChat";
+import Call from "./functions/call"
 import Icon from "@material-ui/core/Icon";
 
 import {
@@ -100,6 +102,16 @@ function SimpleMenu() {
       history.push("/random-chat");
     };
 
+    const handleVideoChat = () => {
+      handleClose();
+      history.push("/video-chat");
+    }
+
+    const handleCall = () => {
+      handleClose();
+      history.push("/call");
+    }
+
     const handleSignOut = () => {
       handleClose();
       axios
@@ -133,6 +145,8 @@ function SimpleMenu() {
           <MenuItem onClick={handleSearch}>Search</MenuItem>
           <MenuItem onClick={handlePeople}>People</MenuItem>
           <MenuItem onClick={handleRandomChat}>Random Chat</MenuItem>
+          <MenuItem onClick={handleVideoChat}>Video Chat</MenuItem>
+          <MenuItem onClick={handleCall}>Call</MenuItem>
           <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
         </Menu>
       </div>
@@ -207,6 +221,12 @@ function Main() {
           </PrivateRoute>
           <PrivateRoute exact path="/random-chat">
             <RandomChat></RandomChat>
+          </PrivateRoute>
+          <PrivateRoute exact path="/video-chat">
+            <VideoChat></VideoChat>
+          </PrivateRoute>
+          <PrivateRoute exact path="/call">
+            <Call></Call>
           </PrivateRoute>
           <PrivateRoute exact path="/profile/:username">
             <ProfileGeneric></ProfileGeneric>

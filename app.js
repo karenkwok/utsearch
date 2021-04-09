@@ -61,7 +61,7 @@ const typeDefs = `
     CreateFriends(input: String): [String],
     CreateBlocked(input: String): User,
     CreateBio(input: String): String,
-    CreateTag(input: String): [String], 
+    CreateTag(input: String): [String],
     CreateUser(input: CreateUserInput): User
   }
   type MyLocation {
@@ -369,7 +369,11 @@ const users = {};
 const connected = {};
 const pairs = [];
 
-io.on("connection", (socket) => {
+const randomChatNameSpace = io.of('/random-chat');
+const callNameSpace = io.of('/call');
+const videoChatNameSpace = io.of('/video-chat');
+
+randomChatNameSpace.on("connection", (socket) => {
   //For new connections, save user id
   if (!users[socket.id]) {
     users[socket.id] = socket.id;
@@ -378,7 +382,7 @@ io.on("connection", (socket) => {
 
   //Update all connected users with connected users
   socket.emit("yourID", socket.id);
-  io.sockets.emit("allUsers", connected);
+  randomChatNameSpace.emit("allUsers", connected);
 
   //Delete users if they disconnect
   socket.on("disconnect", () => {
@@ -395,12 +399,12 @@ io.on("connection", (socket) => {
 
     delete users[socket.id];
     delete connected[socket.id];
-    io.sockets.emit("allUsers", connected);
+    randomChatNameSpace.emit("allUsers", connected);
   });
 
   //Call a user
   socket.on("callUser", (data) => {
-    io.to(data.userToCall).emit("hey", {
+    randomChatNameSpace.to(data.userToCall).emit("hey", {
       signal: data.signalData,
       from: data.from,
       to: data.userToCall,
@@ -412,8 +416,180 @@ io.on("connection", (socket) => {
     pairs.push([data.to, data.from]);
     delete connected[data.to];
     delete connected[data.from];
-    io.to(data.to).emit("callAccepted", data.signal);
-    io.sockets.emit("allUsers", connected);
+    randomChatNameSpace.to(data.to).emit("callAccepted", data.signal);
+    randomChatNameSpace.emit("allUsers", connected);
+  });
+});
+
+const videoUsers = [];
+const videoConnected = [];
+const videoPairs = [];
+
+videoChatNameSpace.on("connection", (socket) => {
+  //Return id to socket
+  socket.emit("yourID", socket.id);
+
+  //Get socket's username and then update list
+  socket.on("ConnectUsername", (data) => {
+    //For new connections, save user id and their username
+    if (!users[socket.id]) {
+      videoUsers[socket.id] = socket.id;
+      videoConnected.push([socket.id, data.username]);
+    }
+
+    //Notify all current users of connected usernames
+    videoChatNameSpace.emit("allUsers", videoConnected);
+  });
+
+  //Delete users if they disconnect
+  socket.on("disconnect", () => {
+    for (let pair of videoPairs) {
+      //If one disconnects, notify other user
+      if (pair.includes(socket.id)) {
+        let index = pair.indexOf(socket.id);
+        if (index == 0) {
+          socket.to(pair[1]).emit("user left");
+        } else {
+          socket.to(pair[0]).emit("user left");
+        }
+      }
+    }
+
+    //Delete socket id and username pair from the list
+    delete videoUsers[socket.id];
+    for (let i = 0; i < (videoConnected.length); i++) {
+      if (videoConnected[i][0] == socket.id) {
+        videoConnected.splice(i, 1);
+      }
+    }
+
+    //Notify all other users of the change
+    videoChatNameSpace.emit("allUsers", connected);
+  });
+
+  //Call a user
+  socket.on("callUser", (data) => {
+    let callerUsername = "";
+    for (let i = 0; i < (videoConnected.length); i++) {
+      if (videoConnected[i][0] == data.from) {
+        callerUsername = videoConnected[i][1];
+      }
+    }
+    videoChatNameSpace.to(data.userToCall).emit("hey", {
+      signal: data.signalData,
+      from: data.from,
+      fromUsername: callerUsername,
+      to: data.userToCall,
+    });
+  });
+
+  //Let calling user know call is accepted
+  socket.on("acceptCall", (data) => {
+    videoPairs.push([data.to, data.from]);
+
+    //Users are not connected, now in a call
+    for (let i = 0; i < (videoConnected.length); i++) {
+      if (videoConnected[i][0] == data.to) {
+        videoConnected.splice(i, 1);
+      }
+    }
+    let callerUser = '';
+    for (let i = 0; i < videoConnected.length; i++) {
+      if (videoConnected[i][0] == data.from) {
+        callerUser = videoConnected[i][1];
+        videoConnected.splice(i, 1);
+     }
+    }
+
+    //Notify parties of the changes
+    videoChatNameSpace.to(data.to).emit("callAccepted", {signal: data.signal, username: callerUser});
+    videoChatNameSpace.emit("allUsers", videoConnected);
+  });
+});
+
+const callUsers = [];
+const callConnected = [];
+const callPairs = [];
+
+callNameSpace.on("connection", (socket) => {
+  //Return id to socket
+  socket.emit("yourID", socket.id);
+
+  //Get socket's username and then update list
+  socket.on("ConnectUsername", (data) => {
+    //For new connections, save user id and their username
+    if (!users[socket.id]) {
+      callUsers[socket.id] = socket.id;
+      callConnected.push([socket.id, data.username]);
+    }
+
+    //Notify all current users of connected usernames
+    callNameSpace.emit("allUsers", callConnected);
+  });
+
+  //Delete users if they disconnect
+  socket.on("disconnect", () => {
+    for (let pair of callPairs) {
+      //If one disconnects, notify other user
+      if (pair.includes(socket.id)) {
+        let index = pair.indexOf(socket.id);
+        if (index == 0) {
+          socket.to(pair[1]).emit("user left");
+        } else {
+          socket.to(pair[0]).emit("user left");
+        }
+      }
+    }
+
+    //Delete socket id and username pair from the list
+    delete callUsers[socket.id];
+    for (let i = 0; i < (callConnected.length); i++) {
+      if (callConnected[i][0] == socket.id) {
+        callConnected.splice(i, 1);
+      }
+    }
+
+    //Notify all other users of the change
+    callNameSpace.emit("allUsers", connected);
+  });
+
+  //Call a user
+  socket.on("callUser", (data) => {
+    let callerUsername = "";
+    for (let i = 0; i < (callConnected.length); i++) {
+      if (callConnected[i][0] == data.from) {
+        callerUsername = callConnected[i][1];
+      }
+    }
+    callNameSpace.to(data.userToCall).emit("hey", {
+      signal: data.signalData,
+      from: data.from,
+      fromUsername: callerUsername,
+      to: data.userToCall,
+    });
+  });
+
+  //Let calling user know call is accepted
+  socket.on("acceptCall", (data) => {
+    callPairs.push([data.to, data.from]);
+
+    //Users are not connected, now in a call
+    for (let i = 0; i < (callConnected.length); i++) {
+      if (callConnected[i][0] == data.to) {
+        callConnected.splice(i, 1);
+      }
+    }
+    let callerUser = '';
+    for (let i = 0; i < callConnected.length; i++) {
+      if (callConnected[i][0] == data.from) {
+        callerUser = callConnected[i][1];
+        callConnected.splice(i, 1);
+     }
+    }
+
+    //Notify parties of the changes
+    callNameSpace.to(data.to).emit("callAccepted", {signal: data.signal, username: callerUser});
+    callNameSpace.emit("allUsers", callConnected);
   });
 });
 

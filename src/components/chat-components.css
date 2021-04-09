@@ -1,0 +1,11 @@
+.username:hover {
+  color: blue;
+  cursor: pointer;
+  text-decoration: none;
+
+}
+
+.username {
+  cursor: pointer;
+  text-decoration: none;
+}

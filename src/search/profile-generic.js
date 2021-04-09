@@ -166,8 +166,12 @@ function ProfileGeneric() {
     fourbtns = (
       <div>
         {friendButton}
-        <button className={"profilegeneric-button " + buttonClass}>Call</button>
-        <button className={"profilegeneric-button " + buttonClass}>Chat</button>
+        <Link to="/call">
+          <button className={"profilegeneric-button " + buttonClass}>Call</button>
+        </Link>
+        <Link to="/video-chat">
+          <button className={"profilegeneric-button " + buttonClass}>Chat</button>
+        </Link>
         {blockbtn}
       </div>
     );
