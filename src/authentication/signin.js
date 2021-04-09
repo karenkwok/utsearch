@@ -60,6 +60,7 @@ function SigninForm() {
           type="text"
           className="signinform-fields"
           name="username"
+          maxlength="20"
           value={username}
           onChange={handleUsernameChange}
         />

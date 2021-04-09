@@ -41,6 +41,7 @@ const typeDefs = `
     myLocation: MyLocation
   }
   type Query {
+    GetFriendsLocation: [FriendsLocation],
     GetUsers(searchValue: String): [User],
     profile: User,
     profileGeneric(input: ProfileGenericInput): User
@@ -58,7 +59,7 @@ const typeDefs = `
     FriendRequestResponse(user: String, acceptRequest: Boolean): User,
     CreateFriendRequest(input: String): [String],
     CreateFriends(input: String): [String],
-    CreateBlocked(input: String): [String],
+    CreateBlocked(input: String): User,
     CreateBio(input: String): String,
     CreateTag(input: String): [String],
     CreateUser(input: CreateUserInput): User
@@ -67,11 +68,26 @@ const typeDefs = `
     lat: Float,
     long: Float
   }
+  type FriendsLocation {
+    username: String,
+    myLocation: MyLocation
+  }
 `;
 
 // The resolvers
 const resolvers = {
   Query: {
+    GetFriendsLocation: async (_, {}, context) => {
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
+      else {
+        const userFriends = await User.find({
+          username: { $in: context.user.friends },
+          myLocation: { $ne: null },
+        });
+        return userFriends;
+      }
+    },
     GetUsers: async (parent, args, context) => {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
@@ -99,11 +115,12 @@ const resolvers = {
   },
   Mutation: {
     CreateLocation: async (_, { lat, long }, context) => {
-      if (!context.user) throw new AuthenticationError("You must be logged in.");
+      if (!context.user)
+        throw new AuthenticationError("You must be logged in.");
       else {
         const updatedUser = await User.findOneAndUpdate(
           { username: context.user.username },
-          { myLocation: {lat: lat, long: long} },
+          { myLocation: { lat: lat, long: long } },
           { new: true }
         );
         return updatedUser;
@@ -224,10 +241,24 @@ const resolvers = {
         }
         const updatedUser = await User.findOneAndUpdate(
           { username: context.user.username },
-          { $addToSet: { blocked: input } },
+          {
+            $addToSet: { blocked: input },
+            $pull: { friends: input, friendRequestsSent: input, friendRequestsReceived: input },
+          },
           { new: true }
         );
-        return updatedUser.blocked;
+        const otherUser = await User.findOneAndUpdate(
+          { username: input },
+          {
+            $pull: {
+              friends: context.user.username,
+              friendRequestsSent: context.user.username,
+              friendRequestsReceived: context.user.username
+            },
+          },
+          { new: true }
+        );
+        return updatedUser
       }
     },
     CreateBio: async (_, { input }, context) => {

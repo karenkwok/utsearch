@@ -20,7 +20,12 @@ const EDIT_FRIEND_REQUESTS = gql`
 
 const EDIT_BLOCKED = gql`
   mutation($input: String!) {
-    CreateBlocked(input: $input)
+    CreateBlocked(input: $input) {
+      friends
+      friendRequestsReceived
+      friendRequestsSent
+      blocked
+    }
   }
 `;
 
@@ -53,6 +58,7 @@ function ProfileGeneric() {
     client
       .mutate({ variables: { input: username }, mutation: EDIT_BLOCKED })
       .then((result) => {
+        console.log(result);
         dispatch({ type: "EDIT_BLOCKED", payload: result.data.CreateBlocked });
         console.log(result);
       })
@@ -89,7 +95,7 @@ function ProfileGeneric() {
       .catch((error) => {
         console.log(error);
       });
-  });
+  }, [username]);
 
   let friendButton;
   let editbtn;
@@ -107,7 +113,10 @@ function ProfileGeneric() {
     }
     if (state.user.friends.includes(username)) {
       friendButton = (
-        <button id="profilegeneric-friends" className={"profilegeneric-button " + buttonClass}>
+        <button
+          id="profilegeneric-friends"
+          className={"profilegeneric-button " + buttonClass}
+        >
           Friends
         </button>
       );
@@ -116,7 +125,10 @@ function ProfileGeneric() {
       state.user.friendRequestsSent.includes(username)
     ) {
       friendButton = (
-        <button id="profilegeneric-pendingfriend" className={"profilegeneric-button " + buttonClass}>
+        <button
+          id="profilegeneric-pendingfriend"
+          className={"profilegeneric-button " + buttonClass}
+        >
           Pending Friend
         </button>
       );
@@ -124,29 +136,42 @@ function ProfileGeneric() {
       friendButton = (
         <button
           className={"profilegeneric-button " + buttonClass}
-          onClick={handleFriendSave}
+          onClick={isBlocked === true ? undefined : handleFriendSave}
         >
           +Friend
         </button>
       );
     }
     editbtn = <div></div>;
-    fourbtns = (
-      <div>
-        {friendButton}
-        <Link to="/call">
-          <button className={"profilegeneric-button " + buttonClass}>Call</button>
-        </Link>
-
-        <Link to="/video-chat">
-          <button className={"profilegeneric-button " + buttonClass}>Chat</button>
-        </Link>
+    let blockbtn;
+    if (isBlocked === true) {
+      blockbtn = (
+        <button
+          className={"profilegeneric-button " + buttonClass}
+        >
+          Blocked
+        </button>
+      );
+    } else {
+      blockbtn = (
         <button
           className={"profilegeneric-button " + buttonClass}
           onClick={handleBlockedSave}
         >
           Block
         </button>
+      );
+    }
+    fourbtns = (
+      <div>
+        {friendButton}
+        <Link to="/call">
+          <button className={"profilegeneric-button " + buttonClass}>Call</button>
+        </Link>
+        <Link to="/video-chat">
+          <button className={"profilegeneric-button " + buttonClass}>Chat</button>
+        </Link>
+        {blockbtn}
       </div>
     );
   } else {

@@ -13,6 +13,7 @@ import RandomChat from "./functions/randomChat";
 import Credits from "./functions/credits";
 import VideoChat from "./functions/videoChat";
 import Call from "./functions/call"
+import Icon from "@material-ui/core/Icon";
 
 import {
   BrowserRouter as Router,
@@ -40,6 +41,10 @@ export const client = new ApolloClient({
   cache: new InMemoryCache(),
   // tell apollo client to send my session cookie to backend so that the request can be authenticated
   credentials: "include",
+  defaultOptions: {
+    watchQuery: { fetchPolicy: "no-cache", errorPolicy: "ignore" },
+    query: { fetchPolicy: "no-cache", errorPolicy: "all" },
+  },
 });
 
 function PrivateRoute({ children, ...rest }) {
@@ -127,6 +132,7 @@ function SimpleMenu() {
           onClick={handleClick}
         >
           {username}
+          <Icon>arrow_drop_down</Icon>
         </Button>
         <Menu
           id="simple-menu"
