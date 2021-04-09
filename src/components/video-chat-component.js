@@ -235,6 +235,7 @@ function VideoChatComponent(){
 
     socket.current.destroy();
     setCallAccepted(false);
+    setCallerUsername("");
     setMuteBtnState("Mute Me");
     setHideBtnState("Hide Me");
     setMuteCallerBtnState("Mute");
@@ -323,7 +324,7 @@ function VideoChatComponent(){
   if (!receivingCall && Object.keys(users).length === 0) {
     disconnectButton = (
       <div>
-        <button onClick={disconnectCall}>Disconnect</button>
+        <button onClick={disconnectCall}>Reconnect</button>
       </div>
     )
   }

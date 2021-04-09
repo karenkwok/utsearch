@@ -296,7 +296,7 @@ function RandomChatComponent(){
   if (!receivingCall && Object.keys(users).length === 0) {
     disconnectButton = (
       <div>
-        <button onClick={disconnectCall}>Disconnect</button>
+        <button onClick={disconnectCall}>Reconnect</button>
       </div>
     )
   }
