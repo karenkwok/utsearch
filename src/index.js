@@ -11,6 +11,7 @@ import Profile from "./functions/profile";
 import People from "./components/people/people";
 import RandomChat from "./functions/randomChat";
 import Credits from "./functions/credits";
+import Icon from "@material-ui/core/Icon";
 
 import {
   BrowserRouter as Router,
@@ -115,6 +116,7 @@ function SimpleMenu() {
           onClick={handleClick}
         >
           {username}
+          <Icon>arrow_drop_down</Icon>
         </Button>
         <Menu
           id="simple-menu"

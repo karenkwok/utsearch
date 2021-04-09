@@ -87,6 +87,7 @@ function SignupForm() {
           type="text"
           className="signupform-fields"
           name="username"
+          maxlength="20"
           value={username}
           onChange={handleUsernameChange}
         />
