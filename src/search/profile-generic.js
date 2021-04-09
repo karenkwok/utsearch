@@ -113,7 +113,10 @@ function ProfileGeneric() {
     }
     if (state.user.friends.includes(username)) {
       friendButton = (
-        <button id="profilegeneric-friends" className={"profilegeneric-button " + buttonClass}>
+        <button
+          id="profilegeneric-friends"
+          className={"profilegeneric-button " + buttonClass}
+        >
           Friends
         </button>
       );
@@ -122,7 +125,10 @@ function ProfileGeneric() {
       state.user.friendRequestsSent.includes(username)
     ) {
       friendButton = (
-        <button id="profilegeneric-pendingfriend" className={"profilegeneric-button " + buttonClass}>
+        <button
+          id="profilegeneric-pendingfriend"
+          className={"profilegeneric-button " + buttonClass}
+        >
           Pending Friend
         </button>
       );
@@ -137,17 +143,32 @@ function ProfileGeneric() {
       );
     }
     editbtn = <div></div>;
-    fourbtns = (
-      <div>
-        {friendButton}
-        <button className={"profilegeneric-button " + buttonClass}>Call</button>
-        <button className={"profilegeneric-button " + buttonClass}>Chat</button>
+    let blockbtn;
+    if (isBlocked === true) {
+      blockbtn = (
+        <button
+          className={"profilegeneric-button " + buttonClass}
+          onClick={handleBlockedSave}
+        >
+          Blocked
+        </button>
+      );
+    } else {
+      blockbtn = (
         <button
           className={"profilegeneric-button " + buttonClass}
           onClick={handleBlockedSave}
         >
           Block
         </button>
+      );
+    }
+    fourbtns = (
+      <div>
+        {friendButton}
+        <button className={"profilegeneric-button " + buttonClass}>Call</button>
+        <button className={"profilegeneric-button " + buttonClass}>Chat</button>
+        {blockbtn}
       </div>
     );
   } else {
