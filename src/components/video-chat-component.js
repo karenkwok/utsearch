@@ -106,14 +106,6 @@ function VideoChatComponent(){
   function connectUser() {
     socket.current = io.connect('/video-chat');
 
-    //Get the user's webcam as the stream
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-      setStream(stream);
-      if (userVideo.current) {
-        userVideo.current.srcObject = stream;
-      }
-    })
-
     socket.current.on("yourID", (id) => {
       setYourID(id);
       socket.current.emit("ConnectUsername", {username: state.user.username});
@@ -138,6 +130,14 @@ function VideoChatComponent(){
 
   /* Upon clicking past intro, automatically attempt to connect user */
   useEffect(() => {
+    //Get the user's webcam as the stream
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+      setStream(stream);
+      if (userVideo.current) {
+        userVideo.current.srcObject = stream;
+      }
+    })
+
     connectUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

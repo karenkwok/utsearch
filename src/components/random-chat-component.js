@@ -5,6 +5,7 @@ import io from "socket.io-client";
 import Peer from "simple-peer";
 import "../index.css";
 import styled from "styled-components";
+import { useHistory} from "react-router-dom";
 
 /*
 Base Video Chat Structure
@@ -92,17 +93,12 @@ function RandomChatComponent(){
   const socket = useRef();
   const peerRef = useRef();
 
+  const history = useHistory();
+  const [locationKeys, setLocationKeys] = useState([]);
+
   /* Events for the connected user */
   function connectUser() {
     socket.current = io.connect('/random-chat');
-
-    //Get the user's webcam as the stream
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-      setStream(stream);
-      if (userVideo.current) {
-        userVideo.current.srcObject = stream;
-      }
-    })
 
     socket.current.on("yourID", (id) => {
       setYourID(id);
@@ -130,28 +126,44 @@ function RandomChatComponent(){
 
   /* Upon clicking past intro, automatically attempt to connect user */
   useEffect(() => {
+    //Get the user's webcam as the stream
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+      setStream(stream);
+      if (userVideo.current) {
+        userVideo.current.srcObject = stream;
+      }
+    })
+
     connectUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    return history.listen(location => {
+      if (history.action === 'PUSH') {
+        setLocationKeys([ location.key ]);
+        leavePageDisconnect();
+      }
+
+      if (history.action === 'POP') {
+        if (locationKeys[1] === location.key) {
+          setLocationKeys(([ _, ...keys ]) => keys)
+          // Handle forward event
+          leavePageDisconnect();
+
+        } else {
+          setLocationKeys((keys) => [ location.key, ...keys ])
+          // Handle back event
+          leavePageDisconnect();
+        }
+      }
+    })
+  }, [locationKeys, stream]);
+
   var signOutButtonXpath = "//li[text()='Sign Out']";
   var signOutButton = document.evaluate(signOutButtonXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
-  var profileXpath = "//li[text()='Profile']";
-  var profileButton = document.evaluate(profileXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-
-  var searchXpath = "//li[text()='Search']";
-  var searchButton = document.evaluate(searchXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-
   signOutButton.onclick = function() {
-    leavePageDisconnect();
-  }
-
-  profileButton.onclick = function() {
-    leavePageDisconnect();
-  }
-
-  searchButton.onclick = function() {
     leavePageDisconnect();
   }
 

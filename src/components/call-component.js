@@ -96,14 +96,6 @@ function CallComponent(){
   function connectUser() {
     socket.current = io.connect('/call');
 
-    //Get the user's microphone as the stream
-    navigator.mediaDevices.getUserMedia({ video: false, audio: true }).then(stream => {
-      setStream(stream);
-      if (userAudio.current) {
-        userAudio.current.srcObject = stream;
-      }
-    })
-
     socket.current.on("yourID", (id) => {
       setYourID(id);
       socket.current.emit("ConnectUsername", {username: state.user.username});
@@ -128,6 +120,15 @@ function CallComponent(){
 
   /* Upon clicking past intro, automatically attempt to connect user */
   useEffect(() => {
+
+    //Get the user's microphone as the stream
+    navigator.mediaDevices.getUserMedia({ video: false, audio: true }).then(stream => {
+      setStream(stream);
+      if (userAudio.current) {
+        userAudio.current.srcObject = stream;
+      }
+    });
+
     connectUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -152,7 +153,7 @@ function CallComponent(){
         }
       }
     })
-  }, [ locationKeys, stream]);
+  }, [locationKeys, stream]);
 
   var signOutButtonXpath = "//li[text()='Sign Out']";
   var signOutButton = document.evaluate(signOutButtonXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
