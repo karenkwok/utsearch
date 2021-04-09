@@ -27,7 +27,11 @@ function Credits() {
         <li><a href="https://www.youtube.com/watch?v=7a_vgmEZrhE">Video Tutorial</a></li>
       </ul>
 
-
+      <h3> Detecting Route Change in React </h3>
+      <h4> By Nicolas Keller </h4>
+      <ul>
+        <li><a href="https://stackoverflow.com/a/60125216">Stackoverflow Answer</a></li>
+      </ul>
 
       <h3> Tabs Component in React Structure </h3>
       <h4>By joshtronic</h4>

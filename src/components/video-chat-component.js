@@ -100,6 +100,7 @@ function VideoChatComponent(){
   const peerRef = useRef();
 
   const history = useHistory();
+  const [locationKeys, setLocationKeys] = useState([]);
 
   /* Events for the connected user */
   function connectUser() {
@@ -141,26 +142,27 @@ function VideoChatComponent(){
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  var signOutButtonXpath = "//li[text()='Sign Out']";
-  var signOutButton = document.evaluate(signOutButtonXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+  useEffect(() => {
+    return history.listen(location => {
+      if (history.action === 'PUSH') {
+        setLocationKeys([ location.key ]);
+        leavePageDisconnect();
+      }
 
-  var profileXpath = "//li[text()='Profile']";
-  var profileButton = document.evaluate(profileXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+      if (history.action === 'POP') {
+        if (locationKeys[1] === location.key) {
+          setLocationKeys(([ _, ...keys ]) => keys)
+          // Handle forward event
+          leavePageDisconnect();
 
-  var searchXpath = "//li[text()='Search']";
-  var searchButton = document.evaluate(searchXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-
-  signOutButton.onclick = function() {
-    leavePageDisconnect();
-  }
-
-  profileButton.onclick = function() {
-    leavePageDisconnect();
-  }
-
-  searchButton.onclick = function() {
-    leavePageDisconnect();
-  }
+        } else {
+          setLocationKeys((keys) => [ location.key, ...keys ])
+          // Handle back event
+          leavePageDisconnect();
+        }
+      }
+    })
+  }, [ locationKeys, stream]);
 
   /* Connection events if user is the caller */
   function callPeer(id) {
