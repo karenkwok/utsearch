@@ -39,6 +39,10 @@ export const client = new ApolloClient({
   cache: new InMemoryCache(),
   // tell apollo client to send my session cookie to backend so that the request can be authenticated
   credentials: "include",
+  defaultOptions: {
+    watchQuery: { fetchPolicy: "no-cache", errorPolicy: "ignore" },
+    query: { fetchPolicy: "no-cache", errorPolicy: "all" },
+  },
 });
 
 function PrivateRoute({ children, ...rest }) {

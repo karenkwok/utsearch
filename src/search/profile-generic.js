@@ -95,7 +95,7 @@ function ProfileGeneric() {
       .catch((error) => {
         console.log(error);
       });
-  });
+  }, [username]);
 
   let friendButton;
   let editbtn;
