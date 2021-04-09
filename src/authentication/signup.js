@@ -25,6 +25,7 @@ function SignupForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
 
   const [state, dispatch] = useContext(Context);
   const history = useHistory();
@@ -47,6 +48,17 @@ function SignupForm() {
 
   const handleSubmit = function (event) {
     event.preventDefault();
+    // check if email is invalid
+    // https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
+    if (
+      email.search(
+        /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+      ) === -1
+    ) {
+      setError("Email is invalid.");
+      return;
+    };
+    
     // use apollo client to mutate with the variables from the form
     client
       .mutate({
@@ -87,6 +99,7 @@ function SignupForm() {
           type="text"
           className="signupform-fields"
           name="username"
+          maxlength="20"
           value={username}
           onChange={handleUsernameChange}
         />
@@ -108,7 +121,7 @@ function SignupForm() {
           value={email}
           onChange={handleEmailChange}
         />
-
+        <div>{error}</div>
         <input type="submit" id="createaccount-btn" value="Create Account" />
       </form>
       <Link to="/signin" id="signupform-link">
