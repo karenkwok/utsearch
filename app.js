@@ -59,7 +59,7 @@ const typeDefs = `
     FriendRequestResponse(user: String, acceptRequest: Boolean): User,
     CreateFriendRequest(input: String): [String],
     CreateFriends(input: String): [String],
-    CreateBlocked(input: String): [String],
+    CreateBlocked(input: String): User,
     CreateBio(input: String): String,
     CreateTag(input: String): [String], 
     CreateUser(input: CreateUserInput): User
@@ -241,10 +241,24 @@ const resolvers = {
         }
         const updatedUser = await User.findOneAndUpdate(
           { username: context.user.username },
-          { $addToSet: { blocked: input } },
+          {
+            $addToSet: { blocked: input },
+            $pull: { friends: input, friendRequestsSent: input, friendRequestsReceived: input },
+          },
           { new: true }
         );
-        return updatedUser.blocked;
+        const otherUser = await User.findOneAndUpdate(
+          { username: input },
+          {
+            $pull: {
+              friends: context.user.username,
+              friendRequestsSent: context.user.username,
+              friendRequestsReceived: context.user.username
+            },
+          },
+          { new: true }
+        );
+        return updatedUser
       }
     },
     CreateBio: async (_, { input }, context) => {

@@ -20,7 +20,12 @@ const EDIT_FRIEND_REQUESTS = gql`
 
 const EDIT_BLOCKED = gql`
   mutation($input: String!) {
-    CreateBlocked(input: $input)
+    CreateBlocked(input: $input) {
+      friends
+      friendRequestsReceived
+      friendRequestsSent
+      blocked
+    }
   }
 `;
 
@@ -53,6 +58,7 @@ function ProfileGeneric() {
     client
       .mutate({ variables: { input: username }, mutation: EDIT_BLOCKED })
       .then((result) => {
+        console.log(result);
         dispatch({ type: "EDIT_BLOCKED", payload: result.data.CreateBlocked });
         console.log(result);
       })
