@@ -99,6 +99,7 @@ function ProfileGeneric() {
         }
       })
       .catch((error) => {
+        history.push("/search");
         console.log(error);
       });
   }, [username]);

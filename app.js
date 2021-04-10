@@ -109,6 +109,9 @@ const resolvers = {
         throw new AuthenticationError("You must be logged in.");
       else {
         const profile = await User.findOne({ username: args.input.username });
+        if (profile === null) {
+          throw new ApolloError("User does not exist.");
+        }
         return profile;
       }
     },
