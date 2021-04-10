@@ -118,6 +118,7 @@
 
 #profile-bio {
   margin-bottom: 20px;
+  word-break: break-all;
 }
 
 #profile-tags {
