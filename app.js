@@ -287,6 +287,9 @@ const resolvers = {
         if (!input || input.trim() === "") {
           throw new ApolloError("Tag cannot be empty.");
         }
+        else if (input.length > 40) {
+          throw new ApolloError("Tag must be 40 characters or less.");
+        }
         const updatedUser = await User.findOneAndUpdate(
           { username: context.user.username },
           { $push: { tags: input } },
