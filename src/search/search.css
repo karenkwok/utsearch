@@ -107,6 +107,10 @@
   color: blue;
 }
 
+.result-bio {
+  word-break: break-all;
+}
+
 .result-tags {
   display: flex;
   flex-direction: row;
