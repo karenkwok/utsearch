@@ -60,11 +60,6 @@ function SignupForm() {
       setError("You must enter an email.");
       return;
     }
-    /*
-    else if (username.findOne) {
-      setError("Username already taken.");
-      return;
-    }*/
     // check if email is invalid
     // https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
     else if (
@@ -102,6 +97,7 @@ function SignupForm() {
         console.log(result);
       })
       .catch((error) => {
+        setError(error.message);
         console.log(error);
       });
   };

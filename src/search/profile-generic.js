@@ -4,13 +4,13 @@ import React, { useEffect, useContext, useState } from "react";
 import ReactDOM from "react-dom";
 import "../index.css";
 import "./profile-generic.css";
-import { useParams } from "react-router";
+import { Redirect, useParams } from "react-router";
 import { Context } from "../Store";
 import { client } from "..";
 import { gql } from "@apollo/client";
 import profilepic from "./profilepic.png";
 import Icon from "@material-ui/core/Icon";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const EDIT_FRIEND_REQUESTS = gql`
   mutation($input: String!) {
@@ -35,6 +35,7 @@ function ProfileGeneric() {
   const [tags, setTags] = useState([]);
   const [blocked, setBlocked] = useState([]);
   const { username } = useParams();
+  const history = useHistory();
 
   const handleFriendSave = function () {
     client
@@ -87,12 +88,18 @@ function ProfileGeneric() {
         },
       })
       .then((result) => {
-        setBio(result.data.profileGeneric.bio);
-        setTags(result.data.profileGeneric.tags);
-        setBlocked(result.data.profileGeneric.blocked);
         console.log(result);
+        if (result.data.profileGeneric === null) {
+          console.log(result);
+          history.push("/search");
+        } else {
+          setBio(result.data.profileGeneric.bio);
+          setTags(result.data.profileGeneric.tags);
+          setBlocked(result.data.profileGeneric.blocked);
+        }
       })
       .catch((error) => {
+        history.push("/search");
         console.log(error);
       });
   }, [username]);
@@ -167,10 +174,14 @@ function ProfileGeneric() {
       <div>
         {friendButton}
         <Link to="/call">
-          <button className={"profilegeneric-button " + buttonClass}>Call</button>
+          <button className={"profilegeneric-button " + buttonClass}>
+            Call
+          </button>
         </Link>
         <Link to="/video-chat">
-          <button className={"profilegeneric-button " + buttonClass}>Chat</button>
+          <button className={"profilegeneric-button " + buttonClass}>
+            Chat
+          </button>
         </Link>
         {blockbtn}
       </div>

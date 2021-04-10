@@ -13,6 +13,7 @@ function SigninForm() {
   // initial form state values
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const [state, dispatch] = useContext(Context);
   const history = useHistory();
@@ -46,6 +47,7 @@ function SigninForm() {
         console.log(result);
       })
       .catch((error) => {
+        setError("Username or password is incorrect.");
         console.log(error);
       });
   };
@@ -73,7 +75,7 @@ function SigninForm() {
           value={password}
           onChange={handlePasswordChange}
         />
-
+        <div id="signup-error">{error}</div>
         <input type="submit" id="signin-btn" value="Sign In" />
       </form>
       <Link to="/signup">Don't have an account? Sign Up.</Link>

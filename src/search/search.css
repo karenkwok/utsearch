@@ -104,7 +104,7 @@
 }
 
 .username:hover {
-  text-decoration: underline;
+  color: blue;
 }
 
 .result-tags {

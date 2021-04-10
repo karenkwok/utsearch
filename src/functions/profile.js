@@ -28,6 +28,7 @@ function Profile() {
   const [bio, setBio] = useState("");
   const [tag, setTag] = useState("");
   const [tags, setTags] = useState(state.user.tags);
+  const [error, setError] = useState("");
   const { username } = useParams();
 
   if (username !== state.user.username) {
@@ -57,6 +58,12 @@ function Profile() {
   };
 
   const handleTagSave = function () {
+    if (!tag || tag.trim() === "") {
+      setError("Tag cannot be empty.");
+    }
+    else if (tags.length === 30) {
+      setError("You cannot create more than 30 tags.");
+    }
     client
       .mutate({
         variables: {
@@ -122,6 +129,7 @@ function Profile() {
                   onChange={handleTagChange}
                   value={tag}
                 ></textarea>
+                <div id="signup-error">{error}</div>
                 <button className="profile-save" onClick={handleTagSave}>Save Tag</button>
               </div>
             </div>
