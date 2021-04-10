@@ -292,6 +292,8 @@ const resolvers = {
     CreateUser: async (_, { input }) => {
       if (!input.username) {
         throw new ApolloError("You must enter a username.");
+      } else if (input.username.length > 20) {
+        throw new ApolloError("Username must be 20 characters or less.");
       } else if (!input.password) {
         throw new ApolloError("You must enter a password.");
       } else if (!input.email) {
