@@ -85,6 +85,7 @@ function SigninForm() {
         <input type="submit" id="signin-btn" value="Sign In" />
       </form>
       <Link to="/signup">Don't have an account? Sign Up.</Link>
+      <Link id="credits-link" to="/credits">Credits</Link>
     </div>
   );
 }

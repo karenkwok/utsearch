@@ -330,7 +330,7 @@ function VideoChatComponent(){
   }
 
   let videoText;
-  if (callerUsername === "") {
+  if (callerUsername === "" || state.user.blocked.includes(callerUsername)) {
     videoText = (
       <>
         <Box>You</Box>
@@ -356,13 +356,19 @@ function VideoChatComponent(){
   }
 
   let userButtons;
-  if (Object.keys(users).length > 1) {
+  let blockedCount = 0;
+  for (var i = 0; i < users.length; i++) {
+    if (state.user.blocked.includes(users[i][1])) {
+      blockedCount++;
+    }
+  }
+  if ((Object.keys(users).length - blockedCount) > 1) {
     userButtons = (
       <StrangerList>
         <Title>Current Callers Available:</Title>
         {users.map((user, index) => {
 
-          if (user[0] === yourID) {
+          if (user[1] === state.user.username) {
             return null;
           } else if (state.user.blocked.includes(user[1])) {
             return null;
@@ -407,7 +413,7 @@ function VideoChatComponent(){
           <Box></Box>
         </>
       )
-    } else {
+    } else if (!state.user.blocked.includes(callerUsername)) {
       muteButtons =  (
         <>
           <Box>
