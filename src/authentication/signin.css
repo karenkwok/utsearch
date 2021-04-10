@@ -51,6 +51,10 @@
   outline: none;
 }
 
+#signin-error {
+  color: red;
+}
+
 #signin-btn {
   margin-top: 20px;
   margin-bottom: 20px;

@@ -83,7 +83,7 @@ function SigninForm() {
           value={password}
           onChange={handlePasswordChange}
         />
-        <div id="signup-error">{error}</div>
+        <div id="signin-error">{error}</div>
         <input type="submit" id="signin-btn" value="Sign In" />
       </form>
       <Link to="/signup">Don't have an account? Sign Up.</Link>
