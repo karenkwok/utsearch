@@ -58,14 +58,14 @@ function Search() {
     } else {
       results = (
         <div id="search-results">
-          <p>No results found for "{searchValue2}".</p>
+          <p id="search-results-sentence">No results found for "{searchValue2}".</p>
         </div>
       );
     }
   } else {
     results = (
       <div id="search-results">
-        <p>Search results for "{searchValue2}".</p>
+        <p id="search-results-sentence">Search results for "{searchValue2}".</p>
         {searchResults.map((searchResult) => {
           return (
             <div className="result-example">

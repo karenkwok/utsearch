@@ -59,6 +59,11 @@
   width: 65%;
 }
 
+#search-results-sentence {
+  flex-wrap: wrap;
+  word-break: break-all;
+}
+
 #search-results-container {
   padding: 10px;
   border: none;
