@@ -32,7 +32,7 @@ function Profile() {
   const { username } = useParams();
 
   if (username !== state.user.username) {
-    return <p>"You can't do that."</p>;
+    return <p id="you-cant-do-that">You can't do that.</p>;
   }
 
   const handleBioChange = function (event) {

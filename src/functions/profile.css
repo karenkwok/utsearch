@@ -1,3 +1,7 @@
+#you-cant-do-that {
+  color: red;
+}
+
 #profile-wrapper {
   display: flex;
   flex-direction: column;
