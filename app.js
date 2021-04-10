@@ -284,6 +284,9 @@ const resolvers = {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       else {
+        if (!input || input.trim() === "") {
+          throw new ApolloError("Tag cannot be empty.");
+        }
         const updatedUser = await User.findOneAndUpdate(
           { username: context.user.username },
           { $push: { tags: input } },
