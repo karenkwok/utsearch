@@ -9,7 +9,7 @@ function Credits() {
     <div>
       <h1>Credits</h1>
 
-      <p>Special thanks to joshtronic and Coding With Chaim</p>
+      <p>Special thanks to the following resources</p>
       <p>Without these tutorials, this project would not be possible.</p>
 
       <h3> Basic Video Chat Structure </h3>
@@ -37,6 +37,18 @@ function Credits() {
       <h4>By joshtronic</h4>
       <ul>
         <li><a href="https://www.digitalocean.com/community/tutorials/react-tabs-component">Online Tutorial</a></li>
+      </ul>
+
+      <h3> idk-lmao Icon </h3>
+      <h4>By Jordan Feng</h4>
+      <ul>
+        <li><a href="https://jordanfeng.me">My Website (Feedback is always welcome) :D</a></li>
+      </ul>
+
+      <h3> Converting Image to favicon </h3>
+      <h4>By favicon Generator</h4>
+      <ul>
+        <li><a href="https://www.favicon-generator.org/">Online Tool</a></li>
       </ul>
     </div>
   );
