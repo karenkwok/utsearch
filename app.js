@@ -290,8 +290,20 @@ const resolvers = {
       }
     },
     CreateUser: async (_, { input }) => {
-      if ((await User.findOne({ username: input.username })) !== null) {
+      if (!input.username) {
+        throw new ApolloError("You must enter a username.");
+      } else if (!input.password) {
+        throw new ApolloError("You must enter a password.");
+      } else if (!input.email) {
+        throw new ApolloError("You must enter an email.");
+      } else if ((await User.findOne({ username: input.username })) !== null) {
         throw new AuthenticationError("Username already exists.");
+      } else if (
+        input.email.search(
+          /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+        ) === -1
+      ) {
+        throw new ApolloError("Invalid email.");
       } else {
         const newUser = User({
           username: input.username,
