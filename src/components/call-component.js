@@ -325,7 +325,7 @@ function CallComponent(){
   }
 
   let userButtons;
-  if (Object.keys(users).length > 1) {
+  if ((Object.keys(users).length - state.user.blocked.length) > 1) {
     userButtons = (
       <UserList>
         <Title>Current Callers Available:</Title>
@@ -373,7 +373,7 @@ function CallComponent(){
           <Box></Box>
         </>
       )
-    } else {
+    } else if (!state.user.blocked.includes(callerUsername)){
       muteButtons =  (
         <>
           <Box>
