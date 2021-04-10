@@ -129,7 +129,7 @@ function Profile() {
                   onChange={handleTagChange}
                   value={tag}
                 ></textarea>
-                <div id="signup-error">{error}</div>
+                <div id="profile-error">{error}</div>
                 <button className="profile-save" onClick={handleTagSave}>Save Tag</button>
               </div>
             </div>
