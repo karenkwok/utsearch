@@ -243,7 +243,11 @@ const resolvers = {
           { username: context.user.username },
           {
             $addToSet: { blocked: input },
-            $pull: { friends: input, friendRequestsSent: input, friendRequestsReceived: input },
+            $pull: {
+              friends: input,
+              friendRequestsSent: input,
+              friendRequestsReceived: input,
+            },
           },
           { new: true }
         );
@@ -253,12 +257,12 @@ const resolvers = {
             $pull: {
               friends: context.user.username,
               friendRequestsSent: context.user.username,
-              friendRequestsReceived: context.user.username
+              friendRequestsReceived: context.user.username,
             },
           },
           { new: true }
         );
-        return updatedUser
+        return updatedUser;
       }
     },
     CreateBio: async (_, { input }, context) => {
@@ -286,15 +290,19 @@ const resolvers = {
       }
     },
     CreateUser: async (_, { input }) => {
-      const newUser = User({
-        username: input.username,
-        email: input.email,
-        bio: "",
-        tags: [],
-      });
-      await newUser.setPassword(input.password);
-      await newUser.save();
-      return newUser;
+      if ((await User.findOne({ username: input.username })) !== null) {
+        throw new AuthenticationError("Username already exists.");
+      } else {
+        const newUser = User({
+          username: input.username,
+          email: input.email,
+          bio: "",
+          tags: [],
+        });
+        await newUser.setPassword(input.password);
+        await newUser.save();
+        return newUser;
+      }
     },
   },
 };
@@ -369,9 +377,9 @@ const users = {};
 const connected = {};
 const pairs = [];
 
-const randomChatNameSpace = io.of('/random-chat');
-const callNameSpace = io.of('/call');
-const videoChatNameSpace = io.of('/video-chat');
+const randomChatNameSpace = io.of("/random-chat");
+const callNameSpace = io.of("/call");
+const videoChatNameSpace = io.of("/video-chat");
 
 randomChatNameSpace.on("connection", (socket) => {
   //For new connections, save user id
@@ -457,7 +465,7 @@ videoChatNameSpace.on("connection", (socket) => {
 
     //Delete socket id and username pair from the list
     delete videoUsers[socket.id];
-    for (let i = 0; i < (videoConnected.length); i++) {
+    for (let i = 0; i < videoConnected.length; i++) {
       if (videoConnected[i][0] == socket.id) {
         videoConnected.splice(i, 1);
       }
@@ -470,7 +478,7 @@ videoChatNameSpace.on("connection", (socket) => {
   //Call a user
   socket.on("callUser", (data) => {
     let callerUsername = "";
-    for (let i = 0; i < (videoConnected.length); i++) {
+    for (let i = 0; i < videoConnected.length; i++) {
       if (videoConnected[i][0] == data.from) {
         callerUsername = videoConnected[i][1];
       }
@@ -488,21 +496,23 @@ videoChatNameSpace.on("connection", (socket) => {
     videoPairs.push([data.to, data.from]);
 
     //Users are not connected, now in a call
-    for (let i = 0; i < (videoConnected.length); i++) {
+    for (let i = 0; i < videoConnected.length; i++) {
       if (videoConnected[i][0] == data.to) {
         videoConnected.splice(i, 1);
       }
     }
-    let callerUser = '';
+    let callerUser = "";
     for (let i = 0; i < videoConnected.length; i++) {
       if (videoConnected[i][0] == data.from) {
         callerUser = videoConnected[i][1];
         videoConnected.splice(i, 1);
-     }
+      }
     }
 
     //Notify parties of the changes
-    videoChatNameSpace.to(data.to).emit("callAccepted", {signal: data.signal, username: callerUser});
+    videoChatNameSpace
+      .to(data.to)
+      .emit("callAccepted", { signal: data.signal, username: callerUser });
     videoChatNameSpace.emit("allUsers", videoConnected);
   });
 });
@@ -543,7 +553,7 @@ callNameSpace.on("connection", (socket) => {
 
     //Delete socket id and username pair from the list
     delete callUsers[socket.id];
-    for (let i = 0; i < (callConnected.length); i++) {
+    for (let i = 0; i < callConnected.length; i++) {
       if (callConnected[i][0] == socket.id) {
         callConnected.splice(i, 1);
       }
@@ -556,7 +566,7 @@ callNameSpace.on("connection", (socket) => {
   //Call a user
   socket.on("callUser", (data) => {
     let callerUsername = "";
-    for (let i = 0; i < (callConnected.length); i++) {
+    for (let i = 0; i < callConnected.length; i++) {
       if (callConnected[i][0] == data.from) {
         callerUsername = callConnected[i][1];
       }
@@ -574,21 +584,23 @@ callNameSpace.on("connection", (socket) => {
     callPairs.push([data.to, data.from]);
 
     //Users are not connected, now in a call
-    for (let i = 0; i < (callConnected.length); i++) {
+    for (let i = 0; i < callConnected.length; i++) {
       if (callConnected[i][0] == data.to) {
         callConnected.splice(i, 1);
       }
     }
-    let callerUser = '';
+    let callerUser = "";
     for (let i = 0; i < callConnected.length; i++) {
       if (callConnected[i][0] == data.from) {
         callerUser = callConnected[i][1];
         callConnected.splice(i, 1);
-     }
+      }
     }
 
     //Notify parties of the changes
-    callNameSpace.to(data.to).emit("callAccepted", {signal: data.signal, username: callerUser});
+    callNameSpace
+      .to(data.to)
+      .emit("callAccepted", { signal: data.signal, username: callerUser });
     callNameSpace.emit("allUsers", callConnected);
   });
 });
