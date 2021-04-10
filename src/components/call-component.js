@@ -325,7 +325,13 @@ function CallComponent(){
   }
 
   let userButtons;
-  if ((Object.keys(users).length - state.user.blocked.length) > 1) {
+  let blockedCount = 0;
+  for (int i = 0; i < users.length; i++) {
+    if (state.user.blocked.includes(user[1])) {
+      blockedCount++;
+    }
+  }
+  if ((Object.keys(users).length - blockedCount) > 1) {
     userButtons = (
       <UserList>
         <Title>Current Callers Available:</Title>
