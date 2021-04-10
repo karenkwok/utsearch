@@ -52,11 +52,9 @@ function SigninForm() {
       .then((result) => {
         dispatch({ type: "SET_USER", payload: result.data });
         history.push("/search");
-        console.log(result);
       })
       .catch((error) => {
         setError("Username or password is incorrect.");
-        console.log(error);
       });
   };
 

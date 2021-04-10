@@ -50,19 +50,17 @@ function Profile() {
         dispatch({ type: "EDIT_BIO", payload: result.data.CreateBio });
         setBio(result.data.CreateBio);
         setBio("");
-        console.log(result);
       })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   const handleTagSave = function () {
     if (!tag || tag.trim() === "") {
       setError("Tag cannot be empty.");
+      return;
     }
     else if (tags.length === 30) {
       setError("You cannot create more than 30 tags.");
+      return;
     }
     client
       .mutate({
@@ -74,11 +72,7 @@ function Profile() {
       .then((result) => {
         setTags(result.data.CreateTag);
         setTag("");
-        console.log(result);
       })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   return (

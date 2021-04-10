@@ -44,11 +44,7 @@ function Search() {
       .then((result) => {
         setSearchResults(result.data.GetUsers);
         setSearchValue("");
-        console.log(result);
       })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   let results;

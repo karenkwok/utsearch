@@ -86,7 +86,6 @@ function People() {
                         type: "SET_USER",
                         payload: result.data.FriendRequestResponse,
                       });
-                      console.log(result);
                     });
                 }}
               >
@@ -104,7 +103,6 @@ function People() {
                         type: "SET_USER",
                         payload: result.data.FriendRequestResponse,
                       });
-                      console.log(result);
                     });
                 }}
               >

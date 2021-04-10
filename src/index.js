@@ -189,11 +189,9 @@ function Main() {
         })
         .then((res) => {
           dispatch({ type: "SET_USER", payload: res.data.profile });
-          console.log(res);
         })
         .catch((err) => {
           dispatch({ type: "SET_USER", payload: null });
-          console.log(err);
         });
     }
   }, [username]);

@@ -48,24 +48,15 @@ function ProfileGeneric() {
           type: "EDIT_FRIEND_REQUESTS",
           payload: result.data.CreateFriendRequest,
         });
-        console.log(result);
       })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   const handleBlockedSave = function () {
     client
       .mutate({ variables: { input: username }, mutation: EDIT_BLOCKED })
       .then((result) => {
-        console.log(result);
         dispatch({ type: "EDIT_BLOCKED", payload: result.data.CreateBlocked });
-        console.log(result);
       })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   useEffect(() => {
@@ -88,9 +79,7 @@ function ProfileGeneric() {
         },
       })
       .then((result) => {
-        console.log(result);
         if (result.data.profileGeneric === null) {
-          console.log(result);
           history.push("/search");
         } else {
           setBio(result.data.profileGeneric.bio);
@@ -100,7 +89,6 @@ function ProfileGeneric() {
       })
       .catch((error) => {
         history.push("/search");
-        console.log(error);
       });
   }, [username]);
 

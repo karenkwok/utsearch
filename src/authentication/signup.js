@@ -94,11 +94,9 @@ function SignupForm() {
       .then((result) => {
         dispatch({ type: "SET_USER", payload: result.data });
         history.push("/search");
-        console.log(result);
       })
       .catch((error) => {
         setError(error.message);
-        console.log(error);
       });
   };
 

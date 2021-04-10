@@ -61,11 +61,7 @@ function Maps() {
               type: "EDIT_LOCATION",
               payload: result.data.CreateLocation.myLocation,
             });
-            console.log(result);
           })
-          .catch((error) => {
-            console.log(error);
-          });
       };
       navigator.geolocation.getCurrentPosition(location);
     }
@@ -73,11 +69,7 @@ function Maps() {
       .query({ variables: {}, query: GET_FRIENDS_LOCATION })
       .then((result) => {
         setfriendsLocation(result.data.GetFriendsLocation);
-        console.log(result);
       })
-      .catch((error) => {
-        console.log(error);
-      });
   }, [lat, long]);
 
   return (
