@@ -58,7 +58,6 @@ const typeDefs = `
     CreateLocation(lat: Float, long: Float): User,
     FriendRequestResponse(user: String, acceptRequest: Boolean): User,
     CreateFriendRequest(input: String): [String],
-    CreateFriends(input: String): [String],
     CreateBlocked(input: String): User,
     CreateBio(input: String): String,
     CreateTag(input: String): [String],
@@ -214,23 +213,6 @@ const resolvers = {
           { new: true }
         );
         return updatedUser.friendRequestsSent;
-      }
-    },
-    CreateFriends: async (_, { input }, context) => {
-      if (!context.user)
-        throw new AuthenticationError("You must be logged in.");
-      else {
-        if ((await User.findOne({ username: input })) === null) {
-          throw new ApolloError("User does not exist.");
-        } else if (context.user.username === input) {
-          throw new ApolloError("You can't add yourself as a friend!");
-        }
-        const updatedUser = await User.findOneAndUpdate(
-          { username: context.user.username },
-          { $addToSet: { friends: input } },
-          { new: true }
-        );
-        return updatedUser.friends;
       }
     },
     CreateBlocked: async (_, { input }, context) => {
