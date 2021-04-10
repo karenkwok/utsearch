@@ -1,3 +1,7 @@
+#you-cant-do-that {
+  color: red;
+}
+
 #profile-wrapper {
   display: flex;
   flex-direction: column;
@@ -74,6 +78,11 @@
   align-items: center;
 }
 
+#profile-error {
+  color: red;
+  margin-bottom: 8px;
+}
+
 .profile-save {
   padding-left: 12px;
   padding-right: 12px;
@@ -109,6 +118,7 @@
 
 #profile-bio {
   margin-bottom: 20px;
+  word-break: break-all;
 }
 
 #profile-tags {

@@ -32,6 +32,14 @@ function SigninForm() {
 
   const handleSubmit = function (event) {
     event.preventDefault();
+    if (!username) {
+      setError("You must enter a username.");
+      return;
+    }
+    else if (!password) {
+      setError("You must enter a password.");
+      return;
+    }
     axios
       .post(
         domain + "/signin",
@@ -44,11 +52,9 @@ function SigninForm() {
       .then((result) => {
         dispatch({ type: "SET_USER", payload: result.data });
         history.push("/search");
-        console.log(result);
       })
       .catch((error) => {
         setError("Username or password is incorrect.");
-        console.log(error);
       });
   };
 
@@ -75,7 +81,7 @@ function SigninForm() {
           value={password}
           onChange={handlePasswordChange}
         />
-        <div id="signup-error">{error}</div>
+        <div id="signin-error">{error}</div>
         <input type="submit" id="signin-btn" value="Sign In" />
       </form>
       <Link to="/signup">Don't have an account? Sign Up.</Link>

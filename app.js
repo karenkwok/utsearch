@@ -272,6 +272,9 @@ const resolvers = {
       if (!context.user)
         throw new AuthenticationError("You must be logged in.");
       else {
+        if (input.length > 255) {
+          throw new ApolloError("Bio must be 255 characters or less.");
+        }
         const updatedUser = await User.findOneAndUpdate(
           { username: context.user.username },
           { bio: input },
