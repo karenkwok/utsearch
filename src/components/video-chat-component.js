@@ -330,7 +330,7 @@ function VideoChatComponent(){
   }
 
   let videoText;
-  if (callerUsername === "") {
+  if (callerUsername === "" || state.user.blocked.includes(callerUsername)) {
     videoText = (
       <>
         <Box>You</Box>
@@ -362,7 +362,7 @@ function VideoChatComponent(){
         <Title>Current Callers Available:</Title>
         {users.map((user, index) => {
 
-          if (user[0] === yourID) {
+          if (user[1] === state.user.username) {
             return null;
           } else if (state.user.blocked.includes(user[1])) {
             return null;
