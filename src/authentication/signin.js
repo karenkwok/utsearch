@@ -32,6 +32,14 @@ function SigninForm() {
 
   const handleSubmit = function (event) {
     event.preventDefault();
+    if (!username) {
+      setError("You must enter a username.");
+      return;
+    }
+    else if (!password) {
+      setError("You must enter a password.");
+      return;
+    }
     axios
       .post(
         domain + "/signin",

@@ -89,7 +89,7 @@ function Profile() {
         </Link>
       </button>
       <div id="profile-picture-wrapper">
-        <img id="profile-picture" src={profilepic} alt="Profile Picture" />
+        <img id="profile-picture" src={profilepic} alt="Profile" />
       </div>
 
       <h2 id="profile-name">{username}</h2>
