@@ -290,6 +290,9 @@ const resolvers = {
         else if (input.length > 40) {
           throw new ApolloError("Tag must be 40 characters or less.");
         }
+        else if (context.user.tags.length === 30) {
+          throw new ApolloError("You cannot create more than 30 tags.");
+        }
         const updatedUser = await User.findOneAndUpdate(
           { username: context.user.username },
           { $push: { tags: input } },

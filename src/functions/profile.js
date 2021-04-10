@@ -61,6 +61,9 @@ function Profile() {
     if (!tag || tag.trim() === "") {
       setError("Tag cannot be empty.");
     }
+    else if (tags.length === 30) {
+      setError("You cannot create more than 30 tags.");
+    }
     client
       .mutate({
         variables: {
