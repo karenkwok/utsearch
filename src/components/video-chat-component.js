@@ -357,8 +357,8 @@ function VideoChatComponent(){
 
   let userButtons;
   let blockedCount = 0;
-  for (int i = 0; i < users.length; i++) {
-    if (state.user.blocked.includes(user[1])) {
+  for (var i = 0; i < users.length; i++) {
+    if (state.user.blocked.includes(users[i][1])) {
       blockedCount++;
     }
   }
