@@ -10,7 +10,7 @@ App can be found at: https://utsearch.tech
 
 ## Video URL
 
-Video can be found at:
+Video can be found at: https://youtu.be/HAx83RlzHaU
 
 ## Documentation
 
