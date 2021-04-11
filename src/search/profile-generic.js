@@ -1,8 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
-import ReactDOM from "react-dom";
 import "../index.css";
 import "./profile-generic.css";
-import { Redirect, useParams } from "react-router";
+import { useParams } from "react-router";
 import { Context } from "../Store";
 import { client } from "..";
 import { gql } from "@apollo/client";
@@ -46,7 +45,7 @@ function ProfileGeneric() {
           type: "EDIT_FRIEND_REQUESTS",
           payload: result.data.CreateFriendRequest,
         });
-      })
+      });
   };
 
   const handleBlockedSave = function () {
@@ -54,7 +53,7 @@ function ProfileGeneric() {
       .mutate({ variables: { input: username }, mutation: EDIT_BLOCKED })
       .then((result) => {
         dispatch({ type: "EDIT_BLOCKED", payload: result.data.CreateBlocked });
-      })
+      });
   };
 
   useEffect(() => {

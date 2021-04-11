@@ -36,72 +36,10 @@
   outline: none;
 }
 
-.profile-input {
-  margin-left: 5px;
-  margin-right: 5px;
-  margin-bottom: 10px;
-  width: 300px;
-  font-family: Arial;
-  resize: none;
-}
-
-.tab-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 40px;
-}
-
 #profile-picture {
   height: 120px;
   width: 120px;
   border-radius: 70px;
-}
-
-#button-wrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  margin-bottom: 40px;
-  width: 100%;
-}
-
-#textarea-wrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-
-.textarea-save {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#profile-error {
-  color: red;
-  margin-bottom: 8px;
-}
-
-.profile-save {
-  padding-left: 12px;
-  padding-right: 12px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-
-  background-color: rgb(0, 42, 92);
-  color: white;
-  border: none;
-  border-radius: 30px;
-}
-
-.profile-save:hover {
-  background-color: #5e8de9;
-  cursor: pointer;
-}
-
-.profile-save:focus {
-  outline: none;
 }
 
 #profile-name {
@@ -125,8 +63,8 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  flex-wrap: wrap;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .profile-tag {
@@ -145,6 +83,64 @@
   font-weight: bold;
 }
 
-#profile-box {
-  height: 300px;
+#button-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+#textarea-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.textarea-save {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-input {
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 10px;
+  width: 300px;
+  font-family: Arial;
+  resize: none;
+}
+
+#profile-error {
+  margin-bottom: 8px;
+  color: red;
+}
+
+.profile-save {
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+
+  background-color: rgb(0, 42, 92);
+  color: white;
+  border: none;
+  border-radius: 30px;
+}
+
+.profile-save:hover {
+  background-color: #5e8de9;
+  cursor: pointer;
+}
+
+.profile-save:focus {
+  outline: none;
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
 }

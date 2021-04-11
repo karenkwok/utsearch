@@ -1,8 +1,6 @@
 import { React, useContext, useState } from "react";
-import ReactDOM from "react-dom";
 import "../index.css";
 import "./search.css";
-import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import Icon from "@material-ui/core/Icon";
 import { Context } from "../Store";
@@ -42,7 +40,7 @@ function Search() {
       .then((result) => {
         setSearchResults(result.data.GetUsers);
         setSearchValue("");
-      })
+      });
   };
 
   let results;
@@ -52,7 +50,9 @@ function Search() {
     } else {
       results = (
         <div id="search-results">
-          <p id="search-results-sentence">No results found for "{searchValue2}".</p>
+          <p id="search-results-sentence">
+            No results found for "{searchValue2}".
+          </p>
         </div>
       );
     }
@@ -64,10 +64,7 @@ function Search() {
           return (
             <div className="result-example">
               <div>
-                <img
-                  className="result-picture"
-                  src={profilepic}
-                />
+                <img className="result-picture" src={profilepic} />
               </div>
               <div className="result-text">
                 <div className="result-username">

@@ -48,15 +48,14 @@ function Profile() {
         dispatch({ type: "EDIT_BIO", payload: result.data.CreateBio });
         setBio(result.data.CreateBio);
         setBio("");
-      })
+      });
   };
 
   const handleTagSave = function () {
     if (!tag || tag.trim() === "") {
       setError("Tag cannot be empty.");
       return;
-    }
-    else if (tags.length === 30) {
+    } else if (tags.length === 30) {
       setError("You cannot create more than 30 tags.");
       return;
     }
@@ -70,7 +69,7 @@ function Profile() {
       .then((result) => {
         setTags(result.data.CreateTag);
         setTag("");
-      })
+      });
   };
 
   return (
@@ -97,35 +96,39 @@ function Profile() {
       </div>
 
       <div id="button-wrapper">
-          <div className="profile-buttons" label="My Info">
-            <div id="textarea-wrapper">
-              <div className="textarea-save">
-                <textarea
-                  className="profile-input"
-                  placeholder="Enter your bio (max 255 characters)"
-                  maxLength="255"
-                  name="Text1"
-                  rows="6"
-                  onChange={handleBioChange}
-                  value={bio}
-                ></textarea>
-                <button className="profile-save" onClick={handleBioSave}>Save Bio</button>
-              </div>
-              <div className="textarea-save">
-                <textarea
-                  className="profile-input"
-                  placeholder="Enter a tag (max 40 characters)"
-                  maxLength="40"
-                  name="Text1"
-                  rows="6"
-                  onChange={handleTagChange}
-                  value={tag}
-                ></textarea>
-                <div id="profile-error">{error}</div>
-                <button className="profile-save" onClick={handleTagSave}>Save Tag</button>
-              </div>
+        <div className="profile-buttons" label="My Info">
+          <div id="textarea-wrapper">
+            <div className="textarea-save">
+              <textarea
+                className="profile-input"
+                placeholder="Enter your bio (max 255 characters)"
+                maxLength="255"
+                name="Text1"
+                rows="6"
+                onChange={handleBioChange}
+                value={bio}
+              ></textarea>
+              <button className="profile-save" onClick={handleBioSave}>
+                Save Bio
+              </button>
+            </div>
+            <div className="textarea-save">
+              <textarea
+                className="profile-input"
+                placeholder="Enter a tag (max 40 characters)"
+                maxLength="40"
+                name="Text1"
+                rows="6"
+                onChange={handleTagChange}
+                value={tag}
+              ></textarea>
+              <div id="profile-error">{error}</div>
+              <button className="profile-save" onClick={handleTagSave}>
+                Save Tag
+              </button>
             </div>
           </div>
+        </div>
       </div>
     </div>
   );

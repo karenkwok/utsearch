@@ -4,7 +4,6 @@ import "../index.css";
 import PropTypes from "prop-types";
 import Tab from "./tab";
 
-
 class Tabs extends React.Component {
   static propTypes = {
     children: PropTypes.instanceOf(Array).isRequired,
@@ -21,7 +20,6 @@ class Tabs extends React.Component {
   onClickTabItem = (tab) => {
     this.setState({ activeTab: tab });
   };
-
 
   render() {
     const {

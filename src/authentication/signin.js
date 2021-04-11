@@ -33,8 +33,7 @@ function SigninForm() {
     if (!username) {
       setError("You must enter a username.");
       return;
-    }
-    else if (!password) {
+    } else if (!password) {
       setError("You must enter a password.");
       return;
     }
@@ -70,7 +69,6 @@ function SigninForm() {
           value={username}
           onChange={handleUsernameChange}
         />
-
         <p className="signinform-labels">Password</p>
         <input
           type="password"
@@ -83,7 +81,9 @@ function SigninForm() {
         <input type="submit" id="signin-btn" value="Sign In" />
       </form>
       <Link to="/signup">Don't have an account? Sign Up.</Link>
-      <Link id="credits-link" to="/credits">Credits</Link>
+      <Link id="credits-link" to="/credits">
+        Credits
+      </Link>
     </div>
   );
 }

@@ -64,11 +64,6 @@
   word-break: break-all;
 }
 
-#search-results-container {
-  padding: 10px;
-  border: none;
-}
-
 .result-example {
   display: flex;
   flex-direction: row;
