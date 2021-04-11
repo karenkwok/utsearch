@@ -14,6 +14,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const cors = require("cors");
 const socket = require("socket.io");
 const MongoStore = require("connect-mongo");
+const helmet = require("helmet");
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -515,17 +516,24 @@ const resolvers = {
 
 // initialize app
 const app = express();
+app.use(helmet());
+
+let corsOrigin;
 
 if (process.env.NODE_ENV === "production") {
+  corsOrigin = undefined;
   app.use(sslRedirect());
+} else {
+  corsOrigin = "http://localhost:3000";
 }
 
 // enables communication if frontend is on different port than backend
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: corsOrigin, credentials: true }));
 app.use(
   session({
     secret: "plkojihughfgd",
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    cookie: { sameSite: true, secure: process.env.NODE_ENV === "production" },
   })
 );
 app.use(passport.initialize());
@@ -543,7 +551,7 @@ const server = new ApolloServer({
 
 server.applyMiddleware({
   app,
-  cors: { origin: "http://localhost:3000" },
+  cors: { origin: corsOrigin },
 });
 
 app.post(
