@@ -535,6 +535,7 @@ app.use(passport.session());
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  introspection: true,
   playground: true,
   context: ({ req }) => {
     return { user: req.user };
