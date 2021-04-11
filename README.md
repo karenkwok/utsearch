@@ -4,6 +4,14 @@
 
 Jordan Feng, Karen Kwok
 
+## App URL
+
+App can be found at: https://utsearch.tech
+
+## Video URL
+
+Video can be found at:
+
 ## Documentation
 
 Documentation can be found at: https://github.com/UTSCC09/project-idk-lmao/tree/master/doc
