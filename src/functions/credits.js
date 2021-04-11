@@ -72,6 +72,26 @@ function Credits() {
           <a href="https://www.favicon-generator.org/">Online Tool</a>
         </li>
       </ul>
+
+      <h3> Private Routes on React </h3>
+      <h4>By React Router</h4>
+      <ul>
+        <li>
+          <a href="https://reactrouter.com/web/example/auth-workflow">
+            React Router Auth Workflow
+          </a>
+        </li>
+      </ul>
+
+      <h3> Global State with React Hooks and Context API </h3>
+      <h4>By Amir Off</h4>
+      <ul>
+        <li>
+          <a href="https://codeburst.io/global-state-with-react-hooks-and-context-api-87019cc4f2cf">
+            codeburst
+          </a>
+        </li>
+      </ul>
     </div>
   );
 }

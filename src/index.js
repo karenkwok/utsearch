@@ -44,6 +44,7 @@ export const client = new ApolloClient({
   },
 });
 
+// https://reactrouter.com/web/example/auth-workflow
 function PrivateRoute({ children, ...rest }) {
   const [state, dispatch] = useContext(Context);
   const isAuthenticated = state.user !== undefined && state.user !== null;
