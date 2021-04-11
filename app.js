@@ -14,7 +14,6 @@ const LocalStrategy = require("passport-local").Strategy;
 const cors = require("cors");
 const socket = require("socket.io");
 const MongoStore = require("connect-mongo");
-const helmet = require("helmet");
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -516,7 +515,6 @@ const resolvers = {
 
 // initialize app
 const app = express();
-app.use(helmet());
 
 let corsOrigin;
 
