@@ -531,6 +531,7 @@ app.use(
   session({
     secret: "plkojihughfgd",
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    cookie: { sameSite: true, secure: process.env.NODE_ENV === "production" },
   })
 );
 app.use(passport.initialize());
