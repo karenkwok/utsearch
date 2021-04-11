@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import React, { useEffect, useState, useRef } from 'react';
 import io from "socket.io-client";
 import Peer from "simple-peer";

@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import { useEffect, useContext, useState } from "react";
 import { Context } from "../../../Store";
 import { client } from "../../..";

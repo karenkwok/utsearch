@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import logo from './logo.svg';
 import './App.css';
 

@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import React, { useEffect, useContext } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";

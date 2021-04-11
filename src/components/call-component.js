@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Context } from "../Store";
 import io from "socket.io-client";

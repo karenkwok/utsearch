@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import { useContext, useState } from "react";
 import "./people.css";
 import "../../index.css";

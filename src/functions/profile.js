@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import { useContext, useState } from "react";
 import "./profile.css";
 import "../index.css";

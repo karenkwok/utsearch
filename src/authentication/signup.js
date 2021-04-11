@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import { React, useContext, useState } from "react";
 import "./signup.css";
 import "../index.css";
