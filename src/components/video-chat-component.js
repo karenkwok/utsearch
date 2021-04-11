@@ -81,7 +81,7 @@ function VideoChatComponent(){
 
   const [callerUsername, setCallerUsername] = useState("");
 
-  const [state, dispatch] = useContext(Context);
+  const [state] = useContext(Context);
 
   // Video Call Button option states
   const [muteBtnState, setMuteBtnState] = useState("Mute Me");
@@ -160,6 +160,7 @@ function VideoChatComponent(){
         }
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ locationKeys, stream]);
 
   var signOutButtonXpath = "//li[text()='Sign Out']";
