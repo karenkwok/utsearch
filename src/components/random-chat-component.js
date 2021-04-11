@@ -156,6 +156,7 @@ function RandomChatComponent(){
         }
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locationKeys, stream]);
 
   var signOutButtonXpath = "//li[text()='Sign Out']";

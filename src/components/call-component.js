@@ -73,7 +73,7 @@ function CallComponent(){
 
   const [callerUsername, setCallerUsername] = useState("");
 
-  const [state, dispatch] = useContext(Context);
+  const [state] = useContext(Context);
 
   // Audio Call Button option states
   const [muteBtnState, setMuteBtnState] = useState("Mute Me");
@@ -151,6 +151,7 @@ function CallComponent(){
         }
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locationKeys, stream]);
 
   var signOutButtonXpath = "//li[text()='Sign Out']";
