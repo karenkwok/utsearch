@@ -51,7 +51,10 @@ function Maps() {
         setLong(position.coords.longitude);
         client
           .mutate({
-            variables: { lat: position.coords.latitude, long: position.coords.longitude },
+            variables: {
+              lat: position.coords.latitude,
+              long: position.coords.longitude,
+            },
             mutation: EDIT_LOCATION,
           })
           .then((result) => {
@@ -59,7 +62,7 @@ function Maps() {
               type: "EDIT_LOCATION",
               payload: result.data.CreateLocation.myLocation,
             });
-          })
+          });
       };
       navigator.geolocation.getCurrentPosition(location);
     }
@@ -67,7 +70,7 @@ function Maps() {
       .query({ variables: {}, query: GET_FRIENDS_LOCATION })
       .then((result) => {
         setfriendsLocation(result.data.GetFriendsLocation);
-      })
+      });
   }, [lat, long]);
 
   return (
@@ -80,12 +83,7 @@ function Maps() {
         }}
         defaultZoom={16}
       >
-        <Location
-          lat={lat}
-          lng={long}
-          username="me"
-          emoji="&#128514;"
-        />
+        <Location lat={lat} lng={long} username="me" emoji="&#128514;" />
         {friendsLocation.map((friendLocation) => {
           return (
             <Location

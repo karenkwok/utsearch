@@ -10,7 +10,7 @@ import People from "./components/people/people";
 import RandomChat from "./functions/randomChat";
 import Credits from "./functions/credits";
 import VideoChat from "./functions/videoChat";
-import Call from "./functions/call"
+import Call from "./functions/call";
 import Icon from "@material-ui/core/Icon";
 
 import {
@@ -103,12 +103,12 @@ function SimpleMenu() {
     const handleVideoChat = () => {
       handleClose();
       history.push("/video-chat");
-    }
+    };
 
     const handleCall = () => {
       handleClose();
       history.push("/call");
-    }
+    };
 
     const handleSignOut = () => {
       handleClose();

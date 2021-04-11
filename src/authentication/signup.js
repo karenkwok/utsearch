@@ -49,12 +49,10 @@ function SignupForm() {
     if (!username) {
       setError("You must enter a username.");
       return;
-    }
-    else if (!password) {
+    } else if (!password) {
       setError("You must enter a password.");
       return;
-    }
-    else if (!email) {
+    } else if (!email) {
       setError("You must enter an email.");
       return;
     }
@@ -67,8 +65,8 @@ function SignupForm() {
     ) {
       setError("Invalid email.");
       return;
-    };
-    
+    }
+
     // use apollo client to mutate with the variables from the form
     client
       .mutate({

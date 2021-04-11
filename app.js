@@ -1,4 +1,3 @@
-//import sslRedirect from "heroku-ssl-redirect";
 const sslRedirect = require("heroku-ssl-redirect").default;
 const express = require("express");
 const session = require("express-session");
@@ -25,7 +24,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   useUnifiedTopology: true,
 });
 
-// The GraphQL schema in string form
+// the graphql schema in string form
 const typeDefs = `
   type User {
     username: String,
@@ -271,7 +270,7 @@ const typeDefs = `
   }
 `;
 
-// The resolvers
+// resolvers
 const resolvers = {
   Query: {
     GetFriendsLocation: async (_, {}, context) => {
@@ -514,14 +513,14 @@ const resolvers = {
   },
 };
 
-// Initialize the app
+// initialize app
 const app = express();
 
 if (process.env.NODE_ENV === "production") {
   app.use(sslRedirect());
 }
 
-// enables communication if frontend is on diff port than backend
+// enables communication if frontend is on different port than backend
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(
   session({
