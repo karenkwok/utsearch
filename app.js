@@ -552,7 +552,17 @@ app.post(
   express.json(),
   passport.authenticate("local"),
   function (req, res, next) {
-    res.json(req.user);
+    res.json({
+      username: req.user.username,
+      email: req.user.email,
+      bio: req.user.bio,
+      tags: req.user.tags,
+      friends: req.user.friends,
+      friendRequestsReceived: req.user.friendRequestsReceived,
+      friendRequestsSent: req.user.friendRequestsSent,
+      blocked: req.user.blocked,
+      myLocation: req.user.myLocation,
+    });
   }
 );
 
