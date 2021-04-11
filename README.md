@@ -4,6 +4,10 @@
 
 Jordan Feng, Karen Kwok
 
+## Documentation
+
+Documentation can be found at: https://github.com/UTSCC09/project-idk-lmao/tree/master/doc
+
 ## Description of the Web Application
 
 UTSearCh is a networking platform where U of T students can find other U of T students based on search criterias.
