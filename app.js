@@ -38,28 +38,12 @@ const typeDefs = `
     blocked: [String],
     myLocation: MyLocation
   }
-  type Query {
-    GetFriendsLocation: [FriendsLocation],
-    GetUsers(searchValue: String): [User],
-    profile: User,
-    profileGeneric(input: ProfileGenericInput): User
-  }
-  input CreateUserInput {
-    username: String
-    password: String
-    email: String
-  }
+  """
+  ## Description:
+  The input username to get a user's profile.
+  """
   input ProfileGenericInput {
     username: String
-  }
-  type Mutation {
-    CreateLocation(lat: Float, long: Float): User,
-    FriendRequestResponse(user: String, acceptRequest: Boolean): User,
-    CreateFriendRequest(input: String): [String],
-    CreateBlocked(input: String): User,
-    CreateBio(input: String): String,
-    CreateTag(input: String): [String],
-    CreateUser(input: CreateUserInput): User
   }
   type MyLocation {
     lat: Float,
@@ -68,6 +52,222 @@ const typeDefs = `
   type FriendsLocation {
     username: String,
     myLocation: MyLocation
+  }
+  input CreateUserInput {
+    username: String
+    password: String
+    email: String
+  }
+  type Query {
+    """
+    ## Description:
+    Get your friends' location (latitude and longitude values).
+
+    ## Response:
+    List of your friends with their locations if they turned location on.
+
+    ## Curl:
+    \`curl --location --request POST 'https://utsearch.tech/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":" query {\r\n    GetFriendsLocation {\r\n        username\r\n        myLocation {\r\n            lat\r\n            long\r\n        }\r\n    }\r\n }","variables":{}}'\`
+    """
+    GetFriendsLocation: [FriendsLocation],
+    """
+    ## Description:
+    Get user(s) that match the search value.
+
+    ## Arguments:
+      - searchValue: username or tag.
+
+    ## Response:
+    List of users that match the search value.
+
+    ## Curl:
+    \`curl --location --request POST 'https://utsearch.tech/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query ($searchValue: String! ) {\r\n      GetUsers(searchValue: $searchValue){\r\n          username\r\n          friendRequestsSent\r\n          friendRequestsReceived\r\n          tags\r\n      }\r\n  }\r\n\r\n","variables":{"searchValue":"grookey"}}'\`
+    """
+    GetUsers(searchValue: String): [User],
+    """
+    ## Description:
+    Get your own profile.
+
+    ## Response:
+    Your own profile.
+
+    ## Curl:
+    \`curl --location --request POST 'https://utsearch.tech/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query {\r\n    profile {\r\n        username\r\n        email\r\n        tags\r\n    }\r\n}","variables":{}}'\`
+    """
+    profile: User,
+    """
+    ## Description:
+    Get the profile of the user given the input username.
+
+    ## Arguments:
+      - input: the username of the profile
+
+    ## Errors:
+      - User does not exist
+    
+    ## Response:
+    The profile that matches the input username.
+
+    ## Curl:
+    \`curl --location --request POST 'http://localhost:5000/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":"query ($input: ProfileGenericInput!) {\r\n    profileGeneric(input: $input) {\r\n        username\r\n        bio\r\n        tags\r\n    }\r\n}","variables":{"input":{"username":"octopus"}}}'\`
+    """
+    profileGeneric(input: ProfileGenericInput): User
+  }
+  type Mutation {
+    """
+    ## Description:
+    Set the location (latitude and longitude values) of the user.
+
+    ## Arguments:
+      - lat: the latitude value of the user's location
+      - long: the longitude value of the user's location
+
+    ## Response:
+    Your own profile with your updated geolocation.
+
+    ## Curl:
+    \`curl --location --request POST 'https://utsearch.tech/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":" mutation ($lat: Float!, $long: Float!) {\r\n    CreateLocation(lat: $lat, long: $long) {\r\n        username\r\n        myLocation{lat, long}\r\n    }\r\n }","variables":{"lat":43,"long":50}}'\`
+    """
+    CreateLocation(lat: Float, long: Float): User,
+    """
+    ## Description:
+    Respond to a friend request by either accepting or rejecting it.
+
+    ## Arguments:
+      - user: the username of the person who sent the friend request
+      - acceptRequest: true if response is accept, false if response is reject
+
+    ## Errors:
+      - User does not exist
+      - You can't add yourself as a friend
+      - User did not send you a friend request
+    
+    ## Response:
+    Your own profile with updated friends list and friend requests received list.
+
+    ## Curl:
+    \`curl --location --request POST 'https://utsearch.tech/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":" mutation ($user: String!, $acceptRequest: Boolean!) {\r\n     FriendRequestResponse(user: $user, acceptRequest: $acceptRequest) {\r\n         friends,\r\n         friendRequestsReceived,\r\n         friendRequestsSent\r\n     }\r\n }","variables":{"user":"chimchar","acceptRequest":true}}'\`
+    """
+    FriendRequestResponse(user: String, acceptRequest: Boolean): User,
+    """
+    ## Description:
+    Send a friend request to a user.
+
+    ## Arguments:
+      - input: the username of the person the friend request will be sent to
+
+    ## Errors:
+      - User does not exist
+      - You can't add yourself as a friend
+      - You blocked this user
+      - User blocked you
+      - User is already your friend
+
+    ## Response:
+    Your updated list of sent friend requests.
+
+    ## Curl:
+    \`curl --location --request POST 'https://utsearch.tech/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":" mutation ($input: String!) {\r\n     CreateFriendRequest(input: $input)\r\n }","variables":{"input":"piplup"}}'\`
+    """
+    CreateFriendRequest(input: String): [String],
+    """
+    ## Description:
+    Block a user from communicating with you.
+
+    ## Arguments:
+      - input: the username of the person that will be blocked
+
+    ## Errors:
+      - User does not exist
+      - You can't block yourself
+    
+    ## Response:
+    Your own profile with your updated blocked list.
+
+    ## Curl:
+    \`curl --location --request POST 'https://utsearch.tech/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":" mutation ($input: String!) {\r\n     CreateBlocked(input: $input)\r\n }\r\n ","variables":{"input":"jordan"}}'\`
+    """
+    CreateBlocked(input: String): User,
+    """
+    ## Description:
+    Edit the content of your bio.
+
+    ## Arguments:
+      - input: the content of the new bio
+
+    ## Errors:
+      - Bio must be 255 characters or less
+    
+    ## Response:
+    Your updated bio.
+
+    ## Curl:
+    \`curl --location --request POST 'https://utsearch.tech/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":" mutation ($input: String!) {\r\n    CreateBio(input: $input)\r\n }\r\n ","variables":{"input":"im so happy"}}'\`
+    """
+    CreateBio(input: String): String,
+    """
+    ## Description:
+    Add a new tag to your profile.
+
+    ## Arguments:
+      - input: the content of the new tag
+
+    ## Errors:
+      - Tag cannot be empty
+      - Tag must be 40 characters or less
+      - Cannot create more than 30 tags
+
+    ## Response:
+    Your updated list of tags.
+
+    ## Curl:
+    \`curl --location --request POST 'https://utsearch.tech/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":" mutation ($input: String!) {\r\n     CreateTag(input: $input)\r\n }\r\n ","variables":{"input":"unicorn"}}'\`
+    """
+    CreateTag(input: String): [String],
+    """
+    ## Description:
+    Create a new user.
+
+    ## Arguments:
+      - input: the username, password, and email of the new user
+
+    ## Errors:
+      - Username cannot be empty
+      - Username must be 20 characters or less
+      - Password cannot be empty
+      - Email cannot be empty
+      - Username already exists
+      - Invalid email
+    
+    ## Response:
+    Your new profile.
+
+    ## Curl:
+    \`curl --location --request POST 'https://utsearch.tech/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{"query":" mutation ($input: CreateUserInput!) {\r\n     CreateUser(input: $input) {\r\n         username\r\n         email\r\n         tags\r\n     }\r\n }\r\n ","variables":{"input":{"username":"me","password":"setdrftg","email":"me@gmail.com"}}}'\`
+    """
+    CreateUser(input: CreateUserInput): User
   }
 `;
 
@@ -269,11 +469,9 @@ const resolvers = {
       else {
         if (!input || input.trim() === "") {
           throw new ApolloError("Tag cannot be empty.");
-        }
-        else if (input.length > 40) {
+        } else if (input.length > 40) {
           throw new ApolloError("Tag must be 40 characters or less.");
-        }
-        else if (context.user.tags.length === 30) {
+        } else if (context.user.tags.length === 30) {
           throw new ApolloError("You cannot create more than 30 tags.");
         }
         const updatedUser = await User.findOneAndUpdate(
@@ -294,7 +492,7 @@ const resolvers = {
       } else if (!input.email) {
         throw new ApolloError("You must enter an email.");
       } else if ((await User.findOne({ username: input.username })) !== null) {
-        throw new AuthenticationError("Username already exists.");
+        throw new ApolloError("Username already exists.");
       } else if (
         input.email.search(
           /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
@@ -337,6 +535,7 @@ app.use(passport.session());
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  introspection: true,
   playground: true,
   context: ({ req }) => {
     return { user: req.user };
