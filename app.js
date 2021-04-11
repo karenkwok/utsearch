@@ -352,7 +352,7 @@ const resolvers = {
             },
             { new: true }
           );
-          const updatedOtherUser = await User.findOneAndUpdate(
+          await User.findOneAndUpdate(
             { username: user },
             {
               $addToSet: { friends: context.user.username },
@@ -369,7 +369,7 @@ const resolvers = {
             },
             { new: true }
           );
-          const updatedOtherUser = await User.findOneAndUpdate(
+          await User.findOneAndUpdate(
             { username: user },
             {
               $pull: { friendRequestsSent: context.user.username },
@@ -404,7 +404,7 @@ const resolvers = {
           { $addToSet: { friendRequestsSent: input } },
           { new: true }
         );
-        const updatedOtherUser = await User.findOneAndUpdate(
+        await User.findOneAndUpdate(
           { username: input },
           { $addToSet: { friendRequestsReceived: context.user.username } },
           { new: true }
@@ -433,7 +433,7 @@ const resolvers = {
           },
           { new: true }
         );
-        const otherUser = await User.findOneAndUpdate(
+        await User.findOneAndUpdate(
           { username: input },
           {
             $pull: {

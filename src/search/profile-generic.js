@@ -186,7 +186,7 @@ function ProfileGeneric() {
     <div id="profilegeneric-wrapper">
       {editbtn}
       <div id="profilegeneric-picture-wrapper">
-        <img id="profilegeneric-picture" src={profilepic} />
+        <img id="profilegeneric-picture" src={profilepic} alt="Profile" />
       </div>
       <h2 id="profilegeneric-username">{username}</h2>
       <div id="profilegeneric-buttons">{fourbtns}</div>

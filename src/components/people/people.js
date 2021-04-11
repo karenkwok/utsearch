@@ -1,9 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import "./people.css";
 import "../../index.css";
 import Maps from "./maps/maps";
 import Tabs from "../../components/tabs";
-import { useParams } from "react-router";
 import { Context } from "../../Store";
 import { client } from "../../index";
 import { gql } from "@apollo/client";
@@ -26,7 +25,6 @@ const EDIT_FRIEND_RESPONSE = gql`
 
 function People() {
   const [state, dispatch] = useContext(Context);
-  const { username } = useParams();
 
   let blockedResults;
   if (state.user.blocked.length === 0) {

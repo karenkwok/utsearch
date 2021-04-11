@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { Context } from "../Store";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import "../index.css";
 import styled from "styled-components";
-import "./chat-components.css"
-import { useHistory} from "react-router-dom";
+import "./chat-components.css";
+import { useHistory } from "react-router-dom";
 
 /*
 Base Video Chat Structure
@@ -52,15 +52,13 @@ const UserList = styled.div`
   min-height: 0;
 `;
 
-const AudioPlayer = styled.audio`
-
-`;
+const AudioPlayer = styled.audio``;
 
 const EmptyAudio = styled.div`
   display: none;
 `;
 
-function CallComponent(){
+function CallComponent() {
   // States for the call connection steps
   const [yourID, setYourID] = useState("");
   const [users, setUsers] = useState({});
@@ -92,16 +90,16 @@ function CallComponent(){
 
   /* Events for the connected user */
   function connectUser() {
-    socket.current = io.connect('/call');
+    socket.current = io.connect("/call");
 
     socket.current.on("yourID", (id) => {
       setYourID(id);
-      socket.current.emit("ConnectUsername", {username: state.user.username});
+      socket.current.emit("ConnectUsername", { username: state.user.username });
     });
 
     socket.current.on("allUsers", (users) => {
       setUsers(users);
-    })
+    });
 
     socket.current.on("hey", (data) => {
       setReceivingCall(true);
@@ -109,57 +107,63 @@ function CallComponent(){
       setCallerSignal(data.signal);
 
       setCallerUsername(data.fromUsername);
-    })
+    });
 
     socket.current.on("user left", () => {
       disconnectCall();
-    })
+    });
   }
 
   /* Upon clicking past intro, automatically attempt to connect user */
   useEffect(() => {
-
     //Get the user's microphone as the stream
-    navigator.mediaDevices.getUserMedia({ video: false, audio: true }).then(stream => {
-      setStream(stream);
-      if (userAudio.current) {
-        userAudio.current.srcObject = stream;
-      }
-    });
+    navigator.mediaDevices
+      .getUserMedia({ video: false, audio: true })
+      .then((stream) => {
+        setStream(stream);
+        if (userAudio.current) {
+          userAudio.current.srcObject = stream;
+        }
+      });
 
     connectUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    return history.listen(location => {
-      if (history.action === 'PUSH') {
-        setLocationKeys([ location.key ]);
+    return history.listen((location) => {
+      if (history.action === "PUSH") {
+        setLocationKeys([location.key]);
         leavePageDisconnect();
       }
 
-      if (history.action === 'POP') {
+      if (history.action === "POP") {
         if (locationKeys[1] === location.key) {
-          setLocationKeys(([ _, ...keys ]) => keys)
+          setLocationKeys(([_, ...keys]) => keys);
           // Handle forward event
           leavePageDisconnect();
-
         } else {
-          setLocationKeys((keys) => [ location.key, ...keys ])
+          setLocationKeys((keys) => [location.key, ...keys]);
           // Handle back event
           leavePageDisconnect();
         }
       }
-    })
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locationKeys, stream]);
 
   var signOutButtonXpath = "//li[text()='Sign Out']";
-  var signOutButton = document.evaluate(signOutButtonXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+  var signOutButton = document.evaluate(
+    signOutButtonXpath,
+    document,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  ).singleNodeValue;
 
-  signOutButton.onclick = function() {
+  signOutButton.onclick = function () {
     leavePageDisconnect();
-  }
+  };
 
   /* Connection events if user is the caller */
   function callPeer(id) {
@@ -169,26 +173,30 @@ function CallComponent(){
       stream: stream,
     });
 
-    peer.on("signal", data => {
-      socket.current.emit("callUser", { userToCall: id, signalData: data, from: yourID })
-    })
+    peer.on("signal", (data) => {
+      socket.current.emit("callUser", {
+        userToCall: id,
+        signalData: data,
+        from: yourID,
+      });
+    });
 
-    peer.on("stream", stream => {
+    peer.on("stream", (stream) => {
       setCallerStream(stream);
       if (partnerAudio.current) {
         partnerAudio.current.srcObject = stream;
       }
     });
 
-    socket.current.on("callAccepted", data => {
+    socket.current.on("callAccepted", (data) => {
       setUsers({});
 
       setCallAccepted(true);
       setReceivingCall(false);
-      socket.current.removeListener('allUsers');
+      socket.current.removeListener("allUsers");
       peer.signal(data.signal);
       setCallerUsername(data.username);
-    })
+    });
     peerRef.current = peer;
   }
 
@@ -196,17 +204,21 @@ function CallComponent(){
   function acceptCall() {
     setCallAccepted(true);
     setReceivingCall(false);
-    socket.current.removeListener('allUsers');
+    socket.current.removeListener("allUsers");
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream: stream,
     });
-    peer.on("signal", data => {
-      socket.current.emit("acceptCall", { signal: data, to: caller, from: yourID })
-    })
+    peer.on("signal", (data) => {
+      socket.current.emit("acceptCall", {
+        signal: data,
+        to: caller,
+        from: yourID,
+      });
+    });
 
-    peer.on("stream", stream => {
+    peer.on("stream", (stream) => {
       setUsers({});
       setReceivingCall(false);
       setCallerStream(stream);
@@ -219,7 +231,7 @@ function CallComponent(){
   }
 
   function leavePageDisconnect() {
-    stream.getTracks().forEach(function(track) {
+    stream.getTracks().forEach(function (track) {
       track.stop();
     });
 
@@ -241,7 +253,7 @@ function CallComponent(){
   }
 
   /* Functions for muting sound */
-  function muteMySound(){
+  function muteMySound() {
     if (muteBtnState === "Mute Me") {
       setMuteBtnState("Unmute Me");
     } else {
@@ -250,16 +262,17 @@ function CallComponent(){
     stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled;
   }
 
-  function muteTheirSound(){
+  function muteTheirSound() {
     if (muteCallerBtnState === "Mute") {
       setMuteCallerBtnState("Unmute");
     } else {
       setMuteCallerBtnState("Mute");
     }
-    callerStream.getAudioTracks()[0].enabled = !callerStream.getAudioTracks()[0].enabled;
+    callerStream.getAudioTracks()[0].enabled = !callerStream.getAudioTracks()[0]
+      .enabled;
   }
 
-  function goToProfile(){
+  function goToProfile() {
     socket.current.destroy();
     setCallAccepted(false);
     setCallerUsername("");
@@ -283,9 +296,7 @@ function CallComponent(){
       <AudioPlayer playsInline ref={partnerAudio} autoPlay />
     );
   } else {
-    partnerAudioPlayer = (
-      <EmptyAudio />
-    );
+    partnerAudioPlayer = <EmptyAudio />;
   }
 
   let disconnectButton;
@@ -294,7 +305,7 @@ function CallComponent(){
       <div>
         <button onClick={disconnectCall}>Reconnect</button>
       </div>
-    )
+    );
   }
 
   let videoText;
@@ -304,23 +315,23 @@ function CallComponent(){
         <Box>You</Box>
         <Box></Box>
       </>
-    )
+    );
   } else if (!receivingCall) {
     videoText = (
       <>
         <Box>You</Box>
-        <Box onClick={() => goToProfile()}><span class="username">{callerUsername}</span></Box>
+        <Box onClick={() => goToProfile()}>
+          <span class="username">{callerUsername}</span>
+        </Box>
       </>
-    )
+    );
   } else {
     videoText = (
       <>
         <Box>You</Box>
-        <Box>
-            {callerUsername} is calling you
-        </Box>
+        <Box>{callerUsername} is calling you</Box>
       </>
-    )
+    );
   }
 
   let userButtons;
@@ -330,12 +341,11 @@ function CallComponent(){
       blockedCount++;
     }
   }
-  if ((Object.keys(users).length - blockedCount) > 1) {
+  if (Object.keys(users).length - blockedCount > 1) {
     userButtons = (
       <UserList>
         <Title>Current Callers Available:</Title>
         {users.map((user, index) => {
-
           if (user[1] === state.user.username) {
             return null;
           } else if (state.user.blocked.includes(user[1])) {
@@ -343,53 +353,61 @@ function CallComponent(){
           }
 
           return (
-            <button key={user[0]} onClick={() => callPeer(user[0])}>Call {user[1]}</button>
+            <button key={user[0]} onClick={() => callPeer(user[0])}>
+              Call {user[1]}
+            </button>
           );
         })}
       </UserList>
-    )
+    );
   } else if (!callAccepted) {
-    userButtons = (
-      <UserList>You are the only one here</UserList>
-    )
+    userButtons = <UserList>You are the only one here</UserList>;
   }
 
   let muteButtons;
   if (callAccepted) {
-    muteButtons =  (
+    muteButtons = (
       <>
-      <Box>
-      <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
-      </Box>
+        <Box>
+          <button key="muteMySound" onClick={() => muteMySound()}>
+            {muteBtnState}
+          </button>
+        </Box>
 
-      <Box>
-      <button key="muteTheirSound" onClick={() => muteTheirSound()}>{muteCallerBtnState}</button>
-      </Box>
+        <Box>
+          <button key="muteTheirSound" onClick={() => muteTheirSound()}>
+            {muteCallerBtnState}
+          </button>
+        </Box>
       </>
-    )
+    );
   } else {
     if (!receivingCall) {
-      muteButtons =  (
+      muteButtons = (
         <>
           <Box>
-            <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
+            <button key="muteMySound" onClick={() => muteMySound()}>
+              {muteBtnState}
+            </button>
           </Box>
 
           <Box></Box>
         </>
-      )
-    } else if (!state.user.blocked.includes(callerUsername)){
-      muteButtons =  (
+      );
+    } else if (!state.user.blocked.includes(callerUsername)) {
+      muteButtons = (
         <>
           <Box>
-            <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
+            <button key="muteMySound" onClick={() => muteMySound()}>
+              {muteBtnState}
+            </button>
           </Box>
 
           <Box>
-              <button onClick={acceptCall}>Accept</button>
+            <button onClick={acceptCall}>Accept</button>
           </Box>
         </>
-      )
+      );
     }
   }
 
@@ -403,19 +421,11 @@ function CallComponent(){
         {userAudioPlayer}
         {partnerAudioPlayer}
       </Row>
-      <Row>
-        {videoText}
-      </Row>
-      <Row>
-        {muteButtons}
-      </Row>
+      <Row>{videoText}</Row>
+      <Row>{muteButtons}</Row>
 
-      <Row>
-        {userButtons}
-      </Row>
-      <Row>
-        {disconnectButton}
-      </Row>
+      <Row>{userButtons}</Row>
+      <Row>{disconnectButton}</Row>
     </Container>
   );
 }

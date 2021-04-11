@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import "../index.css";
 import styled from "styled-components";
-import { useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 /*
 Base Video Chat Structure
@@ -66,7 +66,7 @@ const EmptyVideo = styled.div`
   margin: 10px;
 `;
 
-function RandomChatComponent(){
+function RandomChatComponent() {
   // States for the call connection steps
   const [yourID, setYourID] = useState("");
   const [users, setUsers] = useState({});
@@ -96,20 +96,20 @@ function RandomChatComponent(){
 
   /* Events for the connected user */
   function connectUser() {
-    socket.current = io.connect('/random-chat');
+    socket.current = io.connect("/random-chat");
 
     socket.current.on("yourID", (id) => {
       setYourID(id);
-    })
+    });
     socket.current.on("allUsers", (users) => {
       setUsers(users);
-    })
+    });
 
     socket.current.on("hey", (data) => {
       setReceivingCall(true);
       setCaller(data.from);
       setCallerSignal(data.signal);
-    })
+    });
 
     socket.current.on("user left", () => {
       setMuteBtnState("Mute Me");
@@ -119,52 +119,59 @@ function RandomChatComponent(){
       socket.current.destroy();
       setCallAccepted(false);
       connectUser();
-    })
+    });
   }
 
   /* Upon clicking past intro, automatically attempt to connect user */
   useEffect(() => {
     //Get the user's webcam as the stream
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-      setStream(stream);
-      if (userVideo.current) {
-        userVideo.current.srcObject = stream;
-      }
-    })
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        setStream(stream);
+        if (userVideo.current) {
+          userVideo.current.srcObject = stream;
+        }
+      });
 
     connectUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    return history.listen(location => {
-      if (history.action === 'PUSH') {
-        setLocationKeys([ location.key ]);
+    return history.listen((location) => {
+      if (history.action === "PUSH") {
+        setLocationKeys([location.key]);
         leavePageDisconnect();
       }
 
-      if (history.action === 'POP') {
+      if (history.action === "POP") {
         if (locationKeys[1] === location.key) {
-          setLocationKeys(([ _, ...keys ]) => keys)
+          setLocationKeys(([_, ...keys]) => keys);
           // Handle forward event
           leavePageDisconnect();
-
         } else {
-          setLocationKeys((keys) => [ location.key, ...keys ])
+          setLocationKeys((keys) => [location.key, ...keys]);
           // Handle back event
           leavePageDisconnect();
         }
       }
-    })
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locationKeys, stream]);
 
   var signOutButtonXpath = "//li[text()='Sign Out']";
-  var signOutButton = document.evaluate(signOutButtonXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+  var signOutButton = document.evaluate(
+    signOutButtonXpath,
+    document,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  ).singleNodeValue;
 
-  signOutButton.onclick = function() {
+  signOutButton.onclick = function () {
     leavePageDisconnect();
-  }
+  };
 
   /* Connection events if user is the caller */
   function callPeer(id) {
@@ -174,25 +181,29 @@ function RandomChatComponent(){
       stream: stream,
     });
 
-    peer.on("signal", data => {
-      socket.current.emit("callUser", { userToCall: id, signalData: data, from: yourID })
-    })
+    peer.on("signal", (data) => {
+      socket.current.emit("callUser", {
+        userToCall: id,
+        signalData: data,
+        from: yourID,
+      });
+    });
 
-    peer.on("stream", stream => {
+    peer.on("stream", (stream) => {
       setCallerStream(stream);
       if (partnerVideo.current) {
         partnerVideo.current.srcObject = stream;
       }
     });
 
-    socket.current.on("callAccepted", signal => {
+    socket.current.on("callAccepted", (signal) => {
       setUsers({});
 
       setCallAccepted(true);
       setReceivingCall(false);
-      socket.current.removeListener('allUsers');
+      socket.current.removeListener("allUsers");
       peer.signal(signal);
-    })
+    });
     peerRef.current = peer;
   }
 
@@ -200,17 +211,21 @@ function RandomChatComponent(){
   function acceptCall() {
     setCallAccepted(true);
     setReceivingCall(false);
-    socket.current.removeListener('allUsers');
+    socket.current.removeListener("allUsers");
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream: stream,
     });
-    peer.on("signal", data => {
-      socket.current.emit("acceptCall", { signal: data, to: caller, from: yourID })
-    })
+    peer.on("signal", (data) => {
+      socket.current.emit("acceptCall", {
+        signal: data,
+        to: caller,
+        from: yourID,
+      });
+    });
 
-    peer.on("stream", stream => {
+    peer.on("stream", (stream) => {
       setUsers({});
       setReceivingCall(false);
       setCallerStream(stream);
@@ -223,7 +238,7 @@ function RandomChatComponent(){
   }
 
   function leavePageDisconnect() {
-    stream.getTracks().forEach(function(track) {
+    stream.getTracks().forEach(function (track) {
       track.stop();
     });
 
@@ -247,7 +262,7 @@ function RandomChatComponent(){
   }
 
   /* Functions for muting/hiding video/sound */
-  function muteMyVideo(){
+  function muteMyVideo() {
     if (hideBtnState === "Hide Me") {
       setHideBtnState("Show Me");
     } else {
@@ -256,7 +271,7 @@ function RandomChatComponent(){
     stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled;
   }
 
-  function muteMySound(){
+  function muteMySound() {
     if (muteBtnState === "Mute Me") {
       setMuteBtnState("Unmute Me");
     } else {
@@ -265,42 +280,38 @@ function RandomChatComponent(){
     stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled;
   }
 
-  function muteTheirVideo(){
+  function muteTheirVideo() {
     if (hideCallerBtnState === "Hide Stranger") {
       setHideCallerBtnState("Show Stranger");
     } else {
       setHideCallerBtnState("Hide Stranger");
     }
-    callerStream.getVideoTracks()[0].enabled = !callerStream.getVideoTracks()[0].enabled;
+    callerStream.getVideoTracks()[0].enabled = !callerStream.getVideoTracks()[0]
+      .enabled;
   }
 
-  function muteTheirSound(){
+  function muteTheirSound() {
     if (muteCallerBtnState === "Mute Stranger") {
       setMuteCallerBtnState("Unmute Stranger");
     } else {
       setMuteCallerBtnState("Mute Stranger");
     }
-    callerStream.getAudioTracks()[0].enabled = !callerStream.getAudioTracks()[0].enabled;
+    callerStream.getAudioTracks()[0].enabled = !callerStream.getAudioTracks()[0]
+      .enabled;
   }
 
   /* Conditional Elements */
 
   let UserVideo;
   if (stream) {
-    UserVideo = (
-      <Video playsInline muted ref={userVideo} autoPlay />
-    );
+    UserVideo = <Video playsInline muted ref={userVideo} autoPlay />;
   }
 
   let PartnerVideo;
   if (callAccepted) {
-    PartnerVideo = (
-      <Video playsInline ref={partnerVideo} autoPlay />
-    );
+    PartnerVideo = <Video playsInline ref={partnerVideo} autoPlay />;
   } else {
-    PartnerVideo = (
-      <EmptyVideo />
-    );
+    PartnerVideo = <EmptyVideo />;
   }
 
   let disconnectButton;
@@ -309,7 +320,7 @@ function RandomChatComponent(){
       <div>
         <button onClick={disconnectCall}>Reconnect</button>
       </div>
-    )
+    );
   }
 
   let videoText;
@@ -319,16 +330,14 @@ function RandomChatComponent(){
         <Box>You</Box>
         <Box>Stranger</Box>
       </>
-    )
+    );
   } else {
     videoText = (
       <>
         <Box>You</Box>
-        <Box>
-            A secret stranger is calling you
-        </Box>
+        <Box>A secret stranger is calling you</Box>
       </>
-    )
+    );
   }
 
   let userButtons;
@@ -341,57 +350,73 @@ function RandomChatComponent(){
             return null;
           }
           return (
-            <button key={key} onClick={() => callPeer(key)}>Call Stranger {index}</button>
+            <button key={key} onClick={() => callPeer(key)}>
+              Call Stranger {index}
+            </button>
           );
         })}
       </StrangerList>
-    )
+    );
   } else if (!callAccepted) {
-    userButtons = (
-      <StrangerList>You are the only one here</StrangerList>
-    )
+    userButtons = <StrangerList>You are the only one here</StrangerList>;
   }
 
   let muteButtons;
   if (callAccepted) {
-    muteButtons =  (
+    muteButtons = (
       <>
-      <Box>
-      <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
-      <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
-      </Box>
+        <Box>
+          <button key="muteMyVid" onClick={() => muteMyVideo()}>
+            {hideBtnState}
+          </button>
+          <button key="muteMySound" onClick={() => muteMySound()}>
+            {muteBtnState}
+          </button>
+        </Box>
 
-      <Box>
-      <button key="muteTheirVid" onClick={() => muteTheirVideo()}>{hideCallerBtnState}</button>
-      <button key="muteTheirSound" onClick={() => muteTheirSound()}>{muteCallerBtnState}</button>
-      </Box>
+        <Box>
+          <button key="muteTheirVid" onClick={() => muteTheirVideo()}>
+            {hideCallerBtnState}
+          </button>
+          <button key="muteTheirSound" onClick={() => muteTheirSound()}>
+            {muteCallerBtnState}
+          </button>
+        </Box>
       </>
-    )
+    );
   } else {
     if (!receivingCall) {
-      muteButtons =  (
+      muteButtons = (
         <>
           <Box>
-            <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
-            <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
+            <button key="muteMyVid" onClick={() => muteMyVideo()}>
+              {hideBtnState}
+            </button>
+            <button key="muteMySound" onClick={() => muteMySound()}>
+              {muteBtnState}
+            </button>
           </Box>
 
           <Box></Box>
         </>
-      )
+      );
     } else {
-      muteButtons =  (
+      muteButtons = (
         <>
           <Box>
-            <button key="muteMyVid" onClick={() => muteMyVideo()}>{hideBtnState}</button>
-            <button key="muteMySound" onClick={() => muteMySound()}>{muteBtnState}</button>
+            <button key="muteMyVid" onClick={() => muteMyVideo()}>
+              {hideBtnState}
+            </button>
+            <button key="muteMySound" onClick={() => muteMySound()}>
+              {muteBtnState}
+            </button>
           </Box>
 
           <Box>
-              <button onClick={acceptCall}>Accept</button>
+            <button onClick={acceptCall}>Accept</button>
           </Box>
         </>
-      )
+      );
     }
   }
 
@@ -405,19 +430,11 @@ function RandomChatComponent(){
         {UserVideo}
         {PartnerVideo}
       </Row>
-      <Row>
-        {videoText}
-      </Row>
-      <Row>
-        {muteButtons}
-      </Row>
+      <Row>{videoText}</Row>
+      <Row>{muteButtons}</Row>
 
-      <Row>
-        {userButtons}
-      </Row>
-      <Row>
-        {disconnectButton}
-      </Row>
+      <Row>{userButtons}</Row>
+      <Row>{disconnectButton}</Row>
     </Container>
   );
 }

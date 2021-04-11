@@ -1,9 +1,8 @@
-import { React, useContext, useState } from "react";
+import { React, useState } from "react";
 import "../index.css";
 import "./search.css";
 import { Link } from "react-router-dom";
 import Icon from "@material-ui/core/Icon";
-import { Context } from "../Store";
 import { client } from "..";
 import { gql } from "@apollo/client";
 import profilepic from "./profilepic.png";
@@ -19,7 +18,6 @@ const GET_USERS = gql`
 `;
 
 function Search() {
-  const [state, dispatch] = useContext(Context);
   const [searchValue, setSearchValue] = useState("");
   const [searchValue2, setSearchValue2] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -64,7 +62,11 @@ function Search() {
           return (
             <div className="result-example">
               <div>
-                <img className="result-picture" src={profilepic} />
+                <img
+                  className="result-picture"
+                  src={profilepic}
+                  alt="Profile"
+                />
               </div>
               <div className="result-text">
                 <div className="result-username">

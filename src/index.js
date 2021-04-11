@@ -27,7 +27,6 @@ import axios from "axios";
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import { Link } from "react-router-dom";
 
 //https://utsearch.tech new production
 //https://idk-lmao.herokuapp.com/graphql production
@@ -155,7 +154,6 @@ function SimpleMenu() {
 }
 
 function Main() {
-  const history = useHistory();
   const [state, dispatch] = useContext(Context);
   console.count("main");
   let username = undefined;
