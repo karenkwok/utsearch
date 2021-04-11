@@ -38,28 +38,12 @@ const typeDefs = `
     blocked: [String],
     myLocation: MyLocation
   }
-  type Query {
-    GetFriendsLocation: [FriendsLocation],
-    GetUsers(searchValue: String): [User],
-    profile: User,
-    profileGeneric(input: ProfileGenericInput): User
-  }
-  input CreateUserInput {
-    username: String
-    password: String
-    email: String
-  }
+  """
+  ## Description:
+  The input username to get a user's profile.
+  """
   input ProfileGenericInput {
     username: String
-  }
-  type Mutation {
-    CreateLocation(lat: Float, long: Float): User,
-    FriendRequestResponse(user: String, acceptRequest: Boolean): User,
-    CreateFriendRequest(input: String): [String],
-    CreateBlocked(input: String): User,
-    CreateBio(input: String): String,
-    CreateTag(input: String): [String],
-    CreateUser(input: CreateUserInput): User
   }
   type MyLocation {
     lat: Float,
@@ -68,6 +52,167 @@ const typeDefs = `
   type FriendsLocation {
     username: String,
     myLocation: MyLocation
+  }
+  input CreateUserInput {
+    username: String
+    password: String
+    email: String
+  }
+  type Query {
+    """
+    ## Description:
+    Get your friends' location (latitude and longitude values).
+
+    ## Response:
+    List of your friends with their locations if they turned location on.
+    """
+    GetFriendsLocation: [FriendsLocation],
+    """
+    ## Description:
+    Get user(s) that match the search value.
+
+    ## Arguments:
+      - searchValue: username or tag.
+
+    ## Response:
+    List of users that match the search value.
+    """
+    GetUsers(searchValue: String): [User],
+    """
+    ## Description:
+    Get your own profile.
+
+    ## Response:
+    Your own profile.
+    """
+    profile: User,
+    """
+    ## Description:
+    Get the profile of the user given the input username.
+
+    ## Arguments:
+      - input: the username of the profile
+
+    ## Errors:
+      - User does not exist
+    
+    ## Response:
+    The profile that matches the input username.
+    """
+    profileGeneric(input: ProfileGenericInput): User
+  }
+  type Mutation {
+    """
+    ## Description:
+    Set the location (latitude and longitude values) of the user.
+
+    ## Arguments:
+      - lat: the latitude value of the user's location
+      - long: the longitude value of the user's location
+
+    ## Response:
+    Your own profile with your updated geolocation.
+    """
+    CreateLocation(lat: Float, long: Float): User,
+    """
+    ## Description:
+    Respond to a friend request by either accepting or rejecting it.
+
+    ## Arguments:
+      - user: the username of the person who sent the friend request
+      - acceptRequest: true if response is accept, false if response is reject
+
+    ## Errors:
+      - User does not exist
+      - You can't add yourself as a friend
+      - User did not send you a friend request
+    
+    ## Response:
+    Your own profile with updated friends list and friend requests received list.
+    """
+    FriendRequestResponse(user: String, acceptRequest: Boolean): User,
+    """
+    ## Description:
+    Send a friend request to a user.
+
+    ## Arguments:
+      - input: the username of the person the friend request will be sent to
+
+    ## Errors:
+      - User does not exist
+      - You can't add yourself as a friend
+      - You blocked this user
+      - User blocked you
+      - User is already your friend
+
+    ## Response:
+    Your updated list of sent friend requests.
+    """
+    CreateFriendRequest(input: String): [String],
+    """
+    ## Description:
+    Block a user from communicating with you.
+
+    ## Arguments:
+      - input: the username of the person that will be blocked
+
+    ## Errors:
+      - User does not exist
+      - You can't block yourself
+    
+    ## Response:
+    Your own profile with your updated blocked list.
+    """
+    CreateBlocked(input: String): User,
+    """
+    ## Description:
+    Edit the content of your bio.
+
+    ## Arguments:
+      - input: the content of the new bio
+
+    ## Errors:
+      - Bio must be 255 characters or less
+    
+    ## Response:
+    Your updated bio.
+    """
+    CreateBio(input: String): String,
+    """
+    ## Description:
+    Add a new tag to your profile.
+
+    ## Arguments:
+      - input: the content of the new tag
+
+    ## Errors:
+      - Tag cannot be empty
+      - Tag must be 40 characters or less
+      - Cannot create more than 30 tags
+
+    ## Response:
+    Your updated list of tags.
+    """
+    CreateTag(input: String): [String],
+    """
+    ## Description:
+    Create a new user.
+
+    ## Arguments:
+      - input: the username, password, and email of the new user
+
+    ## Errors:
+      - Username cannot be empty
+      - Username must be 20 characters or less
+      - Password cannot be empty
+      - Email cannot be empty
+      - Username already exists
+      - Invalid email
+    
+    ## Response:
+    Your new profile.
+    """
+    CreateUser(input: CreateUserInput): User
   }
 `;
 
@@ -294,7 +439,7 @@ const resolvers = {
       } else if (!input.email) {
         throw new ApolloError("You must enter an email.");
       } else if ((await User.findOne({ username: input.username })) !== null) {
-        throw new AuthenticationError("Username already exists.");
+        throw new ApolloError("Username already exists.");
       } else if (
         input.email.search(
           /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
