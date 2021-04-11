@@ -516,12 +516,17 @@ const resolvers = {
 // initialize app
 const app = express();
 
+let corsOrigin;
+
 if (process.env.NODE_ENV === "production") {
+  corsOrigin = undefined;
   app.use(sslRedirect());
+} else {
+  corsOrigin = "http://localhost:3000";
 }
 
 // enables communication if frontend is on different port than backend
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: corsOrigin, credentials: true }));
 app.use(
   session({
     secret: "plkojihughfgd",
@@ -543,7 +548,7 @@ const server = new ApolloServer({
 
 server.applyMiddleware({
   app,
-  cors: { origin: "http://localhost:3000" },
+  cors: { origin: corsOrigin },
 });
 
 app.post(
