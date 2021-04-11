@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 //import sslRedirect from "heroku-ssl-redirect";
 const sslRedirect = require("heroku-ssl-redirect").default;
 const express = require("express");
