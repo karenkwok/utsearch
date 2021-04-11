@@ -114,7 +114,7 @@ const typeDefs = `
     The profile that matches the input username.
 
     ## Curl:
-    \`curl --location --request POST 'http://localhost:5000/graphql' \
+    \`curl --location --request POST 'https://utsearch.tech/graphql' \
 --header 'Content-Type: application/json' \
 --data-raw '{"query":"query ($input: ProfileGenericInput!) {\r\n    profileGeneric(input: $input) {\r\n        username\r\n        bio\r\n        tags\r\n    }\r\n}","variables":{"input":{"username":"octopus"}}}'\`
     """
