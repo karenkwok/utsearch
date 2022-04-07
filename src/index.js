@@ -31,7 +31,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 //https://utsearch.tech new production
 //https://idk-lmao.herokuapp.com/graphql production
 //http://localhost:5000 local
-export const domain = "https://utsearch.tech";
+export const domain = "https://idk-lmao.herokuapp.com";
 
 export const client = new ApolloClient({
   uri: domain + "/graphql",
